@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build output
+dist/
+*.js
+*.js.map
+*.d.ts
+*.d.ts.map
+!scripts/*.sh
+
+# Test output
+coverage/
+*.log
+
+# Environment files
+.env
+.env.*
+.env.local
+.env.*.local
+
+# Backup files
+*_backup_*.json
+temp_*.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

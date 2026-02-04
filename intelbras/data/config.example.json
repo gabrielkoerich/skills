@@ -1,0 +1,25 @@
+{
+    "_comment": "Credentials are loaded from environment variables. See .env.example",
+    "cameras": [
+        {
+            "name": "CAM1",
+            "channel": 1,
+            "rtsp_subtype": 0
+        },
+        {
+            "name": "CAM2",
+            "channel": 2,
+            "rtsp_subtype": 0
+        },
+        {
+            "name": "CAM3",
+            "channel": 3,
+            "rtsp_subtype": 0
+        },
+        {
+            "name": "CAM4",
+            "channel": 4,
+            "rtsp_subtype": 0
+        }
+    ]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "github-secrets",
+  "version": "1.0.0",
+  "description": "Manage GitHub repository secrets via the GitHub API",
+  "type": "module",
+  "scripts": {
+    "list": "bunx tsx src/cli.ts list",
+    "get": "bunx tsx src/cli.ts get",
+    "set": "bunx tsx src/cli.ts set",
+    "delete": "bunx tsx src/cli.ts delete",
+    "sync": "bunx tsx src/cli.ts sync",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "libsodium-wrappers-sumo": "^0.8.2"
+  },
+  "devDependencies": {
+    "@types/libsodium-wrappers": "^0.7.14",
+    "@types/bun": "latest",
+    "typescript": "^5.3.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
