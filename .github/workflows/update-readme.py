@@ -216,8 +216,11 @@ def update_readme():
             generate_table_row(skill_name, skill["description"], skill["requirements"])
         )
 
-    # Combine existing + new rows
-    all_rows = existing_rows + new_table_rows
+    # Combine existing + new rows, sorted alphabetically by skill name
+    all_rows = sorted(
+        existing_rows + new_table_rows,
+        key=lambda row: re.search(r"\[([a-z0-9-]+)\]", row).group(1) if re.search(r"\[([a-z0-9-]+)\]", row) else row,
+    )
 
     # Build new detail sections
     new_detail_sections = []
