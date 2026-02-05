@@ -128,7 +128,7 @@ def find_structure_header(content: str) -> int:
 
 def generate_table_row(skill_name: str, description: str, requirements: str) -> str:
     """Generate a table row for a skill."""
-    desc = description.replace("|", "\\|")
+    desc = description.strip().strip('"').replace("|", "\\|")
     req = requirements.replace("|", "\\|")
     return f"| [{skill_name}](#{skill_name}) | {desc} | {req} |"
 
@@ -138,7 +138,7 @@ def generate_detail_section(skill_name: str, skill_path: Path) -> str:
     content = skill_path.read_text()
     frontmatter = parse_frontmatter(content)
 
-    description = frontmatter.get("description", "")
+    description = frontmatter.get("description", "").strip().strip('"')
     requirements = extract_requirements_from_skill(skill_path)
 
     return f"""### {skill_name}
