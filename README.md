@@ -1,5 +1,7 @@
 # Skills
 
+[![Update README](https://github.com/gabrielkoerich/skills/actions/workflows/update-readme.yml/badge.svg)](https://github.com/gabrielkoerich/skills/actions/workflows/update-readme.yml)
+
 A collection of independent, self-contained skills for AI agents. Each skill lives in its own directory with a `SKILL.md` documentation file. No skill files need to be modified — all configuration is done via environment variables in a gitignored `.env` file.
 
 > **Security:** Always review a skill's code before installing it. Do not run code you haven't verified. Skills can contain scripts that execute on your machine — understand what they do first.

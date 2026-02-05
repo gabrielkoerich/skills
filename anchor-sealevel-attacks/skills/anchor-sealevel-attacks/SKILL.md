@@ -6,7 +6,6 @@ description: Audits Solana/Anchor programs for all 11 sealevel attack vectors. U
 # Anchor Sealevel Attacks Auditor
 
 ## Common Attack Vectors
-
  - Missing signer authorization
  - Account data mismatches
  - Owner check gaps
