@@ -176,9 +176,7 @@ def update_readme():
     print(f"New skills: {sorted(new_skills)}")
     print(f"Deleted skills: {sorted(deleted_skills)}")
 
-    if not new_skills and not deleted_skills:
-        print("No changes needed.")
-        return
+    # Note: We process even if no new/deleted skills to fix formatting issues (e.g., quotes)
 
     # Find table boundaries
     start_line, separator_line, end_line = find_table_bounds(content)
@@ -203,6 +201,8 @@ def update_readme():
             # Check if this row is for a deleted skill
             match = re.match(r"\|\s*\[([a-z0-9-]+)\]\(#[a-z0-9-]+\)\s*\|", row)
             if match and match.group(1) not in deleted_skills:
+                # Strip quotes from description column in existing rows
+                row = re.sub(r'\|\s*"([^"]+)"\s*\|', r"| \1 |", row)
                 existing_rows.append(row)
             elif not match:
                 # Keep rows that don't match (might be special rows)
@@ -243,34 +243,65 @@ def update_readme():
     # Add everything up to and including ## Skill Details
     new_lines.extend(lines[end_line + 1 : details_start + 1])
 
-    # Remove deleted skill sections from details
-    details_section = "\n".join(lines[details_start + 1 :])
-    for skill_name in deleted_skills:
-        # Remove the section for this skill
-        pattern = rf"\n---\n\n### {skill_name}\n\n.*?(?=\n---\n\n### |\n\n## |\Z)"
-        details_section = re.sub(pattern, "", details_section, flags=re.DOTALL)
+    # Extract and sort all skill detail sections
+    details_content = "\n".join(lines[details_start + 1 :])
 
-        # Also handle if it's the first section (no leading ---)
-        pattern2 = rf"### {skill_name}\n\n.*?(?=\n---\n\n### |\n\n## |\Z)"
-        details_section = re.sub(pattern2, "", details_section, flags=re.DOTALL)
+    # Find where skill details end (## Structure or end of content)
+    structure_match = re.search(r"\n## Structure\n", details_content)
+    if structure_match:
+        skill_details_content = details_content[: structure_match.start()]
+        after_skills = details_content[structure_match.start() :]
+    else:
+        skill_details_content = details_content
+        after_skills = ""
 
-    # Add new skill sections before ## Structure or end
-    if new_detail_sections:
-        # Remove leading --- from first new section since existing content ends with ---
-        sections_to_add = [re.sub(r"^\n---\n\n", "\n", s) for s in new_detail_sections]
-        joined_sections = "".join(sections_to_add)
+    # Extract all skill sections (### skill-name)
+    # Split by section headers, handling various separators:
+    # - Start of content (possibly with leading newlines): ^\n*### name
+    # - After ---\n\n: ---\n\n### name
+    # - After multiple newlines: \n\n\n### name
+    skill_sections = []
 
-        if structure_line > 0:
-            # Insert before ## Structure
-            structure_pattern = r"\n## Structure\n"
-            details_section = re.sub(
-                structure_pattern,
-                joined_sections + "\n\n## Structure\n",
-                details_section,
-            )
+    # Find all section positions
+    header_pattern = r"(?:^\n*### |\n---\n\n### |\n\n\n### )([a-z0-9-]+)\n\n"
+    headers = list(re.finditer(header_pattern, skill_details_content))
+
+    for i, match in enumerate(headers):
+        skill_name = match.group(1)
+        start = match.end()
+        if i + 1 < len(headers):
+            end = headers[i + 1].start()
         else:
-            # Append at end
-            details_section = details_section.rstrip("\n") + joined_sections + "\n"
+            end = len(skill_details_content)
+        section_content = skill_details_content[start:end].rstrip("\n")
+        # Strip quotes from description (first line of content)
+        section_content = re.sub(r'^"([^"]+)"\n\n', r"\1\n\n", section_content)
+        if skill_name not in deleted_skills:
+            skill_sections.append((skill_name, section_content))
+
+    # Add new skill sections
+    for skill_name in sorted(new_skills):
+        section = generate_detail_section(skill_name, filesystem_skills[skill_name]["path"])
+        # Strip ### header since we build it ourselves
+        content_only = re.sub(r"^### [a-z0-9-]+\n\n", "", section)
+        skill_sections.append((skill_name, content_only.rstrip("\n")))
+
+    # Sort all sections alphabetically by skill name
+    skill_sections.sort(key=lambda x: x[0])
+
+    # Rebuild skill details content
+    if skill_sections:
+        rebuilt = []
+        for i, (skill_name, content) in enumerate(skill_sections):
+            if i == 0:
+                rebuilt.append(f"### {skill_name}\n\n{content}")
+            else:
+                rebuilt.append(f"---\n\n### {skill_name}\n\n{content}")
+        skill_details_content = "\n\n".join(rebuilt) + "\n"
+    else:
+        skill_details_content = ""
+
+    details_section = skill_details_content + after_skills
 
     new_lines.append(details_section)
 
