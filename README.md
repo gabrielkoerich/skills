@@ -98,7 +98,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 
 | Skill | Description | Requirements |
 |-------|-------------|--------------|
-| [anchor-sealevel-attacks](#anchor-sealevel-attacks) | Audits Solana/Anchor programs for all 11 sealevel attack vectors: missing signer authorization, account data mismatches, owner check gaps, type cosplay, re-initialization, arbitrary CPI, duplicate mutable accounts, bump seed canonicalization, PDA sharing, unsafe account closing, and sysvar address spoofing. Use when auditing Solana smart contracts or reviewing Anchor programs for security. | See SKILL.md |
+| [anchor-sealevel-attacks](#anchor-sealevel-attacks) | Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security. | See SKILL.md |
 | [apple-calendar](#apple-calendar) | macOS Calendar.app integration (CRUD, search) | macOS |
 | [binance-prices](#binance-prices) | Real-time crypto prices from Binance public API | python3, curl |
 | [bird](#bird) | X/Twitter access via bird CLI | [bird CLI](https://github.com/steipete/bird), Chrome |
