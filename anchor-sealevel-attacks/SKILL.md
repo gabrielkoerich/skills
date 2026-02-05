@@ -1,4 +1,3 @@
-
 ---
 name: anchor-sealevel-attacks
 description: Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security.
