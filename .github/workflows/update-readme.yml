@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - '*/SKILL.md'
-      - '.github/workflows/update-readme.py'
+      - '.github/workflows/*'
 
 permissions:
   contents: write
