@@ -1,9 +1,24 @@
+
 ---
 name: anchor-sealevel-attacks
-description: "Audits Solana/Anchor programs for all 11 sealevel attack vectors: missing signer authorization, account data mismatches, owner check gaps, type cosplay, re-initialization, arbitrary CPI, duplicate mutable accounts, bump seed canonicalization, PDA sharing, unsafe account closing, and sysvar address spoofing. Use when auditing Solana smart contracts or reviewing Anchor programs for security."
+description: Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security.
 ---
 
 # Anchor Sealevel Attacks Auditor
+
+## Common Attack Vectors
+
+ - Missing signer authorization
+ - Account data mismatches
+ - Owner check gaps
+ - Type cosplay
+ - Re-initialization
+ - Arbitrary CPI
+ - Duplicate mutable accounts
+ - Bump seed canonicalization
+ - PDA sharing
+ - Unsafe account closing
+ - Sysvar address spoofing
 
 ## When to Use
 
@@ -43,17 +58,17 @@ When invoked, I will:
 
 | # | Attack | Severity | What to Check |
 |---|--------|----------|---------------|
-| 0 | Signer Authorization | CRITICAL | `Signer<'info>` or `is_signer` check |
-| 1 | Account Data Matching | HIGH | `constraint` or `has_one` on data fields |
-| 2 | Owner Checks | HIGH | `Account<'info, T>` or manual `.owner` check |
-| 3 | Type Cosplay | HIGH | `Account<'info, T>` with `#[account]` discriminator |
-| 4 | Initialization | CRITICAL | `#[account(init)]` or `is_initialized` flag |
-| 5 | Arbitrary CPI | CRITICAL | `Program<'info, T>` or program ID validation |
-| 6 | Duplicate Mutable Accounts | HIGH | `constraint = a.key() != b.key()` |
-| 7 | Bump Seed Canonicalization | CRITICAL | `seeds` + `bump` constraint, not user-provided bump |
-| 8 | PDA Sharing | HIGH | Unique seeds per user/entity, `seeds` constraint |
-| 9 | Closing Accounts | CRITICAL | `#[account(close = dest)]` or discriminator + force-defund |
-| 10 | Sysvar Address Checking | HIGH | `Sysvar<'info, T>` or address validation |
+| 0 | [Signer Authorization](#0-signer-authorization) | CRITICAL | `Signer<'info>` or `is_signer` check |
+| 1 | [Account Data Matching](#1-account-data-matching) | HIGH | `constraint` or `has_one` on data fields |
+| 2 | [Owner Checks](#2-owner-checks) | HIGH | `Account<'info, T>` or manual `.owner` check |
+| 3 | [Type Cosplay](#3-type-cosplay) | HIGH | `Account<'info, T>` with `#[account]` discriminator |
+| 4 | [Initialization](#4-initialization) | CRITICAL | `#[account(init)]` or `is_initialized` flag |
+| 5 | [Arbitrary CPI](#5-arbitrary-cpi) | CRITICAL | `Program<'info, T>` or program ID validation |
+| 6 | [Duplicate Mutable Accounts](#6-duplicate-mutable-accounts) | HIGH | `constraint = a.key() != b.key()` |
+| 7 | [Bump Seed Canonicalization](#7-bump-seed-canonicalization) | CRITICAL | `seeds` + `bump` constraint, not user-provided bump |
+| 8 | [PDA Sharing](#8-pda-sharing) | HIGH | Unique seeds per user/entity, `seeds` constraint |
+| 9 | [Closing Accounts](#9-closing-accounts) | CRITICAL | `#[account(close = dest)]` or discriminator + force-defund |
+| 10 | [Sysvar Address Checking](#10-sysvar-address-checking) | HIGH | `Sysvar<'info, T>` or address validation |
 
 For detailed vulnerability patterns with full insecure/secure/recommended code examples, see [VULNERABILITY_PATTERNS.md](references/VULNERABILITY_PATTERNS.md).
 
@@ -170,59 +185,34 @@ For each vulnerability class, write negative tests that attempt the exploit:
 import * as anchor from "@coral-xyz/anchor";
 
 describe("sealevel attack tests", () => {
-  // #0 Signer Authorization: pass non-signer as authority
+  // #0: Pass non-signer as authority
   it("rejects unsigned authority", async () => {
-    // Craft tx without authority signature, expect MissingRequiredSignature
+    // Craft tx without authority signature
   });
 
-  // #1 Account Data Matching: pass mismatched token account
+  // #1: Pass mismatched token account
   it("rejects token not owned by signer", async () => {
-    // Pass someone else's token account, expect InvalidAccountData
+    // Pass someone else's token account
   });
 
-  // #2 Owner Checks: pass fake account owned by attacker program
-  it("rejects account with wrong program owner", async () => {
-    // Create account under attacker program with crafted data, pass as token
-  });
-
-  // #3 Type Cosplay: pass wrong account type with same layout
+  // #3: Pass wrong account type
   it("rejects metadata account as user account", async () => {
-    // Create Metadata account, pass where User is expected
+    // Create Metadata, pass where User expected
   });
 
-  // #4 Initialization: re-initialize an existing account
-  it("rejects re-initialization of existing account", async () => {
-    // Initialize account, then call initialize again, expect error
-  });
-
-  // #5 Arbitrary CPI: pass fake program for CPI
+  // #5: Pass fake token program
   it("rejects non-SPL token program", async () => {
-    // Deploy fake program, pass as token_program, expect IncorrectProgramId
+    // Deploy fake program, pass as token_program
   });
 
-  // #6 Duplicate Mutable Accounts: same account for both params
+  // #6: Pass same account for both user_a and user_b
   it("rejects duplicate mutable accounts", async () => {
-    // Pass same pubkey for user_a and user_b, expect InvalidArgument
+    // Same pubkey for both accounts
   });
 
-  // #7 Bump Seed Canonicalization: use non-canonical bump
-  it("rejects non-canonical PDA bump", async () => {
-    // Derive PDA with non-canonical bump, attempt to use it
-  });
-
-  // #8 PDA Sharing: access another user's PDA
-  it("rejects cross-user PDA access", async () => {
-    // Create pool for user A, try to withdraw as user B
-  });
-
-  // #9 Closing Accounts: revive closed account
+  // #9: Revive closed account
   it("prevents closed account revival", async () => {
-    // Close account, top up lamports in same tx, try to use again
-  });
-
-  // #10 Sysvar Address Checking: pass fake sysvar
-  it("rejects spoofed sysvar account", async () => {
-    // Create account with fake sysvar data, pass as rent/clock
+    // Close account, top up lamports, try to use
   });
 });
 ```
