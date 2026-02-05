@@ -109,7 +109,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [things3](#things3) | Things 3 task manager via CLI (macOS) | [things CLI](https://github.com/ossianhempel/things3-cli), macOS |
 | [tmux](#tmux) | Remote-control tmux sessions for interactive CLIs | tmux |
 | [x-twitter-chrome](#x-twitter-chrome) | Read/search X via Chrome DevTools Protocol | bun, Chrome |
-
+| [anchor-sealevel-attacks](#anchor-sealevel-attacks) | "Audits Solana/Anchor programs for all 11 sealevel attack vectors: missing signer authorization, account data mismatches, owner check gaps, type cosplay, re-initialization, arbitrary CPI, duplicate mutable accounts, bump seed canonicalization, PDA sharing, unsafe account closing, and sysvar address spoofing. Use when auditing Solana smart contracts or reviewing Anchor programs for security." | See SKILL.md |
 ---
 
 ## Skill Details
@@ -414,6 +414,18 @@ bun run bookmarks.ts
 ```
 
 ---
+
+### anchor-sealevel-attacks
+
+"Audits Solana/Anchor programs for all 11 sealevel attack vectors: missing signer authorization, account data mismatches, owner check gaps, type cosplay, re-initialization, arbitrary CPI, duplicate mutable accounts, bump seed canonicalization, PDA sharing, unsafe account closing, and sysvar address spoofing. Use when auditing Solana smart contracts or reviewing Anchor programs for security."
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See anchor-sealevel-attacks/SKILL.md for full documentation
+```
+
 
 ## Structure
 
