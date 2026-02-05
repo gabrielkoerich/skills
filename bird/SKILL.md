@@ -1,7 +1,6 @@
 ---
-name: bird-skill
-description: bird is a fast X CLI for tweeting, replying, and reading via X/Twitter GraphQL (cookie auth). Requires bird cli installed (bun add -g @steipete/bird) 
-https://github.com/steipete/bird
+name: bird
+description: bird is a fast X CLI for tweeting, replying, and reading via X/Twitter GraphQL (cookie auth). Requires bird cli installed (bun add -g @steipete/bird)
 ---
 
 
