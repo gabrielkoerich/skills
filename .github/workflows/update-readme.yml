@@ -8,8 +8,7 @@ on:
       - '.github/workflows/update-readme.py'
 
 permissions:
-  contents: read
-  pull-requests: write
+  contents: write
 
 jobs:
   update-readme:
