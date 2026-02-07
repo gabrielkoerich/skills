@@ -12,7 +12,8 @@ Review your notes to answer questions like:
 - am I on track for my goals?
 
 **Requirements:** python3
-**Recommended:** qmd CLI for semantic/local search
+
+Recommended: qmd CLI for semantic/local search
 
 ## Commands
 
