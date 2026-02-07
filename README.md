@@ -100,6 +100,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 |-------|-------------|--------------|
 | [anchor-sealevel-attacks](#anchor-sealevel-attacks) | Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security. | See SKILL.md |
 | [apple-calendar](#apple-calendar) | macOS Calendar.app integration (CRUD, search) | macOS |
+| [beancount-analytics](#beancount-analytics) | Analyze Beancount ledgers with reusable CLI reports and question-driven queries. Use when user asks for last month/last 12 months reports, spending breakdowns, savings trends, or direct finance questions from a .bean ledger. | ** python3, beancount (`pip install beancount`) |
 | [binance-prices](#binance-prices) | Real-time crypto prices from Binance public API | python3, curl |
 | [bird](#bird) | X/Twitter access via bird CLI | [bird CLI](https://github.com/steipete/bird), Chrome |
 | [camsnap](#camsnap) | Capture frames/clips from RTSP/ONVIF cameras | [camsnap CLI](https://camsnap.ai), ffmpeg |
@@ -107,6 +108,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [github](#github) | GitHub CLI for issues, PRs, CI runs, and API queries | [gh CLI](https://cli.github.com) |
 | [github-secrets](#github-secrets) | Manage GitHub repo/org secrets via API | bun, `GITHUB_TOKEN` |
 | [intelbras](#intelbras) | Monitor/control Intelbras alarm systems and cameras | python3, curl |
+| [notes-review](#notes-review) | Analyze personal markdown notes and journals with qmd-powered semantic search plus weekly/monthly reflection reports. Use for questions like what was accomplished, what is pending, and whether work aligns with goals. | ** python3 **Recommended:** qmd CLI for semantic/local search |
 | [openai-whisper](#openai-whisper) | Local speech-to-text transcription | [whisper CLI](https://github.com/openai/whisper) |
 | [qmd](#qmd) | Local hybrid search for markdown notes and docs | [qmd CLI](https://github.com/tobi/qmd) |
 | [solana-best-practices](#solana-best-practices) | Reviews Solana/Anchor programs for development best practices. Use when writing, reviewing, improving or auditing Solana smart contracts. 31 vulnerability patterns with 4 real-world case studies. | See SKILL.md |
@@ -141,6 +143,19 @@ scripts/cal-list.sh                    # List calendars
 scripts/cal-events.sh 7                # Events for next 7 days
 scripts/cal-create.sh "Work" "Meeting" "2025-01-15 10:00" "2025-01-15 11:00"
 scripts/cal-search.sh "standup" 30
+```
+
+---
+
+### beancount-analytics
+
+Analyze Beancount ledgers with reusable CLI reports and question-driven queries. Use when user asks for last month/last 12 months reports, spending breakdowns, savings trends, or direct finance questions from a .bean ledger.
+
+**Requirements:** ** python3, beancount (`pip install beancount`)
+**Setup:** None
+**Usage:**
+```bash
+# See beancount-analytics/SKILL.md for full documentation
 ```
 
 ---
@@ -297,6 +312,19 @@ python3 scripts/intelbras-alarm.py status
 python3 scripts/intelbras-alarm.py arm
 python3 scripts/intelbras-alarm.py snap CAM1
 python3 scripts/intelbras-alarm.py all-snap
+```
+
+---
+
+### notes-review
+
+Analyze personal markdown notes and journals with qmd-powered semantic search plus weekly/monthly reflection reports. Use for questions like what was accomplished, what is pending, and whether work aligns with goals.
+
+**Requirements:** ** python3 **Recommended:** qmd CLI for semantic/local search
+**Setup:** None
+**Usage:**
+```bash
+# See notes-review/SKILL.md for full documentation
 ```
 
 ---
