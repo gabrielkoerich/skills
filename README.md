@@ -110,6 +110,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [intelbras](#intelbras) | Monitor/control Intelbras alarm systems and cameras | python3, curl |
 | [notes-review](#notes-review) | Analyze personal markdown notes and journals with qmd-powered semantic search plus weekly/monthly reflection reports. Use for questions like what was accomplished, what is pending, and whether work aligns with goals. | ** python3 **Recommended:** qmd CLI for semantic/local search |
 | [openai-whisper](#openai-whisper) | Local speech-to-text transcription | [whisper CLI](https://github.com/openai/whisper) |
+| [orchestrator](#orchestrator) | Thin operational wrapper for a system-wide orchestrator CLI. Use when running and checking `orchestrator <command>` workflows without duplicating orchestration logic in the skill. | See SKILL.md |
 | [qmd](#qmd) | Local hybrid search for markdown notes and docs | [qmd CLI](https://github.com/tobi/qmd) |
 | [solana-best-practices](#solana-best-practices) | Reviews Solana/Anchor programs for development best practices. Use when writing, reviewing, improving or auditing Solana smart contracts. 31 vulnerability patterns with 4 real-world case studies. | See SKILL.md |
 | [things3](#things3) | Things 3 task manager via CLI (macOS) | [things CLI](https://github.com/ossianhempel/things3-cli), macOS |
@@ -347,6 +348,19 @@ pip install openai-whisper
 whisper audio.m4a --model turbo --output_dir .
 whisper audio.mp3 --task translate          # Translate to English
 ./whisper-handler.sh audio.m4a txt /tmp     # Handler script
+```
+
+---
+
+### orchestrator
+
+Thin operational wrapper for a system-wide orchestrator CLI. Use when running and checking `orchestrator <command>` workflows without duplicating orchestration logic in the skill.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See orchestrator/SKILL.md for full documentation
 ```
 
 ---
