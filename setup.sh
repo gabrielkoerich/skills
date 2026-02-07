@@ -105,6 +105,29 @@ setup_binance_prices() {
     fi
 }
 
+setup_beancount_analytics() {
+    header "beancount-analytics"
+    check_bin python3 || return 1
+    check_bin uv || { info "Install uv: https://docs.astral.sh/uv/getting-started/installation/"; return 1; }
+
+    info "Installing Beancount dependency with uv..."
+    if uv pip install --system beancount &>/dev/null; then
+        ok "beancount installed"
+    else
+        warn "uv install failed"
+        info "Try manually: uv pip install --system beancount"
+        return 1
+    fi
+
+    info "Smoke test: report help..."
+    if python3 "$SCRIPT_DIR/beancount-analytics/scripts/report.py" --help &>/dev/null; then
+        ok "beancount-analytics works"
+    else
+        fail "beancount-analytics smoke test failed"
+        return 1
+    fi
+}
+
 setup_bird() {
     header "bird"
     if ! check_bin bird; then
@@ -248,6 +271,26 @@ setup_intelbras() {
     fi
 }
 
+setup_notes_review() {
+    header "notes-review"
+    check_bin python3 || return 1
+
+    info "Smoke test: review help..."
+    if python3 "$SCRIPT_DIR/notes-review/scripts/review.py" --help &>/dev/null; then
+        ok "notes-review works"
+    else
+        fail "notes-review smoke test failed"
+        return 1
+    fi
+
+    if command -v qmd &>/dev/null; then
+        ok "qmd found: $(command -v qmd)"
+    else
+        warn "qmd not found (recommended for open-ended semantic note queries)"
+        info "Run: ./setup.sh qmd"
+    fi
+}
+
 setup_openai_whisper() {
     header "openai-whisper"
     if ! check_bin whisper; then
@@ -371,6 +414,7 @@ setup_x_twitter_chrome() {
 
 SKILLS=(
     apple-calendar
+    beancount-analytics
     binance-prices
     bird
     camsnap
@@ -378,6 +422,7 @@ SKILLS=(
     github
     github-secrets
     intelbras
+    notes-review
     openai-whisper
     qmd
     things3
@@ -389,6 +434,7 @@ run_skill_setup() {
     local skill="$1"
     case "$skill" in
         apple-calendar)      setup_apple_calendar ;;
+        beancount-analytics) setup_beancount_analytics ;;
         binance-prices)      setup_binance_prices ;;
         bird)                setup_bird ;;
         camsnap)             setup_camsnap ;;
@@ -396,6 +442,7 @@ run_skill_setup() {
         github)              setup_github ;;
         github-secrets)      setup_github_secrets ;;
         intelbras)           setup_intelbras ;;
+        notes-review)        setup_notes_review ;;
         openai-whisper)      setup_openai_whisper ;;
         qmd)                 setup_qmd ;;
         things3)             setup_things3 ;;
