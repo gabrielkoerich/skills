@@ -106,6 +106,8 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [camsnap](#camsnap) | Capture frames/clips from RTSP/ONVIF cameras | [camsnap CLI](https://camsnap.ai), ffmpeg |
 | [elevenlabs-voices](#elevenlabs-voices) | Voice synthesis with 18 personas, 32 languages, SFX | python3, `ELEVEN_API_KEY` |
 | [gh-issue-worktree](#gh-issue-worktree) | Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories. | See SKILL.md |
+| [gh-pr-polish](#gh-pr-polish) | Generate high-signal PR titles and bodies from git history and changed files, then open PRs with gh CLI. | See SKILL.md |
+| [git-worktrees](#git-worktrees) | Manage plain Git worktree feature branches without issue linking. Create a feature branch worktree, develop in isolation, push, and open a PR with commit-based changes summary. | See SKILL.md |
 | [github](#github) | GitHub CLI for issues, PRs, CI runs, and API queries | [gh CLI](https://cli.github.com) |
 | [github-secrets](#github-secrets) | Manage GitHub repo/org secrets via API | bun, `GITHUB_TOKEN` |
 | [intelbras](#intelbras) | Monitor/control Intelbras alarm systems and cameras | python3, curl |
@@ -113,9 +115,12 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [openai-whisper](#openai-whisper) | Local speech-to-text transcription | [whisper CLI](https://github.com/openai/whisper) |
 | [orchestrator](#orchestrator) | Thin operational wrapper for a system-wide orchestrator CLI. Use when running and checking `orchestrator <command>` workflows without duplicating orchestration logic in the skill. | See SKILL.md |
 | [qmd](#qmd) | Local hybrid search for markdown notes and docs | [qmd CLI](https://github.com/tobi/qmd) |
+| [skill-creator](#skill-creator) | Create or update repository-local skills with consistent SKILL.md structure, scripts, and agents/openai.yaml metadata. | See SKILL.md |
+| [skill-lint](#skill-lint) | Lint and auto-fix skill folders for metadata, naming consistency, path placeholder consistency, and optional agents/openai.yaml presence. | See SKILL.md |
 | [solana-best-practices](#solana-best-practices) | Reviews Solana/Anchor programs for development best practices. Use when writing, reviewing, improving or auditing Solana smart contracts. 31 vulnerability patterns with 4 real-world case studies. | See SKILL.md |
 | [things3](#things3) | Things 3 task manager via CLI (macOS) | [things CLI](https://github.com/ossianhempel/things3-cli), macOS |
 | [tmux](#tmux) | Remote-control tmux sessions for interactive CLIs | tmux |
+| [worktree-janitor](#worktree-janitor) | Audit and clean git worktrees safely across repositories, including stale metadata and merged local branches. | See SKILL.md |
 | [x-twitter-chrome](#x-twitter-chrome) | Read/search X via Chrome DevTools Protocol | bun, Chrome |
 ---
 
@@ -251,6 +256,32 @@ Manage Git worktrees for isolated development environments per GitHub issue. Use
 **Usage:**
 ```bash
 # See gh-issue-worktree/SKILL.md for full documentation
+```
+
+---
+
+### gh-pr-polish
+
+Generate high-signal PR titles and bodies from git history and changed files, then open PRs with gh CLI.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See gh-pr-polish/SKILL.md for full documentation
+```
+
+---
+
+### git-worktrees
+
+Manage plain Git worktree feature branches without issue linking. Create a feature branch worktree, develop in isolation, push, and open a PR with commit-based changes summary.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See git-worktrees/SKILL.md for full documentation
 ```
 
 ---
@@ -404,6 +435,32 @@ qmd mcp      # Exposes qmd_search, qmd_vsearch, qmd_query, qmd_get tools
 
 ---
 
+### skill-creator
+
+Create or update repository-local skills with consistent SKILL.md structure, scripts, and agents/openai.yaml metadata.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See skill-creator/SKILL.md for full documentation
+```
+
+---
+
+### skill-lint
+
+Lint and auto-fix skill folders for metadata, naming consistency, path placeholder consistency, and optional agents/openai.yaml presence.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See skill-lint/SKILL.md for full documentation
+```
+
+---
+
 ### solana-best-practices
 
 Reviews Solana/Anchor programs for development best practices. Use when writing, reviewing, improving or auditing Solana smart contracts. 31 vulnerability patterns with 4 real-world case studies.
@@ -467,6 +524,19 @@ tmux -S "$SOCKET" capture-pane -p -J -t mysession -S -200
 
 # Kill session
 tmux -S "$SOCKET" kill-session -t mysession
+```
+
+---
+
+### worktree-janitor
+
+Audit and clean git worktrees safely across repositories, including stale metadata and merged local branches.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See worktree-janitor/SKILL.md for full documentation
 ```
 
 ---
