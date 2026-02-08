@@ -12,10 +12,6 @@ lint-skills:
 lint-skills-fix:
   ./skill-lint/scripts/lint-skills.sh --fix
 
-# Scaffold a new skill directory with SKILL.md + agents/openai.yaml
-scaffold-skill name description:
-  ./skill-creator/scripts/init-skill.sh "{{name}}" "{{description}}"
-
 # Build PR body preview from current branch
 pr-body base="main":
   ./gh-pr-polish/scripts/make-pr-body.sh "{{base}}"
