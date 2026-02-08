@@ -1,0 +1,4 @@
+version: 1
+display_name: "Things3"
+short_description: "Manage Things 3 via the `things` CLI on macOS (add/update projects+todos via URL scheme; read/search/list from the local Things database). Use when a user asks to add a task to Things, list inbox/today/upcoming, search tasks, or inspect projects/areas/tags."
+default_prompt: "Use the things3 skill for this task."

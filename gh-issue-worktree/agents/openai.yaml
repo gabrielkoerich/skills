@@ -1,0 +1,4 @@
+version: 1
+display_name: "Gh Issue Worktree"
+short_description: "Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories."
+default_prompt: "Use the gh-issue-worktree skill for this task."

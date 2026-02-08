@@ -1,0 +1,4 @@
+version: 1
+display_name: Skill Lint
+short_description: Lint and normalize skills
+default_prompt: Validate and auto-fix skills in this repository for metadata and naming consistency.

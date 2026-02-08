@@ -1,0 +1,4 @@
+version: 1
+display_name: "Qmd"
+short_description: "Fast local search for markdown files, notes, and docs using qmd CLI. Combines BM25 full-text search, vector semantic search, and LLM reranking — all running locally. No API keys needed."
+default_prompt: "Use the qmd skill for this task."

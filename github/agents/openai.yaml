@@ -1,0 +1,4 @@
+version: 1
+display_name: "Github"
+short_description: "\"Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries.\""
+default_prompt: "Use the github skill for this task."

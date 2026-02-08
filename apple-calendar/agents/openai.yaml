@@ -1,0 +1,4 @@
+version: 1
+display_name: "Apple Calendar"
+short_description: "Apple Calendar.app integration for macOS. CRUD operations for events, search, and multi-calendar support."
+default_prompt: "Use the apple-calendar skill for this task."

@@ -1,0 +1,4 @@
+version: 1
+display_name: "Openai Whisper"
+short_description: "Local speech-to-text with the Whisper CLI (no API key)."
+default_prompt: "Use the openai-whisper skill for this task."

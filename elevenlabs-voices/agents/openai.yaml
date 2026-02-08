@@ -1,0 +1,4 @@
+version: 1
+display_name: "Elevenlabs Voices"
+short_description: "High-quality voice synthesis with 18 personas, 32 languages, sound effects, batch processing, and voice design using ElevenLabs API."
+default_prompt: "Use the elevenlabs-voices skill for this task."

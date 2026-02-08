@@ -1,0 +1,4 @@
+version: 1
+display_name: "Beancount Analytics"
+short_description: "Analyze Beancount ledgers with reusable CLI reports and question-driven queries. Use when user asks for last month/last 12 months reports, spending breakdowns, savings trends, or direct finance questions from a .bean ledger."
+default_prompt: "Use the beancount-analytics skill for this task."

@@ -1,0 +1,4 @@
+version: 1
+display_name: "Orchestrator"
+short_description: "Thin operational wrapper for a system-wide orchestrator CLI. Use when running and checking `orchestrator <command>` workflows without duplicating orchestration logic in the skill."
+default_prompt: "Use the orchestrator skill for this task."

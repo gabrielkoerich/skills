@@ -1,0 +1,4 @@
+version: 1
+display_name: "Tmux"
+short_description: "Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output."
+default_prompt: "Use the tmux skill for this task."

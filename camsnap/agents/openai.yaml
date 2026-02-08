@@ -1,0 +1,4 @@
+version: 1
+display_name: "Camsnap"
+short_description: "Capture frames or clips from RTSP/ONVIF cameras."
+default_prompt: "Use the camsnap skill for this task."

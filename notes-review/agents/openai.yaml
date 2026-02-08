@@ -1,0 +1,4 @@
+version: 1
+display_name: "Notes Review"
+short_description: "Analyze personal markdown notes and journals with qmd-powered semantic search plus weekly/monthly reflection reports. Use for questions like what was accomplished, what is pending, and whether work aligns with goals."
+default_prompt: "Use the notes-review skill for this task."

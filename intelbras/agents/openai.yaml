@@ -1,0 +1,4 @@
+version: 1
+display_name: "Intelbras"
+short_description: "Monitor and control Intelbras alarm systems and cameras. Supports AMT series, Intelbras IFR alarms with HTTP API. Get status, arm/disarm, and check camera streams."
+default_prompt: "Use the intelbras skill for this task."

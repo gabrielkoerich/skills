@@ -1,0 +1,4 @@
+version: 1
+display_name: Skill Creator
+short_description: Scaffold local skills consistently
+default_prompt: Create a new skill directory with SKILL.md, scripts folder, and agents/openai.yaml metadata.

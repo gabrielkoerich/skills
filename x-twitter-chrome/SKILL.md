@@ -1,3 +1,8 @@
+---
+name: x-twitter-chrome
+description: Read and search X/Twitter using Chrome browser automation with an authenticated local profile.
+---
+
 # X/Twitter Chrome Skill
 
 Read and search X (Twitter) using browser automation with the logged-in Chrome profile.

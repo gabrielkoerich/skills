@@ -1,0 +1,4 @@
+version: 1
+display_name: "Binance Prices"
+short_description: "Fetch cryptocurrency prices from Binance public API (no API key required). Use when user asks for BTC, ETH, SOL, or any crypto price from Binance."
+default_prompt: "Use the binance-prices skill for this task."
