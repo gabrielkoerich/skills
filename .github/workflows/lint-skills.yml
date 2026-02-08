@@ -1,0 +1,29 @@
+name: Lint Skills
+
+on:
+  pull_request:
+    paths:
+      - '**/SKILL.md'
+      - '**/agents/openai.yaml'
+      - 'skill-lint/**'
+      - 'Justfile'
+      - '.github/workflows/lint-skills.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**/SKILL.md'
+      - '**/agents/openai.yaml'
+      - 'skill-lint/**'
+      - 'Justfile'
+      - '.github/workflows/lint-skills.yml'
+  workflow_dispatch:
+
+jobs:
+  lint-skills:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run skills lint
+        run: ./skill-lint/scripts/lint-skills.sh
