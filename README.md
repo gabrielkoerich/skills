@@ -105,6 +105,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [bird](#bird) | X/Twitter access via bird CLI | [bird CLI](https://github.com/steipete/bird), Chrome |
 | [camsnap](#camsnap) | Capture frames/clips from RTSP/ONVIF cameras | [camsnap CLI](https://camsnap.ai), ffmpeg |
 | [elevenlabs-voices](#elevenlabs-voices) | Voice synthesis with 18 personas, 32 languages, SFX | python3, `ELEVEN_API_KEY` |
+| [gh-issue-worktree](#gh-issue-worktree) | Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories. | See SKILL.md |
 | [github](#github) | GitHub CLI for issues, PRs, CI runs, and API queries | [gh CLI](https://cli.github.com) |
 | [github-secrets](#github-secrets) | Manage GitHub repo/org secrets via API | bun, `GITHUB_TOKEN` |
 | [intelbras](#intelbras) | Monitor/control Intelbras alarm systems and cameras | python3, curl |
@@ -237,6 +238,19 @@ python3 scripts/tts.py --text "Hello" --voice rachel --output hello.mp3
 python3 scripts/tts.py --text "Bonjour" --voice adam --lang fr
 python3 scripts/sfx.py --prompt "Thunder rumbling" --duration 5
 python3 scripts/voice-design.py --gender female --age young --accent british
+```
+
+---
+
+### gh-issue-worktree
+
+Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See gh-issue-worktree/SKILL.md for full documentation
 ```
 
 ---
