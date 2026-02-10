@@ -115,7 +115,6 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [openai-whisper](#openai-whisper) | Local speech-to-text transcription | [whisper CLI](https://github.com/openai/whisper) |
 | [orchestrator](#orchestrator) | Thin operational wrapper for a system-wide orchestrator CLI. Use when running and checking `orchestrator <command>` workflows without duplicating orchestration logic in the skill. | See SKILL.md |
 | [qmd](#qmd) | Local hybrid search for markdown notes and docs | [qmd CLI](https://github.com/tobi/qmd) |
-| [skill-creator](#skill-creator) | Create or update repository-local skills with consistent SKILL.md structure, scripts, and agents/openai.yaml metadata. | See SKILL.md |
 | [skill-lint](#skill-lint) | Lint and auto-fix skill folders for metadata, naming consistency, path placeholder consistency, and optional agents/openai.yaml presence. | See SKILL.md |
 | [solana-best-practices](#solana-best-practices) | Reviews Solana/Anchor programs for development best practices. Use when writing, reviewing, improving or auditing Solana smart contracts. 31 vulnerability patterns with 4 real-world case studies. | See SKILL.md |
 | [things3](#things3) | Things 3 task manager via CLI (macOS) | [things CLI](https://github.com/ossianhempel/things3-cli), macOS |
@@ -431,19 +430,6 @@ qmd get docs/guide.md --json                  # Retrieve document
 **MCP Server:**
 ```bash
 qmd mcp      # Exposes qmd_search, qmd_vsearch, qmd_query, qmd_get tools
-```
-
----
-
-### skill-creator
-
-Create or update repository-local skills with consistent SKILL.md structure, scripts, and agents/openai.yaml metadata.
-
-**Requirements:** See SKILL.md
-**Setup:** None
-**Usage:**
-```bash
-# See skill-creator/SKILL.md for full documentation
 ```
 
 ---
