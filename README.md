@@ -104,6 +104,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [binance-prices](#binance-prices) | Real-time crypto prices from Binance public API | python3, curl |
 | [bird](#bird) | X/Twitter access via bird CLI | [bird CLI](https://github.com/steipete/bird), Chrome |
 | [camsnap](#camsnap) | Capture frames/clips from RTSP/ONVIF cameras | [camsnap CLI](https://camsnap.ai), ffmpeg |
+| [conventional-commits](#conventional-commits) | Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org), by describing the features, fixes, and breaking changes made in commit messages. | See SKILL.md |
 | [elevenlabs-voices](#elevenlabs-voices) | Voice synthesis with 18 personas, 32 languages, SFX | python3, `ELEVEN_API_KEY` |
 | [gh-issue-worktree](#gh-issue-worktree) | Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories. | See SKILL.md |
 | [gh-pr-polish](#gh-pr-polish) | Generate high-signal PR titles and bodies from git history and changed files, then open PRs with gh CLI. | See SKILL.md |
@@ -220,6 +221,19 @@ camsnap snap kitchen --out shot.jpg                  # Take a snapshot
 camsnap clip kitchen --dur 5s --out clip.mp4         # Record a clip
 camsnap watch kitchen --threshold 0.2 --action '...' # Motion detection
 camsnap doctor --probe                               # Diagnose issues
+```
+
+---
+
+### conventional-commits
+
+Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org), by describing the features, fixes, and breaking changes made in commit messages.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See conventional-commits/SKILL.md for full documentation
 ```
 
 ---
