@@ -107,6 +107,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [camsnap](#camsnap) | Capture frames/clips from RTSP/ONVIF cameras | [camsnap CLI](https://camsnap.ai), ffmpeg |
 | [conventional-commits](#conventional-commits) | Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org), by describing the features, fixes, and breaking changes made in commit messages. | See SKILL.md |
 | [elevenlabs-voices](#elevenlabs-voices) | Voice synthesis with 18 personas, 32 languages, SFX | python3, `ELEVEN_API_KEY` |
+| [evm-contract-audit](#evm-contract-audit) | Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentrancy, access control, flash loan exploits, upgrade issues, oracle manipulation, signature attacks, and more. Learned from EVMbench (120 real Code4rena vulnerabilities across 40 production codebases). | See SKILL.md |
 | [gh-issue-worktree](#gh-issue-worktree) | Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories. | See SKILL.md |
 | [gh-pr-polish](#gh-pr-polish) | Generate high-signal PR titles and bodies from git history and changed files, then open PRs with gh CLI. | See SKILL.md |
 | [git-worktree-cleaner](#git-worktree-cleaner) | Audit and clean git worktrees safely across repositories, including stale metadata and merged local branches. | See SKILL.md |
@@ -270,6 +271,19 @@ python3 scripts/tts.py --text "Hello" --voice rachel --output hello.mp3
 python3 scripts/tts.py --text "Bonjour" --voice adam --lang fr
 python3 scripts/sfx.py --prompt "Thunder rumbling" --duration 5
 python3 scripts/voice-design.py --gender female --age young --accent british
+```
+
+---
+
+### evm-contract-audit
+
+Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentrancy, access control, flash loan exploits, upgrade issues, oracle manipulation, signature attacks, and more. Learned from EVMbench (120 real Code4rena vulnerabilities across 40 production codebases).
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See evm-contract-audit/SKILL.md for full documentation
 ```
 
 ---
