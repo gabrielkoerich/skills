@@ -1,0 +1,4 @@
+version: 1
+display_name: "EVM Contract Audit"
+short_description: "Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentrancy, access control, flash loan exploits, upgrade issues, oracle manipulation, signature attacks, and more. Learned from EVMbench (120 real Code4rena vulnerabilities across 40 production codebases)."
+default_prompt: "Use the evm-contract-audit skill for this task."
