@@ -98,6 +98,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 
 | Skill | Description | Requirements |
 |-------|-------------|--------------|
+| [act](#act) | Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing. | See SKILL.md |
 | [anchor-sealevel-attacks](#anchor-sealevel-attacks) | Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security. | See SKILL.md |
 | [apple-calendar](#apple-calendar) | macOS Calendar.app integration (CRUD, search) | macOS |
 | [beancount-analytics](#beancount-analytics) | Analyze Beancount ledgers with reusable CLI reports and question-driven queries. Use when user asks for last month/last 12 months reports, spending breakdowns, savings trends, or direct finance questions from a .bean ledger. | ** python3, beancount (`pip install beancount`) |
@@ -125,6 +126,19 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 ---
 
 ## Skill Details
+### act
+
+Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See act/SKILL.md for full documentation
+```
+
+---
+
 ### anchor-sealevel-attacks
 
 Audits Solana/Anchor programs for all 11 sealevel attack vectors: missing signer authorization, account data mismatches, owner check gaps, type cosplay, re-initialization, arbitrary CPI, duplicate mutable accounts, bump seed canonicalization, PDA sharing, unsafe account closing, and sysvar address spoofing. Use when auditing Solana smart contracts or reviewing Anchor programs for security.
