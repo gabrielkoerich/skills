@@ -56,6 +56,19 @@ For detailed vulnerability patterns with insecure/secure code examples and real-
 - **"It's behind a timelock"** — Timelocks protect against malicious governance, not against logic bugs or permissionless function calls.
 - **"No one would do that"** — If the chain allows it, someone will do it. Smart contracts operate in an adversarial "dark forest" where automated bots scan for exploitable patterns constantly.
 
+## Finding Equivalence Test (from EVMbench LLM Judge)
+
+Two findings are the **same vulnerability** if and only if:
+1. Same underlying security flaw/mechanism
+2. Same code path/function
+3. **Fixing one would fix the other**
+4. An attack for one would work against the other
+
+**Be lenient** with terminology differences, different attack scenarios for same root cause, exposition style.
+**Be strict** about different vulnerability types, different root causes, different code locations, vague descriptions.
+
+See [DETECTION_GRADING.md](references/DETECTION_GRADING.md) for full grading criteria, hint system insights, and the optimal detection workflow.
+
 ## How This Skill Works
 
 When invoked, I will:
@@ -247,7 +260,9 @@ When auditing, avoid these mistakes observed in EVMbench:
 | File | Contents |
 |------|----------|
 | [VULNERABILITY_PATTERNS.md](references/VULNERABILITY_PATTERNS.md) | 13 core vectors with insecure/secure code examples |
+| [EVMBENCH_CATALOG.md](references/EVMBENCH_CATALOG.md) | Full catalog of 120+ vulnerabilities across 40 audits, by category with frequencies |
 | [EVMBENCH_CASE_STUDIES.md](references/EVMBENCH_CASE_STUDIES.md) | 5 detailed case studies from the EVMbench paper |
+| [DETECTION_GRADING.md](references/DETECTION_GRADING.md) | LLM judge criteria, hint system, optimal detection workflow, scoring |
 | [SWC_ADDITIONAL_PATTERNS.md](references/SWC_ADDITIONAL_PATTERNS.md) | SWC registry patterns, 2024-2025 trends |
 | [REAL_WORLD_EXPLOITS.md](references/REAL_WORLD_EXPLOITS.md) | 8 major DeFi exploits ($1.7B+ total) with technical breakdowns |
 | [DEFI_PROTOCOL_PATTERNS.md](references/DEFI_PROTOCOL_PATTERNS.md) | AMM, lending, bridge, and MEV-specific patterns |
@@ -256,7 +271,7 @@ When auditing, avoid these mistakes observed in EVMbench:
 
 ## Additional Resources
 
-- [EVMbench Paper](https://github.com/openai/frontier-evals) — 120 real vulnerabilities from 40 Code4rena audits
+- [EVMbench (frontier-evals)](https://github.com/openai/frontier-evals/tree/main/project/evmbench) — 120 real vulnerabilities from 40 Code4rena audits, with exploit harness and grading
 - [SWC Registry](https://swcregistry.io/) — Smart Contract Weakness Classification
 - [Code4rena Reports](https://code4rena.com/reports) — Real audit findings
 - [OpenZeppelin Security](https://docs.openzeppelin.com/contracts/) — Secure contract building blocks

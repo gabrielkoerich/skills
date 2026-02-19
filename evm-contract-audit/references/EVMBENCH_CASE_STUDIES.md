@@ -195,27 +195,48 @@ A rounding error in MagicLP could be amplified by an attacker to break the prici
 ## Statistical Insights from EVMbench
 
 ### Vulnerability Distribution
-- 120 vulnerabilities from 40 repositories
-- Codebases ranged from 106 to 10,108 sLOC
+- 120+ vulnerabilities from 40 repositories (all HIGH severity, loss-of-funds)
+- Codebases ranged from 106 to 10,108 sLOC (1–116 contracts)
 - Median codebase: 1,296 sLOC, 7 contracts
+- Award values: $0 (synthetic) – $20,366 (Sequence)
+- Auditor discovery count: 1 (hardest) – 177 (easiest, Curves H-04)
 - Most patches are small: majority require ≤5 lines changed
 - Most exploits are short: 1-6 transactions
+
+### Three Evaluation Modes
+- **DETECT**: Produce audit report identifying loss-of-funds vulnerabilities
+- **PATCH**: Find and fix vulnerabilities (diff must not break existing tests)
+- **EXPLOIT**: Send transactions to drain funds on a live Anvil fork
+
+### Progressive Hint System
+| Hint | Info Given | Impact |
+|------|-----------|--------|
+| none | Nothing (hardest) | ~40-46% detection |
+| low | File names + vulnerability count | Moderate improvement |
+| med | One-line title per vulnerability | Near-doubles detection |
+| high | Detailed exploit mechanics | ~90%+ |
 
 ### Discovery Difficulty
 - With no hints: best agent scores 45.6% on detection (Claude Opus 4.6)
 - With mechanism hints: agents can patch 93.9% (GPT-5.2)
 - **The gap proves discovery is the bottleneck, not understanding**
 
-### Common Vulnerability Types Observed
-Based on the 40 audited repositories in EVMbench:
-- Access control issues (Basin, Phi, WellUpgradeable)
-- Reentrancy (Phi, TheDAO pattern)
-- Flash loan / cross-contract trust (Noya)
-- Pricing / oracle manipulation (Abracadabra)
-- Missing validation (BendDAO)
-- Signature issues (Sequence)
-- Race conditions (Size)
-- Gas / chain-level issues (Taiko)
+### Vulnerability Categories by Frequency
+See [EVMBENCH_CATALOG.md](EVMBENCH_CATALOG.md) for the complete catalog.
+
+| Category | Count | Examples |
+|----------|-------|---------|
+| Logic & State Errors | ~20 | Noya (18 alone), Canto, Size, BendDAO |
+| Access Control | ~15 | Basin, Curves, PoolTogether, Virtuals |
+| Reentrancy | ~10 | Phi, NextGen, reNFT, ETH Credit Guild |
+| Integer/Casting | ~8 | PoolTogether, Forte, SecondSwap |
+| Signature Replay | ~6 | Phi, Coinbase, Taiko, Tempo MPP |
+| Token Integration | ~5 | ThorChain, Althea, Noya |
+| Griefing/DoS | ~5 | Curves, reNFT, Wildcat |
+| Staking/Governance | ~4 | Olas, Arbitrum, Munchables |
+| Data Structure | ~3 | Tempo DEX, SecondSwap, Noya |
+| Oracle/Price | ~3 | Abracadabra, Noya |
+| Smart Wallet/Sig | ~3 | Sequence, reNFT |
 
 ### What Makes a Vulnerability Hard to Find
 1. **Large codebases** — 10,000+ sLOC across 100+ contracts
@@ -223,3 +244,4 @@ Based on the 40 audited repositories in EVMbench:
 3. **Subtle state ordering** — CEI violation buried in internal function
 4. **Requires domain knowledge** — understanding DeFi mechanisms (bonding curves, flash loans, liquidation)
 5. **Multiple preconditions** — attacker needs specific roles, timing, or setup
+6. **Few auditors found it** — Sequence H-01 (1 auditor), Noya H-08 (few), Panoptic (few)

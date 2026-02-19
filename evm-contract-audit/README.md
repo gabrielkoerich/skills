@@ -44,20 +44,22 @@ Invoke when auditing any EVM/Solidity smart contract. The skill will scan for al
 
 ## Reference Files
 
-| File | Lines | Contents |
-|------|-------|----------|
-| `SKILL.md` | Main skill | 13 vectors, audit methodology, scanning workflow |
-| `references/VULNERABILITY_PATTERNS.md` | ~950 | Core patterns with insecure/secure code |
-| `references/EVMBENCH_CASE_STUDIES.md` | ~225 | 5 case studies from the paper |
-| `references/SWC_ADDITIONAL_PATTERNS.md` | ~248 | SWC registry + 2024-2025 trends |
-| `references/REAL_WORLD_EXPLOITS.md` | ~267 | 8 major DeFi exploits ($1.7B+) |
-| `references/DEFI_PROTOCOL_PATTERNS.md` | ~175 | AMM, lending, bridge, MEV patterns |
-| `references/SOLIDITY_PITFALLS.md` | ~225 | Storage, assembly, post-Cancun EVM |
-| `references/TESTING_AND_TOOLING.md` | ~471 | Foundry/Hardhat testing & static analysis |
+| File | Contents |
+|------|----------|
+| `SKILL.md` | 13 vectors, audit methodology, scanning workflow, finding equivalence test |
+| `references/VULNERABILITY_PATTERNS.md` | Core patterns with insecure/secure code examples |
+| `references/EVMBENCH_CATALOG.md` | Full catalog of 120+ vulnerabilities across 40 audits, by category |
+| `references/EVMBENCH_CASE_STUDIES.md` | 5 detailed case studies + statistical insights |
+| `references/DETECTION_GRADING.md` | LLM judge criteria, hint system, optimal detection workflow |
+| `references/SWC_ADDITIONAL_PATTERNS.md` | SWC registry + 2024-2025 DeFi exploit trends |
+| `references/REAL_WORLD_EXPLOITS.md` | 8 major DeFi exploits ($1.7B+ total) |
+| `references/DEFI_PROTOCOL_PATTERNS.md` | AMM, lending, bridge, MEV patterns |
+| `references/SOLIDITY_PITFALLS.md` | Storage, assembly, post-Cancun EVM changes |
+| `references/TESTING_AND_TOOLING.md` | Foundry/Hardhat testing & static analysis |
 
 ## External References
 
-- [EVMbench Paper](https://github.com/openai/frontier-evals) — Source benchmark
+- [EVMbench (frontier-evals)](https://github.com/openai/frontier-evals/tree/main/project/evmbench) — 120+ vulnerabilities, exploit harness, grading
 - [Code4rena Reports](https://code4rena.com/reports) — Real audit findings
 - [SWC Registry](https://swcregistry.io/) — Smart Contract Weakness Classification
 - [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/) — Secure building blocks
