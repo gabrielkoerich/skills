@@ -103,7 +103,6 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [apple-calendar](#apple-calendar) | macOS Calendar.app integration (CRUD, search) | macOS |
 | [beancount-analytics](#beancount-analytics) | Analyze Beancount ledgers with reusable CLI reports and question-driven queries. Use when user asks for last month/last 12 months reports, spending breakdowns, savings trends, or direct finance questions from a .bean ledger. | ** python3, beancount (`pip install beancount`) |
 | [binance-prices](#binance-prices) | Real-time crypto prices from Binance public API | python3, curl |
-| [bird](#bird) | X/Twitter access via bird CLI | [bird CLI](https://github.com/steipete/bird), Chrome |
 | [camsnap](#camsnap) | Capture frames/clips from RTSP/ONVIF cameras | [camsnap CLI](https://camsnap.ai), ffmpeg |
 | [conventional-commits](#conventional-commits) | Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org), by describing the features, fixes, and breaking changes made in commit messages. | See SKILL.md |
 | [elevenlabs-voices](#elevenlabs-voices) | Voice synthesis with 18 personas, 32 languages, SFX | python3, `ELEVEN_API_KEY` |
@@ -193,24 +192,6 @@ Fetch real-time cryptocurrency prices from Binance public API. No authentication
 scripts/price.sh btc                   # BTC price in USDT
 scripts/price.sh eth btc               # ETH price in BTC
 scripts/prices.sh btc eth sol          # Multiple prices
-```
-
----
-
-### bird
-
-Read and search X (Twitter) using the bird CLI with Chrome cookie extraction.
-
-**Requirements:** [bird CLI](https://github.com/steipete/bird), Chrome logged into x.com
-**Setup:**
-```bash
-bun add -g @steipete/bird
-```
-**Usage:**
-```bash
-bird read https://x.com/user/status/123 --chrome-profile claude --plain
-bird search "Solana traders" --limit 20 --chrome-profile claude
-bird timeline @username --limit 10 --chrome-profile claude
 ```
 
 ---
