@@ -16,6 +16,9 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 README_PATH = REPO_ROOT / "README.md"
 
+# GitHub repository URL (update if using a different org/user)
+GITHUB_REPO_URL = "https://github.com/gabrielkoerich/skills"
+
 
 def parse_frontmatter(content: str) -> dict:
     """Parse YAML frontmatter from SKILL.md content."""
@@ -130,20 +133,19 @@ def generate_table_row(skill_name: str, description: str, requirements: str) -> 
     """Generate a table row for a skill."""
     desc = description.strip().strip('"').replace("|", "\\|")
     req = requirements.replace("|", "\\|")
-    return f"| [{skill_name}](#{skill_name}) | {desc} | {req} |"
+    skill_url = f"{GITHUB_REPO_URL}/tree/main/{skill_name}"
+    return f"| [{skill_name}]({skill_url}) | {desc} | {req} |"
 
 
 def generate_detail_section(skill_name: str, skill_path: Path) -> str:
-    """Generate a detail section for a skill."""
+    """Generate a detail section content (without header) for a skill."""
     content = skill_path.read_text()
     frontmatter = parse_frontmatter(content)
 
     description = frontmatter.get("description", "").strip().strip('"')
     requirements = extract_requirements_from_skill(skill_path)
 
-    return f"""### {skill_name}
-
-{description}
+    return f"""{description}
 
 **Requirements:** {requirements}
 **Setup:** None
@@ -243,60 +245,35 @@ def update_readme():
     # Add everything up to and including ## Skill Details
     new_lines.extend(lines[end_line + 1 : details_start + 1])
 
-    # Extract and sort all skill detail sections
-    details_content = "\n".join(lines[details_start + 1 :])
-
+    # Rebuild all skill detail sections with correct GitHub links
     # Find where skill details end (## Structure or end of content)
+    details_content = "\n".join(lines[details_start + 1 :])
     structure_match = re.search(r"\n## Structure\n", details_content)
     if structure_match:
-        skill_details_content = details_content[: structure_match.start()]
         after_skills = details_content[structure_match.start() :]
     else:
-        skill_details_content = details_content
         after_skills = ""
 
-    # Extract all skill sections (### skill-name)
-    # Split by section headers, handling various separators:
-    # - Start of content (possibly with leading newlines): ^\n*### name
-    # - After ---\n\n: ---\n\n### name
-    # - After multiple newlines: \n\n\n### name
+    # Build all skill sections fresh to ensure GitHub links are correct
     skill_sections = []
-
-    # Find all section positions
-    header_pattern = r"(?:^\n*### |\n---\n\n### |\n\n\n### )([a-z0-9-]+)\n\n"
-    headers = list(re.finditer(header_pattern, skill_details_content))
-
-    for i, match in enumerate(headers):
-        skill_name = match.group(1)
-        start = match.end()
-        if i + 1 < len(headers):
-            end = headers[i + 1].start()
-        else:
-            end = len(skill_details_content)
-        section_content = skill_details_content[start:end].rstrip("\n")
-        # Strip quotes from description (first line of content)
-        section_content = re.sub(r'^"([^"]+)"\n\n', r"\1\n\n", section_content)
-        if skill_name not in deleted_skills:
-            skill_sections.append((skill_name, section_content))
-
-    # Add new skill sections
-    for skill_name in sorted(new_skills):
+    all_skill_names = sorted(
+        set(filesystem_skills.keys()) - deleted_skills
+    )
+    for skill_name in all_skill_names:
         section = generate_detail_section(skill_name, filesystem_skills[skill_name]["path"])
-        # Strip ### header since we build it ourselves
+        # Strip ### header since we build it ourselves for consistent formatting
         content_only = re.sub(r"^### [a-z0-9-]+\n\n", "", section)
         skill_sections.append((skill_name, content_only.rstrip("\n")))
 
-    # Sort all sections alphabetically by skill name
-    skill_sections.sort(key=lambda x: x[0])
-
-    # Rebuild skill details content
+    # Rebuild skill details content with GitHub links on skill titles
     if skill_sections:
         rebuilt = []
         for i, (skill_name, content) in enumerate(skill_sections):
+            skill_url = f"{GITHUB_REPO_URL}/tree/main/{skill_name}"
             if i == 0:
-                rebuilt.append(f"### {skill_name}\n\n{content}")
+                rebuilt.append(f"### [{skill_name}]({skill_url})\n\n{content}")
             else:
-                rebuilt.append(f"---\n\n### {skill_name}\n\n{content}")
+                rebuilt.append(f"---\n\n### [{skill_name}]({skill_url})\n\n{content}")
         skill_details_content = "\n\n".join(rebuilt) + "\n"
     else:
         skill_details_content = ""
