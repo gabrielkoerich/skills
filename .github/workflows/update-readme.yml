@@ -43,29 +43,29 @@ jobs:
           commit_message: "chore: auto-update skills in README"
           file_pattern: README.md
 
-    build:
-      needs: update
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
+  build:
+    needs: update
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Build docs with zola-builder
-          uses: gabrielkoerich/zola-builder@main
-          with:
-            base-url: ${{ env.BASE_URL }}
+      - name: Build docs with zola-builder
+        uses: gabrielkoerich/zola-builder@main
+        with:
+          base-url: ${{ env.BASE_URL }}
 
-        - name: Upload artifact
-          uses: actions/upload-pages-artifact@v3
-          with:
-            path: .zola-build/public
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .zola-build/public
 
-    deploy:
-      needs: build
-      runs-on: ubuntu-latest
-      environment:
-        name: github-pages
-        url: ${{ steps.deployment.outputs.page_url }}
-      steps:
-        - name: Deploy to GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@v4
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
