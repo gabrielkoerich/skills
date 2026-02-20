@@ -126,7 +126,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 ---
 
 ## Skill Details
-### act
+### [act](https://github.com/gabrielkoerich/skills/tree/main/act)
 
 Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing.
 
@@ -139,9 +139,9 @@ Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, a
 
 ---
 
-### anchor-sealevel-attacks
+### [anchor-sealevel-attacks](https://github.com/gabrielkoerich/skills/tree/main/anchor-sealevel-attacks)
 
-Audits Solana/Anchor programs for all 11 sealevel attack vectors: missing signer authorization, account data mismatches, owner check gaps, type cosplay, re-initialization, arbitrary CPI, duplicate mutable accounts, bump seed canonicalization, PDA sharing, unsafe account closing, and sysvar address spoofing. Use when auditing Solana smart contracts or reviewing Anchor programs for security.
+Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security.
 
 **Requirements:** See SKILL.md
 **Setup:** None
@@ -152,27 +152,24 @@ Audits Solana/Anchor programs for all 11 sealevel attack vectors: missing signer
 
 ---
 
-### apple-calendar
+### [apple-calendar](https://github.com/gabrielkoerich/skills/tree/main/apple-calendar)
 
-macOS Calendar.app integration via AppleScript. List calendars, create/read/update/delete events, search.
+Apple Calendar.app integration for macOS. CRUD operations for events, search, and multi-calendar support.
 
-**Requirements:** macOS with Calendar.app
+**Requirements:** See SKILL.md
 **Setup:** None
 **Usage:**
 ```bash
-scripts/cal-list.sh                    # List calendars
-scripts/cal-events.sh 7                # Events for next 7 days
-scripts/cal-create.sh "Work" "Meeting" "2025-01-15 10:00" "2025-01-15 11:00"
-scripts/cal-search.sh "standup" 30
+# See apple-calendar/SKILL.md for full documentation
 ```
 
 ---
 
-### beancount-analytics
+### [beancount-analytics](https://github.com/gabrielkoerich/skills/tree/main/beancount-analytics)
 
 Analyze Beancount ledgers with reusable CLI reports and question-driven queries. Use when user asks for last month/last 12 months reports, spending breakdowns, savings trends, or direct finance questions from a .bean ledger.
 
-**Requirements:** ** python3, beancount (`pip install beancount`)
+**Requirements:** See SKILL.md
 **Setup:** None
 **Usage:**
 ```bash
@@ -181,47 +178,33 @@ Analyze Beancount ledgers with reusable CLI reports and question-driven queries.
 
 ---
 
-### binance-prices
+### [binance-prices](https://github.com/gabrielkoerich/skills/tree/main/binance-prices)
 
-Fetch real-time cryptocurrency prices from Binance public API. No authentication needed.
+Fetch cryptocurrency prices from Binance public API (no API key required). Use when user asks for BTC, ETH, SOL, or any crypto price from Binance.
 
-**Requirements:** python3, curl
+**Requirements:** See SKILL.md
 **Setup:** None
 **Usage:**
 ```bash
-scripts/price.sh btc                   # BTC price in USDT
-scripts/price.sh eth btc               # ETH price in BTC
-scripts/prices.sh btc eth sol          # Multiple prices
+# See binance-prices/SKILL.md for full documentation
 ```
 
 ---
 
-### camsnap
+### [camsnap](https://github.com/gabrielkoerich/skills/tree/main/camsnap)
 
-Capture snapshots, clips, or motion events from RTSP/ONVIF cameras using the camsnap CLI.
+Capture frames or clips from RTSP/ONVIF cameras.
 
-**Requirements:** [camsnap CLI](https://camsnap.ai), ffmpeg
-**Setup:**
-```bash
-# macOS
-brew install steipete/tap/camsnap
-
-# Configure a camera
-camsnap add --name kitchen --host 192.168.0.10 --user user --pass pass
-```
-**Config:** `~/.config/camsnap/config.yaml`
+**Requirements:** See SKILL.md
+**Setup:** None
 **Usage:**
 ```bash
-camsnap discover --info                              # Discover cameras on network
-camsnap snap kitchen --out shot.jpg                  # Take a snapshot
-camsnap clip kitchen --dur 5s --out clip.mp4         # Record a clip
-camsnap watch kitchen --threshold 0.2 --action '...' # Motion detection
-camsnap doctor --probe                               # Diagnose issues
+# See camsnap/SKILL.md for full documentation
 ```
 
 ---
 
-### conventional-commits
+### [conventional-commits](https://github.com/gabrielkoerich/skills/tree/main/conventional-commits)
 
 Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org), by describing the features, fixes, and breaking changes made in commit messages.
 
@@ -234,29 +217,20 @@ Conventional Commits specification is a lightweight convention on top of commit 
 
 ---
 
-### elevenlabs-voices
+### [elevenlabs-voices](https://github.com/gabrielkoerich/skills/tree/main/elevenlabs-voices)
 
-Voice synthesis toolkit with 18 voice personas, 32 languages, sound effects, batch processing, and voice design.
+High-quality voice synthesis with 18 personas, 32 languages, sound effects, batch processing, and voice design using ElevenLabs API.
 
-**Requirements:** python3
-**Setup:**
-```bash
-./setup.sh elevenlabs-voices
-# Or manually: add ELEVEN_API_KEY to .env
-```
-**Env vars:** `ELEVEN_API_KEY` — get one at [elevenlabs.io](https://elevenlabs.io)
+**Requirements:** See SKILL.md
+**Setup:** None
 **Usage:**
 ```bash
-python3 scripts/tts.py --list                                          # List voices
-python3 scripts/tts.py --text "Hello" --voice rachel --output hello.mp3
-python3 scripts/tts.py --text "Bonjour" --voice adam --lang fr
-python3 scripts/sfx.py --prompt "Thunder rumbling" --duration 5
-python3 scripts/voice-design.py --gender female --age young --accent british
+# See elevenlabs-voices/SKILL.md for full documentation
 ```
 
 ---
 
-### evm-contract-audit
+### [evm-contract-audit](https://github.com/gabrielkoerich/skills/tree/main/evm-contract-audit)
 
 Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentrancy, access control, flash loan exploits, upgrade issues, oracle manipulation, signature attacks, and more. Learned from EVMbench (120 real Code4rena vulnerabilities across 40 production codebases).
 
@@ -269,7 +243,7 @@ Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentra
 
 ---
 
-### gh-issue-worktree
+### [gh-issue-worktree](https://github.com/gabrielkoerich/skills/tree/main/gh-issue-worktree)
 
 Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories.
 
@@ -282,7 +256,7 @@ Manage Git worktrees for isolated development environments per GitHub issue. Use
 
 ---
 
-### gh-pr-polish
+### [gh-pr-polish](https://github.com/gabrielkoerich/skills/tree/main/gh-pr-polish)
 
 Generate high-signal PR titles and bodies from git history and changed files, then open PRs with gh CLI.
 
@@ -295,7 +269,7 @@ Generate high-signal PR titles and bodies from git history and changed files, th
 
 ---
 
-### git-worktree-cleaner
+### [git-worktree-cleaner](https://github.com/gabrielkoerich/skills/tree/main/git-worktree-cleaner)
 
 Audit and clean git worktrees safely across repositories, including stale metadata and merged local branches.
 
@@ -308,7 +282,7 @@ Audit and clean git worktrees safely across repositories, including stale metada
 
 ---
 
-### git-worktrees
+### [git-worktrees](https://github.com/gabrielkoerich/skills/tree/main/git-worktrees)
 
 Manage plain Git worktree feature branches without issue linking. Create a feature branch worktree, develop in isolation, push, and open a PR with commit-based changes summary.
 
@@ -321,87 +295,50 @@ Manage plain Git worktree feature branches without issue linking. Create a featu
 
 ---
 
-### github
+### [github](https://github.com/gabrielkoerich/skills/tree/main/github)
 
-Interact with GitHub using the `gh` CLI. Issues, PRs, CI runs, and API queries.
+Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries.
 
-**Requirements:** [gh CLI](https://cli.github.com)
-**Setup:**
-```bash
-# macOS
-brew install gh
-
-# Linux
-apt install gh
-
-# Authenticate
-gh auth login
-```
+**Requirements:** See SKILL.md
+**Setup:** None
 **Usage:**
 ```bash
-gh pr checks 55 --repo owner/repo                   # Check CI status
-gh run list --repo owner/repo --limit 10             # List workflow runs
-gh run view <run-id> --repo owner/repo --log-failed  # View failed logs
-gh issue list --repo owner/repo --json number,title   # List issues as JSON
-gh api repos/owner/repo/pulls/55 --jq '.title'       # Direct API access
+# See github/SKILL.md for full documentation
 ```
 
 ---
 
-### github-secrets
+### [github-secrets](https://github.com/gabrielkoerich/skills/tree/main/github-secrets)
 
-Manage GitHub repository, organization, and environment secrets via the GitHub API with libsodium encryption.
+Manage GitHub repository secrets via the GitHub API. Supports listing, adding, updating, and deleting repository and organization secrets. Use when user needs to manage GitHub Actions secrets, environment variables, or repository-level secrets securely.
 
-**Requirements:** bun
-**Setup:**
-```bash
-cd github-secrets && bun install
-./setup.sh github-secrets
-# Or manually: add GITHUB_TOKEN to .env
-```
-**Env vars:** `GITHUB_TOKEN` — needs `repo` and `admin:org` scopes
+**Requirements:** See SKILL.md
+**Setup:** None
 **Usage:**
 ```bash
-bun run src/cli.ts list --owner myuser --repo myrepo
-bun run src/cli.ts set --owner myuser --repo myrepo --name API_KEY --value "secret"
-bun run src/cli.ts sync --owner myuser --repo myrepo --env-file .env
-```
-**Tests:**
-```bash
-bun test
+# See github-secrets/SKILL.md for full documentation
 ```
 
 ---
 
-### intelbras
+### [intelbras](https://github.com/gabrielkoerich/skills/tree/main/intelbras)
 
-Monitor and control Intelbras alarm systems (AMT series) and DVR cameras via HTTP API.
+Monitor and control Intelbras alarm systems and cameras. Supports AMT series, Intelbras IFR alarms with HTTP API. Get status, arm/disarm, and check camera streams.
 
-**Requirements:** python3, curl, ffmpeg (optional, for camera snapshots)
-**Setup:**
-```bash
-./setup.sh intelbras
-# Or manually: add INTELBRAS_* vars to .env
-```
-**Env vars:** `INTELBRAS_ALARM_HOST`, `INTELBRAS_ALARM_PORT`, `INTELBRAS_ALARM_USERNAME`, `INTELBRAS_ALARM_PASSWORD`, `INTELBRAS_DVR_HOST`, `INTELBRAS_DVR_PORT`, `INTELBRAS_DVR_RTSP_PORT`, `INTELBRAS_DVR_USERNAME`, `INTELBRAS_DVR_PASSWORD`
-
-The setup script also creates `data/config.json` from the template for camera channel definitions.
-
+**Requirements:** See SKILL.md
+**Setup:** None
 **Usage:**
 ```bash
-python3 scripts/intelbras-alarm.py status
-python3 scripts/intelbras-alarm.py arm
-python3 scripts/intelbras-alarm.py snap CAM1
-python3 scripts/intelbras-alarm.py all-snap
+# See intelbras/SKILL.md for full documentation
 ```
 
 ---
 
-### notes-review
+### [notes-review](https://github.com/gabrielkoerich/skills/tree/main/notes-review)
 
 Analyze personal markdown notes and journals with qmd-powered semantic search plus weekly/monthly reflection reports. Use for questions like what was accomplished, what is pending, and whether work aligns with goals.
 
-**Requirements:** ** python3 **Recommended:** qmd CLI for semantic/local search
+**Requirements:** See SKILL.md
 **Setup:** None
 **Usage:**
 ```bash
@@ -410,29 +347,20 @@ Analyze personal markdown notes and journals with qmd-powered semantic search pl
 
 ---
 
-### openai-whisper
+### [openai-whisper](https://github.com/gabrielkoerich/skills/tree/main/openai-whisper)
 
-Local speech-to-text transcription using OpenAI's Whisper. Runs entirely offline after model download.
+Local speech-to-text with the Whisper CLI (no API key).
 
-**Requirements:** whisper CLI
-**Setup:**
-```bash
-# macOS
-brew install openai-whisper
-
-# Linux
-pip install openai-whisper
-```
+**Requirements:** See SKILL.md
+**Setup:** None
 **Usage:**
 ```bash
-whisper audio.m4a --model turbo --output_dir .
-whisper audio.mp3 --task translate          # Translate to English
-./whisper-handler.sh audio.m4a txt /tmp     # Handler script
+# See openai-whisper/SKILL.md for full documentation
 ```
 
 ---
 
-### orchestrator
+### [orchestrator](https://github.com/gabrielkoerich/skills/tree/main/orchestrator)
 
 Thin operational wrapper for a system-wide orchestrator CLI. Use when running and checking `orchestrator <command>` workflows without duplicating orchestration logic in the skill.
 
@@ -445,32 +373,20 @@ Thin operational wrapper for a system-wide orchestrator CLI. Use when running an
 
 ---
 
-### qmd
+### [qmd](https://github.com/gabrielkoerich/skills/tree/main/qmd)
 
-Local hybrid search engine for markdown notes and docs. BM25 keyword search, vector semantic search, and LLM reranking — all running locally with no API keys.
+Fast local search for markdown files, notes, and docs using qmd CLI. Combines BM25 full-text search, vector semantic search, and LLM reranking — all running locally. No API keys needed.
 
-**Requirements:** [qmd CLI](https://github.com/tobi/qmd), bun
-**Setup:**
-```bash
-bun install -g https://github.com/tobi/qmd
-qmd collection add /path/to/notes --name mynotes --mask "**/*.md"
-qmd embed    # Enable semantic search
-```
+**Requirements:** See SKILL.md
+**Setup:** None
 **Usage:**
 ```bash
-qmd search "authentication flow" --json       # Fast keyword search
-qmd vsearch "how does login work" --json      # Semantic search
-qmd query "complex question" --json           # Hybrid with reranking
-qmd get docs/guide.md --json                  # Retrieve document
-```
-**MCP Server:**
-```bash
-qmd mcp      # Exposes qmd_search, qmd_vsearch, qmd_query, qmd_get tools
+# See qmd/SKILL.md for full documentation
 ```
 
 ---
 
-### skill-lint
+### [skill-lint](https://github.com/gabrielkoerich/skills/tree/main/skill-lint)
 
 Lint and auto-fix skill folders for metadata, naming consistency, path placeholder consistency, and optional agents/openai.yaml presence.
 
@@ -483,7 +399,7 @@ Lint and auto-fix skill folders for metadata, naming consistency, path placehold
 
 ---
 
-### solana-best-practices
+### [solana-best-practices](https://github.com/gabrielkoerich/skills/tree/main/solana-best-practices)
 
 Reviews Solana/Anchor programs for development best practices. Use when writing, reviewing, improving or auditing Solana smart contracts. 31 vulnerability patterns with 4 real-world case studies.
 
@@ -496,84 +412,41 @@ Reviews Solana/Anchor programs for development best practices. Use when writing,
 
 ---
 
-### things3
+### [things3](https://github.com/gabrielkoerich/skills/tree/main/things3)
 
-Manage Things 3 tasks via the `things` CLI on macOS. Read from the local database, add/update todos via the Things URL scheme.
+Manage Things 3 via the `things` CLI on macOS (add/update projects+todos via URL scheme; read/search/list from the local Things database). Use when a user asks to add a task to Things, list inbox/today/upcoming, search tasks, or inspect projects/areas/tags.
 
-**Requirements:** [things CLI](https://github.com/ossianhempel/things3-cli), macOS
-**Setup:**
-```bash
-GOBIN=/opt/homebrew/bin go install github.com/ossianhempel/things3-cli/cmd/things@latest
-```
-If DB reads fail, grant **Full Disk Access** to the calling app (e.g. Terminal).
+**Requirements:** See SKILL.md
+**Setup:** None
 **Usage:**
 ```bash
-things inbox --limit 50                              # View inbox
-things today                                         # Today's tasks
-things search "query"                                # Search tasks
-things projects                                      # List projects
-things add "Buy milk" --when today                   # Add a todo
-things add "Trip prep" --list "Travel" --tags "travel"
-things --dry-run add "Test"                          # Preview without executing
+# See things3/SKILL.md for full documentation
 ```
 
 ---
 
-### tmux
+### [tmux](https://github.com/gabrielkoerich/skills/tree/main/tmux)
 
-Remote-control tmux sessions for interactive CLIs. Send keystrokes, capture output, orchestrate parallel agents.
+Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output.
 
-**Requirements:** tmux (macOS/Linux)
-**Setup:**
-```bash
-# macOS
-brew install tmux
-
-# Linux
-apt install tmux
-```
+**Requirements:** See SKILL.md
+**Setup:** None
 **Usage:**
 ```bash
-# Start a session
-SOCKET="${TMPDIR:-/tmp}/agent-tmux-sockets/agent.sock"
-tmux -S "$SOCKET" new -d -s mysession -n shell
-
-# Send commands
-tmux -S "$SOCKET" send-keys -t mysession -l -- 'echo hello' Enter
-
-# Capture output
-tmux -S "$SOCKET" capture-pane -p -J -t mysession -S -200
-
-# Kill session
-tmux -S "$SOCKET" kill-session -t mysession
+# See tmux/SKILL.md for full documentation
 ```
 
 ---
 
-### x-twitter-chrome
+### [x-twitter-chrome](https://github.com/gabrielkoerich/skills/tree/main/x-twitter-chrome)
 
-Read and search X (Twitter) using Chrome DevTools Protocol with a logged-in Chrome session.
+Read and search X/Twitter using Chrome browser automation with an authenticated local profile.
 
-**Requirements:** bun, Google Chrome
-**Setup:**
-
-Start Chrome with remote debugging:
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
 ```bash
-# macOS
-/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
-  --user-data-dir="$HOME/.claude/browser/<profile>/user-data" \
-  --remote-debugging-port=18800
-
-# Linux
-google-chrome --user-data-dir="$HOME/.claude/browser/<profile>/user-data" --remote-debugging-port=18800
-```
-
-Log into x.com in the browser, then:
-```bash
-bun run timeline.ts @username
-bun run read.ts https://x.com/user/status/123
-bun run search.ts "query"
-bun run bookmarks.ts
+# See x-twitter-chrome/SKILL.md for full documentation
 ```
 
 ## Structure
