@@ -5,6 +5,12 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  # Set your custom domain here, or leave empty to use root-relative URLs (/)
+  # Root-relative URLs work with any domain (GitHub Pages or custom)
+  # Example: BASE_URL: https://docs.example.com
+  BASE_URL: ""
+
 permissions:
   contents: read
   pages: write
@@ -22,7 +28,8 @@ jobs:
 
       - name: Build docs with zola-builder
         uses: gabrielkoerich/zola-builder@main
-        # Pin to a specific version for stability: gabrielkoerich/zola-builder@v1
+        with:
+          base-url: ${{ env.BASE_URL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
