@@ -1,18 +1,30 @@
-name: Update README
+name: Update README & Deploy
 
 on:
   push:
     branches: [main]
-    paths:
-      - '*/SKILL.md'
-      - '.github/workflows/*'
+    # paths:
+    #   - '*/SKILL.md'
+    #   - '.github/workflows/*'
+
+env:
+  # Set your custom domain here, or leave empty to use root-relative URLs (/)
+  # Root-relative URLs work with any domain (GitHub Pages or custom)
+  # Example: BASE_URL: https://docs.example.com
+  BASE_URL: "https://projects.gabrielkoerich.com/skills"
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: update-readme-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  update-readme:
-    runs-on: ubuntu-slim
+  update:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,3 +42,30 @@ jobs:
         with:
           commit_message: "chore: auto-update skills in README"
           file_pattern: README.md
+
+    build:
+      needs: update
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: Build docs with zola-builder
+          uses: gabrielkoerich/zola-builder@main
+          with:
+            base-url: ${{ env.BASE_URL }}
+
+        - name: Upload artifact
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: .zola-build/public
+
+    deploy:
+      needs: build
+      runs-on: ubuntu-latest
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      steps:
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
