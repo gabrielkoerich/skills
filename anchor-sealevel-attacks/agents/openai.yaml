@@ -1,4 +1,0 @@
-version: 1
-display_name: "Anchor Sealevel Attacks"
-short_description: "Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security."
-default_prompt: "Use the anchor-sealevel-attacks skill for this task."

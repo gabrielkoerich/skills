@@ -105,7 +105,7 @@ description: "Reviews Solana/Anchor programs for development best practices. Use
 
 ## When NOT to Use
 
-- For vulnerability scanning of deployed programs (use `anchor-sealevel-attacks` instead)
+- For vulnerability scanning of deployed programs (use `solana-security-audit` instead)
 - For non-Solana blockchain code
 - For off-chain client/frontend code only
 - When the codebase is a Solana SDK library, not a program

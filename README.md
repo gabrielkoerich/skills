@@ -99,7 +99,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | Skill | Description | Requirements |
 |-------|-------------|--------------|
 | [act](#act) | Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing. | See SKILL.md |
-| [anchor-sealevel-attacks](#anchor-sealevel-attacks) | Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security. | See SKILL.md |
+| [solana-security-audit](#solana-security-audit) | Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security. | See SKILL.md |
 | [apple-calendar](#apple-calendar) | macOS Calendar.app integration (CRUD, search) | macOS |
 | [beancount-analytics](#beancount-analytics) | Analyze Beancount ledgers with reusable CLI reports and question-driven queries. Use when user asks for last month/last 12 months reports, spending breakdowns, savings trends, or direct finance questions from a .bean ledger. | ** python3, beancount (`pip install beancount`) |
 | [binance-prices](#binance-prices) | Real-time crypto prices from Binance public API | python3, curl |
@@ -139,7 +139,7 @@ Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, a
 
 ---
 
-### [anchor-sealevel-attacks](https://github.com/gabrielkoerich/skills/tree/main/anchor-sealevel-attacks)
+### [solana-security-audit](https://github.com/gabrielkoerich/skills/tree/main/solana-security-audit)
 
 Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security.
 
@@ -147,7 +147,7 @@ Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when audit
 **Setup:** None
 **Usage:**
 ```bash
-# See anchor-sealevel-attacks/SKILL.md for full documentation
+# See solana-security-audit/SKILL.md for full documentation
 ```
 
 ---

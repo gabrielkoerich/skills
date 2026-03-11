@@ -1,0 +1,4 @@
+version: 1
+display_name: "Solana Security Audit"
+short_description: "Comprehensive Solana smart contract security auditor. Covers sealevel attacks, arithmetic safety, CPI exploits, native Rust pitfalls, state machine issues, and more."
+default_prompt: "Use the solana-security-audit skill for this task."

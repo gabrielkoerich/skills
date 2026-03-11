@@ -42,7 +42,7 @@ For detailed vulnerability patterns with insecure/secure code examples and real-
 
 ## When NOT to Use
 
-- For non-EVM chains (use `anchor-sealevel-attacks` for Solana, `solana-best-practices` for Solana)
+- For non-EVM chains (use `solana-security-audit` for Solana, `solana-best-practices` for Solana)
 - For off-chain backend code with no on-chain interaction
 - For pure frontend/UI reviews
 - For Vyper contracts (patterns differ, though many concepts overlap)
