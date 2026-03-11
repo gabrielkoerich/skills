@@ -85,5 +85,5 @@ When you implement changes, provide:
 - IDLs + codegen: [idl-codegen.md](idl-codegen.md)
 - Payments: [payments.md](payments.md)
 - Confidential transfers: [confidential-transfers.md](confidential-transfers.md)
-- Security checklist: [security.md](security.md)
+- Security checklist: [security.md](security.md) (quick reference; use [solana-security-audit](../solana-security-audit/SKILL.md) for deep audits)
 - Reference links: [resources.md](resources.md)

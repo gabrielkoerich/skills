@@ -1,5 +1,7 @@
 # Solana Security Checklist (Program + Client)
 
+> **Deep audit?** Use the [solana-security-audit](../solana-security-audit/SKILL.md) skill for comprehensive vulnerability scanning (35 attack vectors with full insecure/secure code examples, case studies, and detection commands). This checklist is a quick reference for development; the audit skill is for thorough security review.
+
 ## Core Principle
 
 Assume the attacker controls:
@@ -12,7 +14,7 @@ Assume the attacker controls:
 
 ## Vulnerability Categories
 
-### 1. Missing Owner Checks
+### 1. Missing Owner Checks → [A2](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#a2-owner-checks)
 
 **Risk**: Attacker creates fake accounts with identical data structure and correct discriminator.
 
@@ -37,7 +39,7 @@ if !account.is_owned_by(&crate::ID) {
 
 ---
 
-### 2. Missing Signer Checks
+### 2. Missing Signer Checks → [A0](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#0-signer-authorization)
 
 **Risk**: Any account can perform operations that should be restricted to specific authorities.
 
@@ -67,7 +69,7 @@ if !self.accounts.authority.is_signer() {
 
 ---
 
-### 3. Arbitrary CPI Attacks
+### 3. Arbitrary CPI Attacks → [A5](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#5-arbitrary-cpi-cross-program-invocation)
 
 **Risk**: Program blindly calls whatever program is passed as parameter, becoming a proxy for malicious code.
 
@@ -93,7 +95,7 @@ if self.accounts.token_program.key() != &pinocchio_token::ID {
 
 ---
 
-### 4. Reinitialization Attacks
+### 4. Reinitialization Attacks → [A4](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#4-initialization--re-initialization)
 
 **Risk**: Calling initialization functions on already-initialized accounts overwrites existing data.
 
@@ -124,7 +126,7 @@ if data[0] == ACCOUNT_DISCRIMINATOR {
 
 ---
 
-### 5. PDA Sharing Vulnerabilities
+### 5. PDA Sharing Vulnerabilities → [A8](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#8-pda-sharing)
 
 **Risk**: Same PDA used across multiple users enables unauthorized access.
 
@@ -144,7 +146,7 @@ seeds = [b"pool", vault.key().as_ref(), owner.key().as_ref()]
 
 ---
 
-### 6. Type Cosplay Attacks
+### 6. Type Cosplay Attacks → [A3](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#3-type-cosplay)
 
 **Risk**: Accounts with identical data structures but different purposes can be substituted.
 
@@ -165,7 +167,7 @@ if data[0] != EXPECTED_DISCRIMINATOR {
 
 ---
 
-### 7. Duplicate Mutable Accounts
+### 7. Duplicate Mutable Accounts → [A6](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#6-duplicate-mutable-accounts)
 
 **Risk**: Passing same account twice causes program to overwrite its own changes.
 
@@ -186,7 +188,7 @@ if self.accounts.account_1.key() == self.accounts.account_2.key() {
 
 ---
 
-### 8. Revival Attacks
+### 8. Revival Attacks → [A9](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#9-closing-accounts), [D30](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#d30-native-3-step-account-closure)
 
 **Risk**: Closed accounts can be restored within same transaction by refunding lamports.
 
@@ -217,7 +219,7 @@ pub fn close(account: &AccountInfo, destination: &AccountInfo) -> ProgramResult 
 
 ---
 
-### 9. Data Matching Vulnerabilities
+### 9. Data Matching Vulnerabilities → [A1](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#1-account-data-matching)
 
 **Risk**: Correct type/ownership validation but incorrect assumptions about data relationships.
 
@@ -238,32 +240,61 @@ if data.authority != *authority.key() {
 
 ---
 
+## Additional Patterns (see solana-security-audit for full details)
+
+The 9 patterns above cover the core sealevel attacks. The [solana-security-audit](../solana-security-audit/SKILL.md) skill covers 26 additional patterns including:
+
+- **[B11] Account reloading after CPI** -- `.reload()` after any CPI that modifies accounts
+- **[B12] Arithmetic safety** -- overflow, precision loss, saturating, division by zero, multiply-before-divide
+- **[B13] SOL balance drainage via CPI** -- balance checks before/after CPI
+- **[B15] State machine inconsistencies** -- explicit state enums, validated transitions
+- **[B17] Casting vulnerabilities** -- `try_from()` not `as` for narrowing casts
+- **[B18] Authority transfer** -- two-step nominate/accept pattern
+- **[B19] CPI signer forwarding** -- never forward user wallets to third-party CPIs
+- **[B20] Slippage protection** -- `minimum_amount_out` + `deadline` on swaps
+- **[C25] Security dependency chain** -- unconstrained root account poisons all constraints
+- **[C27] Non-atomic init race** -- rent thief pattern from split create+init
+- **[D28-D32] Native Rust patterns** -- Borsh safety, invoke/invoke_signed, validation sequence
+- **[E33-E35] Pinocchio patterns** -- no auto discriminators, no built-in validation
+
+---
+
 ## Program-Side Checklist
 
 ### Account Validation
-- [ ] Validate account owners match expected program
-- [ ] Validate signer requirements explicitly
+- [ ] Validate account owners match expected program (A2)
+- [ ] Validate signer requirements explicitly (A0)
 - [ ] Validate writable requirements explicitly
-- [ ] Validate PDAs match expected seeds + bump
-- [ ] Validate token mint ↔ token account relationships
-- [ ] Validate rent exemption / initialization status
-- [ ] Check for duplicate mutable accounts
+- [ ] Validate PDAs match expected seeds + bump (A7, A8)
+- [ ] Validate token mint ↔ token account relationships (A1)
+- [ ] Validate rent exemption / initialization status (A4, C26)
+- [ ] Check for duplicate mutable accounts (A6)
+- [ ] Validate sysvar accounts (A10)
+- [ ] Anchor constraint chains start from verified root (C25)
 
 ### CPI Safety
-- [ ] Validate program IDs before CPIs (no arbitrary CPI)
+- [ ] Validate program IDs before CPIs (A5)
 - [ ] Do not pass extra writable or signer privileges to callees
-- [ ] Ensure invoke_signed seeds are correct and canonical
+- [ ] Ensure invoke_signed seeds are correct and canonical (D29)
+- [ ] Call `.reload()` after any CPI that modifies accounts you read (B11)
+- [ ] Check lamport balances before/after CPI (B13)
+- [ ] Re-verify account ownership after CPI (B14)
+- [ ] Never forward user wallets as signers to third-party CPIs (B19)
 
 ### Arithmetic and Invariants
-- [ ] Use checked math (`checked_add`, `checked_sub`, `checked_mul`, `checked_div`)
-- [ ] Avoid unchecked casts
-- [ ] Re-validate state after CPIs when required
+- [ ] Use checked math (`checked_add`, `checked_sub`, `checked_mul`, `checked_div`) (B12)
+- [ ] Avoid unchecked casts -- use `try_from()` not `as` (B17)
+- [ ] Multiply before divide to preserve precision (B12e)
+- [ ] Round in favor of the protocol: `try_floor` not `try_round` (B12b)
+- [ ] Set `overflow-checks = true` in `[profile.release]` (B12)
 
 ### State Lifecycle
-- [ ] Close accounts securely (mark discriminator, drain lamports)
+- [ ] Close accounts securely (mark discriminator, drain lamports) (A9, D30)
 - [ ] Avoid leaving "zombie" accounts with lamports
-- [ ] Gate upgrades and ownership transfers
-- [ ] Prevent reinitialization of existing accounts
+- [ ] Gate upgrades and ownership transfers -- two-step pattern (B18)
+- [ ] Prevent reinitialization of existing accounts (A4)
+- [ ] Use explicit state enums, not booleans (B15)
+- [ ] Add slippage protection + deadlines on swaps/trades (B20)
 
 ---
 

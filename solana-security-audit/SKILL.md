@@ -421,6 +421,10 @@ describe("security audit tests", () => {
 - [Helius Security Guide](https://www.helius.dev/blog/a-hitchhikers-guide-to-solana-program-security) -- Practical walkthrough
 - [Ackee Auditors Bootcamp](https://github.com/Ackee-Blockchain/Solana-Auditors-Bootcamp) -- 7-week audit training
 
+### Related Skills
+- [solana-best-practices](../solana-best-practices/SKILL.md) -- Development practices, Token-2022 compatibility, testing methodology (31 patterns + 14 practices)
+- [solana-dev](../solana-dev/SKILL.md) -- End-to-end development playbook (UI, SDK, Anchor, Pinocchio, testing, payments)
+
 ### Official Documentation
 - [Anchor Security Exploits](https://www.anchor-lang.com/docs/references/security-exploits)
 - [Anchor Account Constraints](https://www.anchor-lang.com/docs/references/account-constraints)
