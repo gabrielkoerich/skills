@@ -99,11 +99,11 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | Skill | Description | Requirements |
 |-------|-------------|--------------|
 | [act](#act) | Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing. | See SKILL.md |
-| [solana-security-audit](#solana-security-audit) | Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security. | See SKILL.md |
 | [apple-calendar](#apple-calendar) | macOS Calendar.app integration (CRUD, search) | macOS |
 | [beancount-analytics](#beancount-analytics) | Analyze Beancount ledgers with reusable CLI reports and question-driven queries. Use when user asks for last month/last 12 months reports, spending breakdowns, savings trends, or direct finance questions from a .bean ledger. | ** python3, beancount (`pip install beancount`) |
 | [binance-prices](#binance-prices) | Real-time crypto prices from Binance public API | python3, curl |
 | [camsnap](#camsnap) | Capture frames/clips from RTSP/ONVIF cameras | [camsnap CLI](https://camsnap.ai), ffmpeg |
+| [contract-decoder](https://github.com/gabrielkoerich/skills/tree/main/contract-decoder) | Decode and reverse-engineer smart contract binaries for security research. Solana: extract instructions, discriminators, PDAs, and error codes from .so files. EVM: decompile bytecode to recover function selectors and storage layout. Use for bug bounty recon, verifying deployed code, or analyzing closed-source contracts. | See SKILL.md |
 | [conventional-commits](#conventional-commits) | Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org), by describing the features, fixes, and breaking changes made in commit messages. | See SKILL.md |
 | [elevenlabs-voices](#elevenlabs-voices) | Voice synthesis with 18 personas, 32 languages, SFX | python3, `ELEVEN_API_KEY` |
 | [evm-contract-audit](#evm-contract-audit) | Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentrancy, access control, flash loan exploits, upgrade issues, oracle manipulation, signature attacks, and more. Learned from EVMbench (120 real Code4rena vulnerabilities across 40 production codebases). | See SKILL.md |
@@ -120,6 +120,8 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [qmd](#qmd) | Local hybrid search for markdown notes and docs | [qmd CLI](https://github.com/tobi/qmd) |
 | [skill-lint](#skill-lint) | Lint and auto-fix skill folders for metadata, naming consistency, path placeholder consistency, and optional agents/openai.yaml presence. | See SKILL.md |
 | [solana-best-practices](#solana-best-practices) | Reviews Solana/Anchor programs for development best practices. Use when writing, reviewing, improving or auditing Solana smart contracts. 31 vulnerability patterns with 4 real-world case studies. | See SKILL.md |
+| [solana-dev](https://github.com/gabrielkoerich/skills/tree/main/solana-dev) | End-to-end Solana development playbook (Jan 2026). Prefer Solana Foundation framework-kit (@solana/client + @solana/react-hooks) for React/Next.js UI. Prefer @solana/kit for all new client/RPC/transaction code. When legacy dependencies require web3.js, isolate it behind @solana/web3-compat (or @solana/web3.js as a true legacy fallback). Covers wallet-standard-first connection (incl. ConnectorKit), Anchor/Pinocchio programs, Codama-based client generation, LiteSVM/Mollusk/Surfpool testing, and security checklists. | See SKILL.md |
+| [solana-security-audit](#solana-security-audit) | Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security. | See SKILL.md |
 | [things3](#things3) | Things 3 task manager via CLI (macOS) | [things CLI](https://github.com/ossianhempel/things3-cli), macOS |
 | [tmux](#tmux) | Remote-control tmux sessions for interactive CLIs | tmux |
 | [x-twitter-chrome](#x-twitter-chrome) | Read/search X via Chrome DevTools Protocol | bun, Chrome |
@@ -135,19 +137,6 @@ Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, a
 **Usage:**
 ```bash
 # See act/SKILL.md for full documentation
-```
-
----
-
-### [solana-security-audit](https://github.com/gabrielkoerich/skills/tree/main/solana-security-audit)
-
-Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security.
-
-**Requirements:** See SKILL.md
-**Setup:** None
-**Usage:**
-```bash
-# See solana-security-audit/SKILL.md for full documentation
 ```
 
 ---
@@ -200,6 +189,19 @@ Capture frames or clips from RTSP/ONVIF cameras.
 **Usage:**
 ```bash
 # See camsnap/SKILL.md for full documentation
+```
+
+---
+
+### [contract-decoder](https://github.com/gabrielkoerich/skills/tree/main/contract-decoder)
+
+Decode and reverse-engineer smart contract binaries for security research. Solana: extract instructions, discriminators, PDAs, and error codes from .so files. EVM: decompile bytecode to recover function selectors and storage layout. Use for bug bounty recon, verifying deployed code, or analyzing closed-source contracts.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See contract-decoder/SKILL.md for full documentation
 ```
 
 ---
@@ -408,6 +410,32 @@ Reviews Solana/Anchor programs for development best practices. Use when writing,
 **Usage:**
 ```bash
 # See solana-best-practices/SKILL.md for full documentation
+```
+
+---
+
+### [solana-dev](https://github.com/gabrielkoerich/skills/tree/main/solana-dev)
+
+End-to-end Solana development playbook (Jan 2026). Prefer Solana Foundation framework-kit (@solana/client + @solana/react-hooks) for React/Next.js UI. Prefer @solana/kit for all new client/RPC/transaction code. When legacy dependencies require web3.js, isolate it behind @solana/web3-compat (or @solana/web3.js as a true legacy fallback). Covers wallet-standard-first connection (incl. ConnectorKit), Anchor/Pinocchio programs, Codama-based client generation, LiteSVM/Mollusk/Surfpool testing, and security checklists.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See solana-dev/SKILL.md for full documentation
+```
+
+---
+
+### [solana-security-audit](https://github.com/gabrielkoerich/skills/tree/main/solana-security-audit)
+
+Comprehensive Solana smart contract security auditor. Covers 25+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, state machine issues, Token-2022 risks, and real-world case studies.
+
+**Requirements:** See SKILL.md
+**Setup:** None
+**Usage:**
+```bash
+# See solana-security-audit/SKILL.md for full documentation
 ```
 
 ---
