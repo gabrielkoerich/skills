@@ -12,7 +12,6 @@ env:
   # Root-relative URLs work with any domain (GitHub Pages or custom)
   # Example: BASE_URL: https://docs.example.com
   BASE_URL: "https://projects.gabrielkoerich.com/skills"
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 permissions:
   contents: write
