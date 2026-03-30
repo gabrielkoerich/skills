@@ -105,6 +105,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [camsnap](#camsnap) | Capture frames/clips from RTSP/ONVIF cameras | [camsnap CLI](https://camsnap.ai), ffmpeg |
 | [contract-decoder](https://github.com/gabrielkoerich/skills/tree/main/contract-decoder) | Decode and reverse-engineer smart contract binaries for security research. Solana: extract instructions, discriminators, PDAs, and error codes from .so files. EVM: decompile bytecode to recover function selectors and storage layout. Use for bug bounty recon, verifying deployed code, or analyzing closed-source contracts. | See SKILL.md |
 | [contract-decoder](https://github.com/gabrielkoerich/skills/tree/main/contract-decoder) | Decode and reverse-engineer smart contract binaries for security research. Solana: extract instructions, discriminators, PDAs, and error codes from .so files. EVM: decompile bytecode to recover function selectors and storage layout. Use for bug bounty recon, verifying deployed code, or analyzing closed-source contracts. | See SKILL.md |
+| [contract-decoder](https://github.com/gabrielkoerich/skills/tree/main/contract-decoder) | Decode and reverse-engineer smart contract binaries for security research. Solana: extract instructions, discriminators, PDAs, and error codes from .so files. EVM: decompile bytecode to recover function selectors and storage layout. Use for bug bounty recon, verifying deployed code, or analyzing closed-source contracts. | See SKILL.md |
 | [conventional-commits](#conventional-commits) | Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org), by describing the features, fixes, and breaking changes made in commit messages. | See SKILL.md |
 | [elevenlabs-voices](#elevenlabs-voices) | Voice synthesis with 18 personas, 32 languages, SFX | python3, `ELEVEN_API_KEY` |
 | [evm-contract-audit](#evm-contract-audit) | Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentrancy, access control, flash loan exploits, upgrade issues, oracle manipulation, signature attacks, and more. Learned from EVMbench (120 real Code4rena vulnerabilities across 40 production codebases). | See SKILL.md |
@@ -117,10 +118,10 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [intelbras](#intelbras) | Monitor/control Intelbras alarm systems and cameras | python3, curl |
 | [notes-review](#notes-review) | Analyze personal markdown notes and journals with qmd-powered semantic search plus weekly/monthly reflection reports. Use for questions like what was accomplished, what is pending, and whether work aligns with goals. | ** python3 **Recommended:** qmd CLI for semantic/local search |
 | [openai-whisper](#openai-whisper) | Local speech-to-text transcription | [whisper CLI](https://github.com/openai/whisper) |
-| [orchestrator](#orchestrator) | Thin operational wrapper for a system-wide orchestrator CLI. Use when running and checking `orchestrator <command>` workflows without duplicating orchestration logic in the skill. | See SKILL.md |
 | [qmd](#qmd) | Local hybrid search for markdown notes and docs | [qmd CLI](https://github.com/tobi/qmd) |
 | [skill-lint](#skill-lint) | Lint and auto-fix skill folders for metadata, naming consistency, path placeholder consistency, and optional agents/openai.yaml presence. | See SKILL.md |
 | [solana-best-practices](#solana-best-practices) | Reviews Solana/Anchor programs for development best practices. Use when writing, reviewing, improving or auditing Solana smart contracts. 31 vulnerability patterns with 4 real-world case studies. | See SKILL.md |
+| [solana-dev](https://github.com/gabrielkoerich/skills/tree/main/solana-dev) | End-to-end Solana development playbook (Jan 2026). Prefer Solana Foundation framework-kit (@solana/client + @solana/react-hooks) for React/Next.js UI. Prefer @solana/kit for all new client/RPC/transaction code. When legacy dependencies require web3.js, isolate it behind @solana/web3-compat (or @solana/web3.js as a true legacy fallback). Covers wallet-standard-first connection (incl. ConnectorKit), Anchor/Pinocchio programs, Codama-based client generation, LiteSVM/Mollusk/Surfpool testing, and security checklists. | See SKILL.md |
 | [solana-dev](https://github.com/gabrielkoerich/skills/tree/main/solana-dev) | End-to-end Solana development playbook (Jan 2026). Prefer Solana Foundation framework-kit (@solana/client + @solana/react-hooks) for React/Next.js UI. Prefer @solana/kit for all new client/RPC/transaction code. When legacy dependencies require web3.js, isolate it behind @solana/web3-compat (or @solana/web3.js as a true legacy fallback). Covers wallet-standard-first connection (incl. ConnectorKit), Anchor/Pinocchio programs, Codama-based client generation, LiteSVM/Mollusk/Surfpool testing, and security checklists. | See SKILL.md |
 | [solana-dev](https://github.com/gabrielkoerich/skills/tree/main/solana-dev) | End-to-end Solana development playbook (Jan 2026). Prefer Solana Foundation framework-kit (@solana/client + @solana/react-hooks) for React/Next.js UI. Prefer @solana/kit for all new client/RPC/transaction code. When legacy dependencies require web3.js, isolate it behind @solana/web3-compat (or @solana/web3.js as a true legacy fallback). Covers wallet-standard-first connection (incl. ConnectorKit), Anchor/Pinocchio programs, Codama-based client generation, LiteSVM/Mollusk/Surfpool testing, and security checklists. | See SKILL.md |
 | [solana-security-audit](#solana-security-audit) | Audits Solana/Anchor programs for all 11 sealevel attack vectors. Use when auditing Solana smart contracts or reviewing Anchor programs for security. | See SKILL.md |
@@ -360,19 +361,6 @@ Local speech-to-text with the Whisper CLI (no API key).
 **Usage:**
 ```bash
 # See openai-whisper/SKILL.md for full documentation
-```
-
----
-
-### [orchestrator](https://github.com/gabrielkoerich/skills/tree/main/orchestrator)
-
-Thin operational wrapper for a system-wide orchestrator CLI. Use when running and checking `orchestrator <command>` workflows without duplicating orchestration logic in the skill.
-
-**Requirements:** See SKILL.md
-**Setup:** None
-**Usage:**
-```bash
-# See orchestrator/SKILL.md for full documentation
 ```
 
 ---
