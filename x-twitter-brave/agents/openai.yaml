@@ -1,0 +1,4 @@
+version: 1
+display_name: "X Twitter Brave"
+short_description: "Read and search X/Twitter using Brave browser automation with an authenticated local profile."
+default_prompt: "Use the x-twitter-brave skill for this task."

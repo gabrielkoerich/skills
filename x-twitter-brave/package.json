@@ -1,0 +1,11 @@
+{
+  "name": "x-twitter-brave",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "timeline": "bun run timeline.ts",
+    "read": "bun run read.ts",
+    "bookmarks": "bun run bookmarks.ts",
+    "search": "bun run search.ts"
+  }
+}
