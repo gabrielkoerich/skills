@@ -7,6 +7,21 @@ description: "Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, 
 
 Use the `gh` CLI to interact with GitHub. Always specify `--repo owner/repo` when not in a git directory, or use URLs directly.
 
+## Requirements
+
+Install and authenticate the GitHub CLI:
+
+```bash
+# macOS
+brew install gh
+
+# Linux
+apt install gh
+
+# Authenticate
+gh auth login
+```
+
 ## Pull Requests
 
 Check CI status on a PR:

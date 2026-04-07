@@ -11,7 +11,15 @@ Generate fast financial summaries from a Beancount ledger, including:
 - top expense categories
 - direct question style queries
 
-Requirements: python3, beancount (`pip install beancount`)
+## Requirements
+
+```bash
+# Using pip
+pip install beancount
+
+# Using uv
+uv install beancount
+```
 
 ## Commands
 

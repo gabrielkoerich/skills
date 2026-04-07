@@ -7,6 +7,16 @@ description: Remote-control tmux sessions for interactive CLIs by sending keystr
 
 Use tmux only when you need an interactive TTY. Prefer exec background mode for long-running, non-interactive tasks.
 
+## Requirements
+
+```bash
+# macOS
+brew install tmux
+
+# Linux
+apt install tmux
+```
+
 ## Quickstart (isolated socket, exec tool)
 
 ```bash

@@ -1,0 +1,4 @@
+version: 1
+display_name: "Bird"
+short_description: "bird is a fast X CLI for tweeting, replying, and reading via X/Twitter GraphQL (cookie auth). Requires bird cli installed (bun add -g @steipete/bird)"
+default_prompt: "Use the bird skill for this task."

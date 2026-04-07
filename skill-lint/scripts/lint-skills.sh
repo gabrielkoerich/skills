@@ -28,8 +28,8 @@ for d in "$ROOT"/*; do
   [[ -f "$skill_md" ]] || continue
 
   dir_name="$(basename "$d")"
-  name="$(sed -n 's/^name: //p' "$skill_md" | head -n1)"
-  desc="$(sed -n 's/^description: //p' "$skill_md" | head -n1)"
+  name="$(sed -n 's/^name: //p' "$skill_md" | head -n1 | sed 's/^"//;s/"$//')"
+  desc="$(sed -n 's/^description: //p' "$skill_md" | head -n1 | sed 's/^"//;s/"$//')"
 
   if [[ -z "$name" ]]; then
     echo "[ERR] $dir_name: missing frontmatter name"
@@ -65,8 +65,36 @@ for d in "$ROOT"/*; do
     fi
   fi
 
-  if [[ ! -f "$d/agents/openai.yaml" ]]; then
-    echo "[WARN] $dir_name: missing agents/openai.yaml"
+  # Check for agents/openai.yaml
+  openai_yaml="$d/agents/openai.yaml"
+  if [[ ! -f "$openai_yaml" ]]; then
+    echo "[ERR] $dir_name: missing agents/openai.yaml"
+    if [[ "$FIX" -eq 1 && -n "$name" && -n "$desc" ]]; then
+      display_name="$(echo "$name" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)}1')"
+      mkdir -p "$d/agents"
+      cat > "$openai_yaml" <<YAML
+version: 1
+display_name: "$display_name"
+short_description: "$desc"
+default_prompt: "Use the $name skill for this task."
+YAML
+      echo "[FIX] $dir_name: created agents/openai.yaml"
+    else
+      overall_fail=1
+    fi
+  fi
+
+  # Check for .claude-plugin/plugin.json
+  plugin_json="$d/.claude-plugin/plugin.json"
+  if [[ ! -f "$plugin_json" ]]; then
+    echo "[ERR] $dir_name: missing .claude-plugin/plugin.json"
+    if [[ "$FIX" -eq 1 && -n "$name" && -n "$desc" ]]; then
+      mkdir -p "$d/.claude-plugin"
+      printf '{\n  "name": "%s",\n  "description": "%s"\n}\n' "$name" "$desc" > "$plugin_json"
+      echo "[FIX] $dir_name: created .claude-plugin/plugin.json"
+    else
+      overall_fail=1
+    fi
   fi
 done
 

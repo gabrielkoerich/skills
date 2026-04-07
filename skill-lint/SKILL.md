@@ -33,7 +33,8 @@ scripts/lint-skills.sh --fix
 - Frontmatter includes `name` and `description`
 - `name` matches directory name
 - Placeholder consistency: use `<project-name>` only (no mixed placeholder styles)
-- Optional warning when `agents/openai.yaml` is missing
+- `.claude-plugin/plugin.json` exists with `name` and `description`
+- `agents/openai.yaml` exists with display name and description
 
 ## Publishing Patterns
 

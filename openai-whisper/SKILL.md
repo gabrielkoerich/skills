@@ -8,7 +8,19 @@ homepage: https://openai.com/research/whisper
 
 Use `whisper` to transcribe audio locally.
 
-Quick start
+## Requirements
+
+Install the Whisper CLI:
+
+```bash
+# macOS
+brew install openai-whisper
+
+# pip
+pip install openai-whisper
+```
+
+## Quick start
 - `whisper /path/audio.mp3 --model medium --output_format txt --output_dir .`
 - `whisper /path/audio.m4a --task translate --output_format srt`
 

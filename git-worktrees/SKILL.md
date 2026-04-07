@@ -157,3 +157,7 @@ git worktree prune
 - Keep feature names short and descriptive.
 - Prefer `~/.worktrees/<project-name>/` as the default worktree root.
 - If you choose repo-local worktrees, ensure they are ignored in `.gitignore`.
+- Never remove the current worktree.
+- Always audit before removing — list worktrees and check which branches are merged.
+- Only delete local branches proven merged (`git branch -d`, not `-D`).
+- Do not force-delete unmerged branches unless explicitly asked.

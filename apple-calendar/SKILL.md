@@ -7,6 +7,12 @@ description: Apple Calendar.app integration for macOS. CRUD operations for event
 
 Interact with Calendar.app via AppleScript. Run scripts from: `cd {baseDir}`
 
+## Requirements
+
+- macOS with Calendar.app
+- `osascript` (included with macOS)
+- `icalBuddy` (recommended for non-Apple imported calendars): `brew install ical-buddy`
+
 ## Commands
 
 | Command | Usage |

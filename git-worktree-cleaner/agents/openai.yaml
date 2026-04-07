@@ -1,4 +1,0 @@
-version: 1
-display_name: Worktree Cleaner
-short_description: Audit and clean git worktrees
-default_prompt: Audit current repository worktrees and suggest safe cleanup actions.

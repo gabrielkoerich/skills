@@ -1,0 +1,4 @@
+version: 1
+display_name: "Act"
+short_description: "Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing."
+default_prompt: "Use the act skill for this task."

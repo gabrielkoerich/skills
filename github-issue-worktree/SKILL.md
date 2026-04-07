@@ -1,6 +1,6 @@
 ---
-name: gh-issue-worktree
-description: Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories.
+name: github-issue-worktree
+description: Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories. Use it when the user explicity ask to work in a given github issue.
 ---
 
 # Git Issue Worktree Workflow Skill
