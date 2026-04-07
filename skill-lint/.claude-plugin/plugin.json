@@ -1,0 +1,4 @@
+{
+  "name": "skill-lint",
+  "description": "Lint and auto-fix skill folders for metadata, naming consistency, path placeholder consistency, and optional agents/openai.yaml presence."
+}

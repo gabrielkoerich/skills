@@ -1,0 +1,5 @@
+{
+  "name": "intelbras",
+  "description": "Monitor and control Intelbras alarm systems and cameras. Supports AMT series, Intelbras IFR alarms with HTTP API. Get status, arm/disarm, and check camera streams.",
+  "homepage": "https://www.intelbras.com.br"
+}

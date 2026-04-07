@@ -1,0 +1,5 @@
+{
+  "name": "github-secrets",
+  "description": "Manage GitHub repository secrets via the GitHub API. Supports listing, adding, updating, and deleting repository and organization secrets. Use when user needs to manage GitHub Actions secrets, environment variables, or repository-level secrets securely.",
+  "homepage": "https://docs.github.com/en/rest/actions/secrets"
+}

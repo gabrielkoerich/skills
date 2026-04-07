@@ -1,0 +1,5 @@
+{
+  "name": "binance-prices",
+  "description": "Fetch cryptocurrency prices from Binance public API (no API key required). Use when user asks for BTC, ETH, SOL, or any crypto price from Binance.",
+  "homepage": "https://github.com/binance/binance-spot-api-docs"
+}

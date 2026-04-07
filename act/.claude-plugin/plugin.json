@@ -1,0 +1,4 @@
+{
+  "name": "act",
+  "description": "Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing."
+}

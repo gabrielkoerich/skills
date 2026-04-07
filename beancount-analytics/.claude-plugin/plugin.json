@@ -1,0 +1,4 @@
+{
+  "name": "beancount-analytics",
+  "description": "Analyze Beancount ledgers with reusable CLI reports and question-driven queries. Use when user asks for last month/last 12 months reports, spending breakdowns, savings trends, or direct finance questions from a .bean ledger."
+}

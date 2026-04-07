@@ -1,0 +1,139 @@
+{
+  "name": "skills",
+  "owner": {
+    "name": "Gabriel Koerich",
+    "email": "gabrielmk@gmail.com"
+  },
+  "metadata": {
+    "description": "A collection of independent, self-contained skills for AI agents."
+  },
+  "plugins": [
+    {
+      "name": "act",
+      "source": "./act",
+      "description": "Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing."
+    },
+    {
+      "name": "apple-calendar",
+      "source": "./apple-calendar",
+      "description": "Apple Calendar.app integration for macOS. CRUD operations for events, search, and multi-calendar support."
+    },
+    {
+      "name": "beancount-analytics",
+      "source": "./beancount-analytics",
+      "description": "Analyze Beancount ledgers with reusable CLI reports and question-driven queries. Use when user asks for last month/last 12 months reports, spending breakdowns, savings trends, or direct finance questions from a .bean ledger."
+    },
+    {
+      "name": "binance-prices",
+      "source": "./binance-prices",
+      "description": "Fetch cryptocurrency prices from Binance public API (no API key required). Use when user asks for BTC, ETH, SOL, or any crypto price from Binance.",
+      "homepage": "https://github.com/binance/binance-spot-api-docs"
+    },
+    {
+      "name": "bird",
+      "source": "./bird",
+      "description": "bird is a fast X CLI for tweeting, replying, and reading via X/Twitter GraphQL (cookie auth). Requires bird cli installed (bun add -g @steipete/bird)"
+    },
+    {
+      "name": "camsnap",
+      "source": "./camsnap",
+      "description": "Capture frames or clips from RTSP/ONVIF cameras.",
+      "homepage": "https://camsnap.ai"
+    },
+    {
+      "name": "conventional-commits",
+      "source": "./conventional-commits",
+      "description": "Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org), by describing the features, fixes, and breaking changes made in commit messages."
+    },
+    {
+      "name": "elevenlabs-voices",
+      "source": "./elevenlabs-voices",
+      "description": "High-quality voice synthesis with 18 personas, 32 languages, sound effects, batch processing, and voice design using ElevenLabs API."
+    },
+    {
+      "name": "evm-contract-audit",
+      "source": "./evm-contract-audit",
+      "description": "Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentrancy, access control, flash loan exploits, upgrade issues, oracle manipulation, signature attacks, and more. Learned from EVMbench (120 real Code4rena vulnerabilities across 40 production codebases)."
+    },
+    {
+      "name": "git-worktrees",
+      "source": "./git-worktrees",
+      "description": "Manage plain Git worktree feature branches without issue linking. Create a feature branch worktree, develop in isolation, push, and open a PR with commit-based changes summary."
+    },
+    {
+      "name": "github",
+      "source": "./github",
+      "description": "Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries."
+    },
+    {
+      "name": "github-issue-worktree",
+      "source": "./github-issue-worktree",
+      "description": "Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories. Use it when the user explicity ask to work in a given github issue."
+    },
+    {
+      "name": "github-secrets",
+      "source": "./github-secrets",
+      "description": "Manage GitHub repository secrets via the GitHub API. Supports listing, adding, updating, and deleting repository and organization secrets. Use when user needs to manage GitHub Actions secrets, environment variables, or repository-level secrets securely.",
+      "homepage": "https://docs.github.com/en/rest/actions/secrets"
+    },
+    {
+      "name": "intelbras",
+      "source": "./intelbras",
+      "description": "Monitor and control Intelbras alarm systems and cameras. Supports AMT series, Intelbras IFR alarms with HTTP API. Get status, arm/disarm, and check camera streams.",
+      "homepage": "https://www.intelbras.com.br"
+    },
+    {
+      "name": "openai-whisper",
+      "source": "./openai-whisper",
+      "description": "Local speech-to-text with the Whisper CLI (no API key).",
+      "homepage": "https://openai.com/research/whisper"
+    },
+    {
+      "name": "qmd",
+      "source": "./qmd",
+      "description": "Fast local search for markdown files, notes, and docs using qmd CLI. Combines BM25 full-text search, vector semantic search, and LLM reranking \u2014 all running locally. No API keys needed.",
+      "homepage": "https://github.com/tobi/qmd"
+    },
+    {
+      "name": "skill-lint",
+      "source": "./skill-lint",
+      "description": "Lint and auto-fix skill folders for metadata, naming consistency, path placeholder consistency, and optional agents/openai.yaml presence."
+    },
+    {
+      "name": "solana-best-practices",
+      "source": "./solana-best-practices",
+      "description": "Reviews Solana/Anchor programs for development best practices. Use when writing, reviewing, improving or auditing Solana smart contracts. 31 vulnerability patterns with 4 real-world case studies."
+    },
+    {
+      "name": "solana-dev",
+      "source": "./solana-dev",
+      "description": "End-to-end Solana development playbook (Jan 2026). Prefer Solana Foundation framework-kit (@solana/client + @solana/react-hooks) for React/Next.js UI. Prefer @solana/kit for all new client/RPC/transaction code. When legacy dependencies require web3.js, isolate it behind @solana/web3-compat (or @solana/web3.js as a true legacy fallback). Covers wallet-standard-first connection (incl. ConnectorKit), Anchor/Pinocchio programs, Codama-based client generation, LiteSVM/Mollusk/Surfpool testing, and security checklists."
+    },
+    {
+      "name": "solana-security-audit",
+      "source": "./solana-security-audit",
+      "description": "Comprehensive Solana smart contract security auditor. Covers 25+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, state machine issues, Token-2022 risks, and real-world case studies."
+    },
+    {
+      "name": "things3",
+      "source": "./things3",
+      "description": "Manage Things 3 via the `things` CLI on macOS (add/update projects+todos via URL scheme; read/search/list from the local Things database). Use when a user asks to add a task to Things, list inbox/today/upcoming, search tasks, or inspect projects/areas/tags.",
+      "homepage": "https://github.com/ossianhempel/things3-cli"
+    },
+    {
+      "name": "tmux",
+      "source": "./tmux",
+      "description": "Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output."
+    },
+    {
+      "name": "x-twitter-brave",
+      "source": "./x-twitter-brave",
+      "description": "Read and search X/Twitter using Brave browser automation with an authenticated local profile."
+    },
+    {
+      "name": "x-twitter-chrome",
+      "source": "./x-twitter-chrome",
+      "description": "Read and search X/Twitter using Chrome browser automation with an authenticated local profile."
+    }
+  ]
+}

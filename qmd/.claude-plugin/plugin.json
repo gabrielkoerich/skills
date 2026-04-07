@@ -1,0 +1,5 @@
+{
+  "name": "qmd",
+  "description": "Fast local search for markdown files, notes, and docs using qmd CLI. Combines BM25 full-text search, vector semantic search, and LLM reranking \u2014 all running locally. No API keys needed.",
+  "homepage": "https://github.com/tobi/qmd"
+}
