@@ -1,6 +1,6 @@
 ---
 name: solana-security-audit
-description: "Comprehensive Solana smart contract security auditor. Covers 25+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, state machine issues, Token-2022 risks, and real-world case studies."
+description: "Comprehensive Solana smart contract security auditor. Covers 50+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, oracle manipulation, Token-2022 extension risks, upgrade authority, on-chain randomness, and real-world case studies through 2026 (Loopscale, DeFiTuna, Drift)."
 ---
 
 # Solana Security Audit
@@ -53,6 +53,28 @@ description: "Comprehensive Solana smart contract security auditor. Covers 25+ a
  - E34: No built-in account validation (all checks manual)
  - E35: `no_allocator!` / `lazy_program_entrypoint!` pitfalls
 
+### Section F: Oracle & Price Feed Security (36-38)
+ - F36: Oracle staleness & confidence (Pyth/Switchboard)
+ - F37: Manipulable price source (spot AMM / illiquid collateral)
+ - F38: Oracle account / feed ID substitution
+
+### Section G: Token-2022 / SPL Token Extensions (39-43)
+ - G39: Token program confusion (SPL vs Token-2022, `InterfaceAccount`)
+ - G40: Transfer fee accounting (fee-on-transfer)
+ - G41: Transfer hook risks (reentrancy, failure, extra accounts)
+ - G42: Dangerous mint extensions (permanent delegate, freeze, close authority)
+ - G43: Amount-semantics extensions (interest-bearing, non-transferable, confidential)
+
+### Section H: Modern Anchor & Runtime Concerns (44-51)
+ - H44: `init_if_needed` re-initialization
+ - H45: Zero-copy / `AccountLoader` footguns
+ - H46: Insecure on-chain randomness (use VRF)
+ - H47: Durable nonce replay / out-of-context signing
+ - H48: Program upgrade authority risk
+ - H49: Compute budget exhaustion (DoS)
+ - H50: State compression / cNFT proof validation
+ - H51: Address Lookup Table risks
+
 For detailed patterns with full insecure/secure/recommended code, see [VULNERABILITY_PATTERNS.md](references/VULNERABILITY_PATTERNS.md).
 
 ## When to Use
@@ -85,6 +107,13 @@ For detailed patterns with full insecure/secure/recommended code, see [VULNERABI
 - "We validate the account before CPI" -- After CPI returns, the account may have changed owner, been closed, or had lamports drained. Re-validate.
 - "Our state transitions are straightforward" -- Without explicit state machine enforcement, attackers can skip states or replay transitions.
 - "High code coverage means we're safe" -- Saber's comprehensive fuzzers missed a rounding bug worth $1M/day. Test economic invariants, not just code paths.
+- "The oracle gives us the price" -- A price without a staleness bound and confidence check is a stale/uncertain number. Solana has no native flash loans, but one atomic transaction can move a spot price, read it, and revert. Loopscale lost $5.8M pricing illiquid collateral off a manipulable source.
+- "We support Token-2022, we use InterfaceAccount" -- `InterfaceAccount` proves the account is a token account, not that the mint is safe. A permanent delegate can burn your vault, a transfer fee makes received < sent, a transfer hook can reenter you. Screen extensions or allow-list mints.
+- "We credit the amount the user deposited" -- On a fee-on-transfer mint the vault receives less than the requested amount. Credit the measured balance delta (`after - before`), never the requested amount.
+- "The mint address can't change" -- With `MintCloseAuthority`, a mint can be closed and its address reused for a different account. Re-validate mint state, don't trust a cached pubkey.
+- "Our program is upgradeable so we can fix bugs" -- A single-key upgrade authority is a rug and a single point of failure: a leaked key swaps in a draining program past every on-chain check. Use a multisig + timelock, or make it immutable.
+- "We seed randomness from the clock/slot" -- Clock, slot, and recent blockhash are predictable and validator-influenceable. Attackers grind or bias them. Use a VRF (Switchboard On-Demand, ORAO).
+- "The transaction was signed by the council, so it's authorized" -- Durable nonces let a signed transaction execute weeks later, out of context. Drift lost ~$270M this way. Bind privileged actions to program-enforced expiries and sequence numbers.
 
 ## How This Skill Works
 
@@ -92,7 +121,7 @@ When invoked, I will:
 
 1. **Locate Solana programs** -- Find `lib.rs` files under `programs/`, check for `#[program]`, `entrypoint!`, or Pinocchio markers
 2. **Determine framework** -- Anchor (with protections), native Rust (manual checks), or Pinocchio (zero-copy, no protections)
-3. **Scan for all attack vectors** -- Check each instruction handler and account struct against 35 patterns across sections A-E
+3. **Scan for all attack vectors** -- Check each instruction handler and account struct against 51 patterns across sections A-H
 4. **Report findings** with severity, file location, vulnerable code, and recommended fix
 5. **Prioritize by severity** -- CRITICAL findings first, then HIGH, then MEDIUM
 
@@ -158,6 +187,37 @@ When invoked, I will:
 | E33 | No Auto Discriminators | HIGH | Manual instruction dispatch + type tags |
 | E34 | No Built-in Validation | HIGH | All checks manual, same as native |
 | E35 | Allocator / Lazy Entry | MEDIUM | `no_allocator!` panics, lazy parsing skips |
+
+### Section F: Oracle & Price Feed Security
+
+| # | Attack | Severity | What to Check |
+|---|--------|----------|---------------|
+| F36 | Oracle Staleness & Confidence | CRITICAL | `get_price_no_older_than`, reject wide `conf`, apply `exponent` |
+| F37 | Manipulable Price Source | CRITICAL | No spot-AMM/illiquid oracle, TWAP + divergence circuit breaker |
+| F38 | Oracle Account Substitution | HIGH | Pin `feed_id` / oracle address, verify owner + `VerificationLevel` |
+
+### Section G: Token-2022 / SPL Token Extensions
+
+| # | Attack | Severity | What to Check |
+|---|--------|----------|---------------|
+| G39 | Token Program Confusion | HIGH | `Interface`/`InterfaceAccount`, bind to passed `token_program` |
+| G40 | Transfer Fee Accounting | HIGH | Credit measured balance delta, not requested amount |
+| G41 | Transfer Hook Risks | HIGH | Checks-effects-interactions, screen/allow-list hook program |
+| G42 | Dangerous Mint Extensions | HIGH | Reject `PermanentDelegate`, freeze, `MintCloseAuthority` |
+| G43 | Amount-Semantics Extensions | MEDIUM | Raw `amount` for math, screen non-transferable/confidential |
+
+### Section H: Modern Anchor & Runtime Concerns
+
+| # | Attack | Severity | What to Check |
+|---|--------|----------|---------------|
+| H44 | `init_if_needed` Re-init | HIGH | Guard against overwriting initialized state |
+| H45 | Zero-Copy / AccountLoader | MEDIUM | `load_init` on first init, `#[repr(C)]`, `#[account(zero)]` |
+| H46 | Insecure Randomness | HIGH | No clock/slot/blockhash randomness, use VRF |
+| H47 | Durable Nonce Replay | HIGH | Program-enforced expiry + sequence on privileged actions |
+| H48 | Upgrade Authority Risk | CRITICAL | Multisig + timelock or immutable, verify `programdata` authority |
+| H49 | Compute Budget Exhaustion | MEDIUM | Bound loops, cap collections, paginate cranks |
+| H50 | State Compression / cNFT | MEDIUM | Verify leaf + proof against on-chain root |
+| H51 | Address Lookup Table | LOW | Enforce account identity on-chain, never trust tx construction |
 
 ## Scanning Workflow
 
@@ -262,6 +322,35 @@ rg "unsafe\s*\{" programs/
 rg "no_allocator!|lazy_program_entrypoint" programs/
 ```
 
+### Step 4.5: Scan Oracle, Token-2022, and Modern Patterns
+
+```bash
+# Oracle security (F36-F38)
+rg "get_price_unchecked|load_price_feed_from_account_info" programs/   # unsafe/deprecated reads
+rg "get_price_no_older_than|get_feed_id_from_hex|PriceUpdateV2" programs/ # safe Pyth pattern (should exist)
+rg "PullFeedAccountData|get_value|switchboard" programs/               # Switchboard
+rg "conf|exponent|publish_time|max_stale|maximum_age" programs/        # staleness/confidence handling
+rg "reserve|vault.*amount.*/.*amount|sqrt_price|get_spot_price" programs/ # spot-AMM-as-oracle (F37)
+
+# Token-2022 / extensions (G39-G43)
+rg "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" programs/             # hardcoded classic program
+rg "Program<'info, Token>|Account<'info, TokenAccount>|Account<'info, Mint>" programs/ # classic-only types
+rg "InterfaceAccount|TokenInterface|Interface<'info" programs/         # multi-standard support
+rg "TransferHook|PermanentDelegate|TransferFeeConfig|withheld_amount" programs/
+rg "MintCloseAuthority|DefaultAccountState|NonTransferable|ConfidentialTransfer|InterestBearingConfig|CpiGuard" programs/
+rg "get_extension|StateWithExtensions" programs/                       # extension screening (should exist)
+
+# Modern Anchor & runtime (H44-H51)
+rg "init_if_needed" programs/                                         # H44
+rg "zero_copy|AccountLoader|load_init|load_mut" programs/             # H45
+rg "Clock::get|unix_timestamp|slot_hashes|recent_blockhash|random|lottery|winner" programs/ # H46
+rg "nonce|advance_nonce|DurableNonce" programs/                       # H47
+rg "programdata|upgrade_authority|BPFLoaderUpgradeab1e|set_upgrade_authority" programs/ # H48
+rg "for .* in .*remaining_accounts|while " programs/                  # H49 unbounded loops
+rg "MerkleTree|concurrent_merkle|account_compression|Bubblegum|verify_leaf" programs/   # H50
+rg "AddressLookupTable|lookup_table" programs/                        # H51
+```
+
 ### Step 5: Cross-Reference Findings
 
 For each finding, verify:
@@ -271,6 +360,9 @@ For each finding, verify:
 - For native/Pinocchio: is the full validation sequence followed (key → owner → signer → writable → discriminator → data)?
 - For CPI: is there a `.reload()` after every CPI that modifies accounts read later?
 - For arithmetic: is every operation using `checked_*()` or is `overflow-checks = true` in Cargo.toml?
+- For oracles: is every price read bounded for staleness AND confidence, exponent-scaled, and pinned to the expected feed?
+- For tokens: does the program screen mint extensions (or allow-list mints) before accepting arbitrary Token-2022 assets, and credit measured balance deltas?
+- For upgradeable programs: is the upgrade authority a multisig/timelock or immutable, not a single EOA?
 
 ### Step 6: Report
 
@@ -312,6 +404,9 @@ Use the finding template below. Group by severity.
 - C25 Unconstrained dependency chain root -- all downstream validation bypassed
 - D29 invoke vs invoke_signed misuse -- unauthorized PDA signing
 - D30 Unsafe native account closure -- account revival
+- F36 Oracle staleness & confidence -- acting on stale/uncertain prices (Mango, Loopscale)
+- F37 Manipulable price source -- spot/illiquid oracle moved in-tx (Loopscale, Nirvana)
+- H48 Program upgrade authority -- single-key rug / full-fund compromise
 
 ### HIGH (Fix before mainnet)
 - A1 Account data mismatch -- operations on wrong accounts
@@ -334,10 +429,23 @@ Use the finding template below. Group by severity.
 - D28 Borsh deserialization -- buffer overread
 - D31 Missing validation sequence -- native program gaps
 - D32 Unsafe Rust -- memory safety bypass
+- F38 Oracle account substitution -- attacker-supplied feed
+- G39 Token program confusion -- classic vs Token-2022 mismatch / fake token program
+- G40 Transfer fee accounting -- over-credit on fee-on-transfer mints
+- G41 Transfer hook risks -- reentrancy / DoS via mint-controlled hook
+- G42 Dangerous mint extensions -- permanent delegate / freeze seizure
+- H44 init_if_needed re-init -- reset authority/state on repeat call
+- H46 Insecure randomness -- predictable clock/slot/blockhash seeds
+- H47 Durable nonce replay -- pre-signed tx executed out of context (Drift)
 
 ### MEDIUM (Improve before mainnet)
 - C21 Remaining accounts -- unvalidated dynamic accounts
 - C24 Reallocation stale data -- old data exposure
+- G43 Amount-semantics extensions -- interest-bearing/non-transferable/confidential mispricing
+- H45 Zero-copy / AccountLoader -- uninitialized memory, type confusion
+- H49 Compute budget exhaustion -- DoS on critical paths
+- H50 State compression / cNFT -- unverified merkle proof
+- H51 Address Lookup Table -- reliance on tx construction for security
 - C26 Rent-exemption violations -- account garbage collection
 - E33-35 Pinocchio framework gaps -- manual everything
 
@@ -387,6 +495,25 @@ describe("security audit tests", () => {
 
   // C25: Unconstrained root
   it("rejects fake config account in dependency chain", async () => {});
+
+  // F36: Stale / low-confidence oracle
+  it("rejects a price update older than max age", async () => {});
+  it("rejects a price with an excessively wide confidence interval", async () => {});
+
+  // F38: Oracle substitution
+  it("rejects a price account for the wrong feed", async () => {});
+
+  // G40: Fee-on-transfer over-credit
+  it("credits only the received amount for a transfer-fee mint", async () => {});
+
+  // G42: Dangerous mint extension
+  it("rejects a collateral mint with a permanent delegate", async () => {});
+
+  // H44: init_if_needed re-init
+  it("prevents re-initializing an existing account", async () => {});
+
+  // H46: Insecure randomness
+  it("does not derive winner selection from clock/slot", async () => {});
 });
 ```
 
@@ -395,12 +522,20 @@ describe("security audit tests", () => {
 | Exploit | Impact | Root Cause | Pattern |
 |---------|--------|------------|---------|
 | Wormhole Bridge | $320M+ | Missing sysvar validation | A10 |
-| Cashio | $48-52M | Missing account validation | A1, A2 |
-| Mango Markets | $115M | Oracle price manipulation | B12, B20 |
+| Cashio | $48-52M | Missing account/mint validation (account confusion) | A1, A2 |
+| Crema Finance | ~$8.8M | Missing owner check on passed "tick" account | A2, C21 |
+| Mango Markets | $115M | Oracle price manipulation (thin market, in-tx) | F36, F37 |
+| Loopscale (2025) | $5.8M | Illiquid collateral priced off manipulable spot source | F37 |
+| Nirvana (2022) | $3.5M | Bonding-curve price manipulation via flash loan | F37 |
+| DeFiTuna (2026) | ~$580K | Fixed-point truncation in solvency check + "empty = healthy" default | B12, B17 |
 | Jet Protocol | -- | PDA without caller validation | A8 |
 | Saber Stable Swap | ~$1M/day potential | Rounding direction (round vs floor) | B12 |
 | Solend Rent Thief | ~0.008 SOL/iter | Non-atomic account init race condition | C27 |
+| Drift (2026) | ~$270-285M | Durable-nonce pre-signing of council multisig + social-engineered fake oracle | H47 (+ operational) |
+| Solana web3.js (2024) | ~$160-190K | Supply-chain: backdoored npm package stole keys | Operational |
 | Step Finance | $27.3M | Admin key compromise (social engineering) | Operational |
+
+The Drift, web3.js, and Step incidents are labeled operational: they are not catchable by reviewing on-chain program code, but auditors should still flag the underlying risk (durable-nonce assumptions, dependency supply chain, single-key admin authority).
 
 ## Tools & Resources
 
@@ -424,6 +559,21 @@ describe("security audit tests", () => {
 ### Related Skills
 - [solana-best-practices](../solana-best-practices/SKILL.md) -- Development practices, Token-2022 compatibility, testing methodology (31 patterns + 14 practices)
 - [solana-dev](../solana-dev/SKILL.md) -- End-to-end development playbook (UI, SDK, Anchor, Pinocchio, testing, payments)
+
+### Oracle & Token-2022 References
+- [Pyth Price Feeds Best Practices](https://docs.pyth.network/price-feeds/best-practices) -- staleness, confidence, exponent handling
+- [Pyth on Solana](https://docs.pyth.network/price-feeds/use-real-time-data/solana) -- `pyth-solana-receiver-sdk`, `PriceUpdateV2`, `get_price_no_older_than`
+- [Switchboard On-Demand (Solana)](https://docs.switchboard.xyz/) -- `PullFeedAccountData`, staleness/variance gating
+- [SPL Token-2022 Extensions Guide](https://solana.com/developers/guides/token-extensions/getting-started) -- transfer hooks, fees, permanent delegate, confidential transfers
+- [Anchor Token Interface](https://www.anchor-lang.com/docs/tokens) -- `InterfaceAccount`, `TokenInterface` for Token-2022
+
+### Incident Post-Mortems (2024-2026)
+- [Helius: Complete History of Solana Hacks](https://www.helius.dev/blog/solana-hacks)
+- [Halborn: Loopscale Hack (2025)](https://www.halborn.com/blog/post/explained-the-loopscale-hack-april-2025)
+- [CertiK: DeFiTuna Incident (2026)](https://www.certik.com/blog/defituna-incident-analysis)
+- [BlockSec: Drift Durable-Nonce Governance Compromise (2026)](https://blocksec.com/blog/drift-protocol-incident-multisig-governance-compromise-via-durable-nonce-exploitation)
+- [Chainalysis: Lessons from the Drift Hack (2026)](https://www.chainalysis.com/blog/lessons-from-the-drift-hack/)
+- [Account Confusion Bug Class ($50M+)](https://medium.com/@tolgacohce/50m-bug-class-a-practical-guide-to-solana-account-confusion-afb01224d955)
 
 ### Official Documentation
 - [Anchor Security Exploits](https://www.anchor-lang.com/docs/references/security-exploits)
