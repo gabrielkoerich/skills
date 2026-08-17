@@ -2,11 +2,24 @@
 
 [![Readme Update](https://github.com/gabrielkoerich/skills/actions/workflows/update-readme.yml/badge.svg)](https://github.com/gabrielkoerich/skills/actions/workflows/update-readme.yml)
 
-A collection of independent, self-contained skills for AI agents. Each skill lives in its own directory with a `SKILL.md` documentation file.
+Self-contained skills for AI agents, following the [Agent Skills](https://agentskills.io) open standard: a `SKILL.md` plus optional scripts, so they work with any agent that supports it.
 
-Some skills require external dependencies or environment variables — check each skill's `SKILL.md` for setup instructions.
+Some skills require external dependencies or environment variables, check each skill's `SKILL.md` for setup instructions.
 
-> **Security:** Always review a skill's code before installing it. Do not run code you haven't verified. Skills can contain scripts that execute on your machine — understand what they do first.
+> **Security:** Always review a skill's code before installing it. Do not run code you haven't verified. Skills can contain scripts that execute on your machine, understand what they do first.
+
+## Featured
+
+The smart contract security set, built from real exploits and audit findings rather than generic checklists:
+
+| Skill | What it does |
+|-------|--------------|
+| [solana-security-audit](solana-security-audit/SKILL.md) | Audits Solana programs against 51 vulnerability patterns across Anchor, native Rust and Pinocchio. Sealevel attacks, arithmetic safety, CPI exploits, Token-2022 extension risks, upgrade authority, on-chain randomness, with post-mortems through 2026 (Loopscale, DeFiTuna, Drift). |
+| [evm-contract-audit](evm-contract-audit/SKILL.md) | Audits Solidity contracts using patterns learned from EVMbench: 120 real Code4rena vulnerabilities across 40 production codebases. Reentrancy, access control, flash loans, oracle manipulation, signature attacks, upgrade issues. |
+| [contract-decoder](contract-decoder/SKILL.md) | Reverse-engineers deployed contract binaries. Extracts instructions, discriminators, PDAs and error codes from Solana `.so` files; recovers function selectors and storage layout from EVM bytecode. For bug bounty recon and verifying deployed code against source. |
+| [solana-best-practices](solana-best-practices/SKILL.md) | Reviews Solana programs for development best practices: 31 vulnerability patterns with 4 real-world case studies. |
+
+Everything else, from git worktree workflows to local markdown search to macOS automation, is in the table below.
 
 ## Installing Skills
 
@@ -65,6 +78,7 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [binance-prices](https://github.com/gabrielkoerich/skills/blob/main/binance-prices/SKILL.md) | Fetch cryptocurrency prices from Binance public API (no API key required). Use when user asks for BTC, ETH, SOL, or any crypto price from Binance. | See SKILL.md |
 | [bird](https://github.com/gabrielkoerich/skills/blob/main/bird/SKILL.md) | bird is a fast X CLI for tweeting, replying, and reading via X/Twitter GraphQL (cookie auth). Requires bird cli installed (bun add -g @steipete/bird) | See SKILL.md |
 | [camsnap](https://github.com/gabrielkoerich/skills/blob/main/camsnap/SKILL.md) | Capture frames or clips from RTSP/ONVIF cameras. | See SKILL.md |
+| [contract-decoder](https://github.com/gabrielkoerich/skills/blob/main/contract-decoder/SKILL.md) | Decode and reverse-engineer smart contract binaries for security research. Solana: extract instructions, discriminators, PDAs, and error codes from .so files. EVM: decompile bytecode to recover function selectors and storage layout. Use for bug bounty recon, verifying deployed code, or analyzing closed-source contracts. | See SKILL.md |
 | [conventional-commits](https://github.com/gabrielkoerich/skills/blob/main/conventional-commits/SKILL.md) | Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org), by describing the features, fixes, and breaking changes made in commit messages. | See SKILL.md |
 | [elevenlabs-voices](https://github.com/gabrielkoerich/skills/tree/main/elevenlabs-voices) | High-quality voice synthesis with 18 personas, 32 languages, sound effects, batch processing, and voice design using ElevenLabs API. | See SKILL.md |
 | [evm-contract-audit](https://github.com/gabrielkoerich/skills/tree/main/evm-contract-audit) | Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentrancy, access control, flash loan exploits, upgrade issues, oracle manipulation, signature attacks, and more. Learned from EVMbench (120 real Code4rena vulnerabilities across 40 production codebases). | See SKILL.md |

@@ -41,6 +41,11 @@
       "homepage": "https://camsnap.ai"
     },
     {
+      "name": "contract-decoder",
+      "source": "./contract-decoder",
+      "description": "Decode and reverse-engineer smart contract binaries for security research. Solana: extract instructions, discriminators, PDAs, and error codes from .so files. EVM: decompile bytecode to recover function selectors and storage layout. Use for bug bounty recon, verifying deployed code, or analyzing closed-source contracts."
+    },
+    {
       "name": "conventional-commits",
       "source": "./conventional-commits",
       "description": "Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org), by describing the features, fixes, and breaking changes made in commit messages."
