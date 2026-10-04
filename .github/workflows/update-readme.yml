@@ -49,15 +49,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build docs with zola-builder
-        uses: gabrielkoerich/zola-builder@main
+      - name: Build docs from the README with the shared theme
+        uses: gabrielkoerich/zola-docs-action@v1
         with:
+          readme: README.md
           base-url: ${{ env.BASE_URL }}
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .zola-build/public
+          zola-version: "0.19.2"
+          extra: |
+            author = "Gabriel Koerich"
+            home_url = "https://gabrielkoerich.com"
+            tagline = "Senior Engineer · AI Workflows · Solana / DeFi"
+            nav = [{ name = "Docs", url = "@/_index.md" }, { name = "Projects", url = "https://projects.gabrielkoerich.com" }]
 
   deploy:
     needs: build
