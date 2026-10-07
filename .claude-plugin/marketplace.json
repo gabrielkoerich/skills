@@ -61,6 +61,11 @@
       "description": "Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentrancy, access control, flash loan exploits, upgrade issues, oracle manipulation, signature attacks, and more. Learned from EVMbench (120 real Code4rena vulnerabilities across 40 production codebases)."
     },
     {
+      "name": "gh-pr-polish",
+      "source": "./gh-pr-polish",
+      "description": "Generate high-signal PR titles and bodies from git history and changed files, then open PRs with gh CLI."
+    },
+    {
       "name": "git-worktrees",
       "source": "./git-worktrees",
       "description": "Manage plain Git worktree feature branches without issue linking. Create a feature branch worktree, develop in isolation, push, and open a PR with commit-based changes summary."
@@ -88,15 +93,40 @@
       "homepage": "https://www.intelbras.com.br"
     },
     {
+      "name": "kokoro-tts",
+      "source": "./kokoro-tts",
+      "description": "High quality offline text-to-speech with Kokoro-82M running on the Apple Silicon GPU via MLX. 54 voices, 9 languages, Apache-2.0, no API key and no cost. Use when asked to speak, narrate, read aloud, or generate natural sounding TTS audio, and when macos-say voices sound too robotic."
+    },
+    {
+      "name": "llm-council",
+      "source": "./llm-council",
+      "description": "Multi-model LLM Council for research synthesis. Routes a research question to a panel of 3 models (Gemini Flash for breadth, Grok for recency, Claude for reasoning) in parallel, then synthesizes via a chairman model. Use in research jobs to get adversarial multi-perspective analysis instead of single-model answers."
+    },
+    {
+      "name": "macos-say",
+      "source": "./macos-say",
+      "description": "Free offline text-to-speech on macOS with the built-in `say` command. Speak text aloud, narrate a file, or render speech to wav/m4a/aiff using system voices. No API key, no network, no cost. Use when asked to speak, read aloud, narrate, voice, or generate TTS audio."
+    },
+    {
+      "name": "notes-review",
+      "source": "./notes-review",
+      "description": "Analyze personal markdown notes and journals with qmd-powered semantic search plus weekly/monthly reflection reports. Use for questions like what was accomplished, what is pending, and whether work aligns with goals."
+    },
+    {
       "name": "openai-whisper",
       "source": "./openai-whisper",
       "description": "Local speech-to-text with the Whisper CLI (no API key).",
       "homepage": "https://openai.com/research/whisper"
     },
     {
+      "name": "passbox",
+      "source": "./passbox",
+      "description": "Read secrets from passbox, inject them into a child process, and stop Touch ID prompts in an unattended job using injection at launch or a scoped grant token. Use when a script, daemon or agent needs a credential, when repeated fingerprint prompts are blocking something long-running, or when working on the passbox store itself."
+    },
+    {
       "name": "qmd",
       "source": "./qmd",
-      "description": "Fast local search for markdown files, notes, and docs using qmd CLI. Combines BM25 full-text search, vector semantic search, and LLM reranking \u2014 all running locally. No API keys needed.",
+      "description": "Fast local search for markdown files, notes, and docs using qmd CLI. Combines BM25 full-text search, vector semantic search, and LLM reranking — all running locally. No API keys needed.",
       "homepage": "https://github.com/tobi/qmd"
     },
     {
@@ -129,6 +159,11 @@
       "name": "tmux",
       "source": "./tmux",
       "description": "Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output."
+    },
+    {
+      "name": "ui-screenshot",
+      "source": "./ui-screenshot",
+      "description": "Capture a PNG screenshot of any URL with a headless Chromium-family browser over CDP (Brave preferred, no Playwright needed), with phone viewports, browser language lists and a layout check. Use it whenever the user asks you to look at, check or visually verify a page or a frontend change, test it on mobile, or test a language redirect. Output PNG goes to /tmp/ui-shot.png by default; read it back with the Read tool."
     },
     {
       "name": "x-twitter-brave",
