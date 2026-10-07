@@ -1,0 +1,4 @@
+{
+  "name": "passbox",
+  "description": "Read secrets from passbox, inject them into a child process, and stop Touch ID prompts in an unattended job using injection at launch or a scoped grant token. Use when a script, daemon or agent needs a credential, when repeated fingerprint prompts are blocking something long-running, or when working on the passbox store itself."
+}
