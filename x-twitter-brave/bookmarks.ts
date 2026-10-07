@@ -12,7 +12,7 @@ const BOOKMARKS_URL = 'https://x.com/i/bookmarks';
 // Connect to browser CDP
 const result = await fetch(`http://127.0.0.1:${CDP_PORT}/json`);
 const allTargets = await result.json();
-const pages = allTargets.filter((t: any) => t.type === 'page');
+const pages = allTargets.filter((t: any) => t.type === 'page' || t.type === 'other');
 
 if (!pages || pages.length === 0) {
   console.error('❌ No browser pages found. Make sure Brave is running with your profile.');
