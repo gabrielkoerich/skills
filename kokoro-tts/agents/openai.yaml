@@ -1,0 +1,4 @@
+version: 1
+display_name: "Kokoro Tts"
+short_description: "High quality offline text-to-speech with Kokoro-82M running on the Apple Silicon GPU via MLX. 54 voices, 9 languages, Apache-2.0, no API key and no cost. Use when asked to speak, narrate, read aloud, or generate natural sounding TTS audio, and when macos-say voices sound too robotic."
+default_prompt: "Use the kokoro-tts skill for this task."
