@@ -1,4 +1,0 @@
-{
-  "name": "gh-pr-polish",
-  "description": "Generate high-signal PR titles and bodies from git history and changed files, then open PRs with gh CLI."
-}
