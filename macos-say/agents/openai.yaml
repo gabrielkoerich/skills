@@ -1,0 +1,4 @@
+version: 1
+display_name: "Macos Say"
+short_description: "Free offline text-to-speech on macOS with the built-in `say` command. Speak text aloud, narrate a file, or render speech to wav/m4a/aiff using system voices. No API key, no network, no cost. Use when asked to speak, read aloud, narrate, voice, or generate TTS audio."
+default_prompt: "Use the macos-say skill for this task."
