@@ -1,4 +1,0 @@
-version: 1
-display_name: GH PR Polish
-short_description: Build better PR titles and bodies
-default_prompt: Generate a high-signal PR body from current branch changes and open the PR.

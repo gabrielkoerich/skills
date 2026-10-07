@@ -1,4 +1,0 @@
-{
-  "name": "llm-council",
-  "description": "Multi-model LLM Council for research synthesis. Routes a research question to a panel of 3 models (Gemini Flash for breadth, Grok for recency, Claude for reasoning) in parallel, then synthesizes via a chairman model. Use in research jobs to get adversarial multi-perspective analysis instead of single-model answers."
-}
