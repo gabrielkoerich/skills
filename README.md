@@ -95,25 +95,12 @@ For any agent that supports `SKILL.md` files, copy the skill directory into the 
 | [skill-lint](https://github.com/gabrielkoerich/skills/blob/main/skill-lint/SKILL.md) | Lint and auto-fix skill folders for metadata, naming consistency, path placeholder consistency, and optional agents/openai.yaml presence. | See SKILL.md |
 | [solana-best-practices](https://github.com/gabrielkoerich/skills/tree/main/solana-best-practices) | Reviews Solana/Anchor programs for development best practices. Use when writing, reviewing, improving or auditing Solana smart contracts. 31 vulnerability patterns with 4 real-world case studies. | See SKILL.md |
 | [solana-dev](https://github.com/gabrielkoerich/skills/blob/main/solana-dev/SKILL.md) | End-to-end Solana development playbook (Jan 2026). Prefer Solana Foundation framework-kit (@solana/client + @solana/react-hooks) for React/Next.js UI. Prefer @solana/kit for all new client/RPC/transaction code. When legacy dependencies require web3.js, isolate it behind @solana/web3-compat (or @solana/web3.js as a true legacy fallback). Covers wallet-standard-first connection (incl. ConnectorKit), Anchor/Pinocchio programs, Codama-based client generation, LiteSVM/Mollusk/Surfpool testing, and security checklists. | See SKILL.md |
-| [solana-security-audit](https://github.com/gabrielkoerich/skills/tree/main/solana-security-audit) | Comprehensive Solana smart contract security auditor. Covers 50+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, oracle manipulation, Token-2022 extension risks, upgrade authority, on-chain randomness, and real-world case studies through 2026 (Loopscale, DeFiTuna, Drift). | See SKILL.md |
+| [solana-security-audit](https://github.com/gabrielkoerich/skills/tree/main/solana-security-audit) | Comprehensive Solana smart contract security auditor. Covers 60+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, oracle manipulation, Token-2022 extension risks, donation and forced-balance accounting DoS, asymmetric paired accounting, loss-blind refreshes, JIT deposit sniping, durable-nonce replay on admin instructions, the on-chain/off-chain trust boundary (forged events, keeper keys), upgrade authority, on-chain randomness, and real-world case studies through 2026 (Loopscale, DeFiTuna, Drift). | See SKILL.md |
 | [things3](https://github.com/gabrielkoerich/skills/blob/main/things3/SKILL.md) | Manage Things 3 via the `things` CLI on macOS (add/update projects+todos via URL scheme; read/search/list from the local Things database). Use when a user asks to add a task to Things, list inbox/today/upcoming, search tasks, or inspect projects/areas/tags. | See SKILL.md |
 | [tmux](https://github.com/gabrielkoerich/skills/blob/main/tmux/SKILL.md) | Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output. | See SKILL.md |
 | [ui-screenshot](https://github.com/gabrielkoerich/skills/blob/main/ui-screenshot/SKILL.md) | Capture a PNG screenshot of any URL with a headless Chromium-family browser over CDP (Brave preferred, no Playwright needed), with phone viewports, browser language lists and a layout check. Use it whenever the user asks you to look at, check or visually verify a page or a frontend change, test it on mobile, or test a language redirect. Output PNG goes to /tmp/ui-shot.png by default; read it back with the Read tool. | See SKILL.md |
 | [x-twitter-brave](https://github.com/gabrielkoerich/skills/blob/main/x-twitter-brave/SKILL.md) | Read and search X/Twitter using Brave browser automation with an authenticated local profile. | See SKILL.md |
 | [x-twitter-chrome](https://github.com/gabrielkoerich/skills/blob/main/x-twitter-chrome/SKILL.md) | Read and search X/Twitter using Chrome browser automation with an authenticated local profile. | See SKILL.md |
-
-## Syncing With a Local Skills Folder
-
-The `Justfile` syncs this repo with `~/.claude/skills` (override with `SKILLS_DIR`).
-
-| Recipe | What it does |
-|--------|--------------|
-| `just sync-to-local` | Copies every repo skill into the local folder. Never deletes local-only skills and never overwrites a local file that is newer. |
-| `just sync-from-local` | Copies local changes back, only for skills this repo already has, then runs `just leak-check` on the changed files and shows `git status`. It never commits. |
-| `just sync-diff` | Lists shared skills that differ and which side changed last. Changes nothing. |
-| `just leak-check` | Greps for personal data and secrets, and runs `gitleaks` if installed. |
-
-Two optional files live in the local folder, never in this repo: `.sync-ignore` lists skill names that must never sync in either direction (one per line, `#` comments allowed), and `.sync-leak-terms` lists extra private regexes for the leak check. If a skill named in `.sync-ignore` shows up in this repo, `sync-from-local` stops with an error.
 
 ## Structure
 

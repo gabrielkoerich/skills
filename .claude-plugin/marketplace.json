@@ -61,11 +61,6 @@
       "description": "Audits EVM/Solidity smart contracts for security vulnerabilities. Covers reentrancy, access control, flash loan exploits, upgrade issues, oracle manipulation, signature attacks, and more. Learned from EVMbench (120 real Code4rena vulnerabilities across 40 production codebases)."
     },
     {
-      "name": "gh-pr-polish",
-      "source": "./gh-pr-polish",
-      "description": "Generate high-signal PR titles and bodies from git history and changed files, then open PRs with gh CLI."
-    },
-    {
       "name": "git-worktrees",
       "source": "./git-worktrees",
       "description": "Manage plain Git worktree feature branches without issue linking. Create a feature branch worktree, develop in isolation, push, and open a PR with commit-based changes summary."
@@ -98,19 +93,9 @@
       "description": "High quality offline text-to-speech with Kokoro-82M running on the Apple Silicon GPU via MLX. 54 voices, 9 languages, Apache-2.0, no API key and no cost. Use when asked to speak, narrate, read aloud, or generate natural sounding TTS audio, and when macos-say voices sound too robotic."
     },
     {
-      "name": "llm-council",
-      "source": "./llm-council",
-      "description": "Multi-model LLM Council for research synthesis. Routes a research question to a panel of 3 models (Gemini Flash for breadth, Grok for recency, Claude for reasoning) in parallel, then synthesizes via a chairman model. Use in research jobs to get adversarial multi-perspective analysis instead of single-model answers."
-    },
-    {
       "name": "macos-say",
       "source": "./macos-say",
       "description": "Free offline text-to-speech on macOS with the built-in `say` command. Speak text aloud, narrate a file, or render speech to wav/m4a/aiff using system voices. No API key, no network, no cost. Use when asked to speak, read aloud, narrate, voice, or generate TTS audio."
-    },
-    {
-      "name": "notes-review",
-      "source": "./notes-review",
-      "description": "Analyze personal markdown notes and journals with qmd-powered semantic search plus weekly/monthly reflection reports. Use for questions like what was accomplished, what is pending, and whether work aligns with goals."
     },
     {
       "name": "openai-whisper",
@@ -126,7 +111,7 @@
     {
       "name": "qmd",
       "source": "./qmd",
-      "description": "Fast local search for markdown files, notes, and docs using qmd CLI. Combines BM25 full-text search, vector semantic search, and LLM reranking — all running locally. No API keys needed.",
+      "description": "Fast local search for markdown files, notes, and docs using qmd CLI. Combines BM25 full-text search, vector semantic search, and LLM reranking \u2014 all running locally. No API keys needed.",
       "homepage": "https://github.com/tobi/qmd"
     },
     {
@@ -147,7 +132,7 @@
     {
       "name": "solana-security-audit",
       "source": "./solana-security-audit",
-      "description": "Comprehensive Solana smart contract security auditor. Covers 50+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, oracle manipulation, Token-2022 extension risks, upgrade authority, on-chain randomness, and real-world case studies through 2026 (Loopscale, DeFiTuna, Drift)."
+      "description": "Comprehensive Solana smart contract security auditor. Covers 60+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, oracle manipulation, Token-2022 extension risks, donation and forced-balance accounting DoS, asymmetric paired accounting, loss-blind refreshes, JIT deposit sniping, durable-nonce replay on admin instructions, the on-chain/off-chain trust boundary (forged events, keeper keys), upgrade authority, on-chain randomness, and real-world case studies through 2026 (Loopscale, DeFiTuna, Drift)."
     },
     {
       "name": "things3",
