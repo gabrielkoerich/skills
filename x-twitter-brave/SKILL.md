@@ -42,12 +42,20 @@ bun run bookmarks.ts
 bun run search.ts "Solana traders"
 ```
 
+### Trending Topics
+```bash
+bun run trending.ts              # all local trends
+bun run trending.ts --global      # worldwide trends only (filters out location-specific)
+bun run trending.ts --news        # trends + today's news
+bun run trending.ts --global --news  # worldwide trends + news
+```
+
 ## How It Works
 
 Uses Chrome DevTools Protocol (CDP) to:
 1. Connect to running Brave instance on port 18801
 2. Navigate to X pages
-3. Extract tweet content via DOM queries
+3. Extract content via `innerText` parsing (resilient to DOM changes)
 4. Return formatted text output
 
 ## Files
@@ -56,6 +64,7 @@ Uses Chrome DevTools Protocol (CDP) to:
 - `read.ts` - Read tweet/thread with replies
 - `bookmarks.ts` - Get your bookmarks
 - `search.ts` - Search tweets
+- `trending.ts` - Trending topics and news
 
 ## Troubleshooting
 
