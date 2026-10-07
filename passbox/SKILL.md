@@ -12,6 +12,19 @@ rather than into the agent.
 Store lives at `~/.passbox` (`PASSBOX_DIR` overrides). Every secret is one age file
 with a random id; the name and policy are inside the ciphertext.
 
+## Install
+
+If `passbox` is not on `PATH`, install it before anything else:
+
+```bash
+brew install gabrielkoerich/tap/passbox
+passbox init
+```
+
+Homebrew downloads a prebuilt binary, so Rust is not needed. If recent Homebrew stops and asks you to trust the tap, run `brew trust --formula gabrielkoerich/tap/passbox` and try again. Without Homebrew, `cargo install passbox` builds it from crates.io (needs Rust and the Command Line Tools).
+
+`passbox init` binds the store to this Mac's Secure Enclave, with no passphrase. The store then opens on this Mac only, so losing the Mac loses the secrets unless sync is turned on. Linux and sync are covered in the [README](https://github.com/gabrielkoerich/passbox#install).
+
 ## Reading a secret
 
 ```bash
@@ -97,7 +110,7 @@ a fresh provider on every call mints a fresh grant every call, and each one is a
 def manager() -> CredentialManager: ...
 ```
 
-Symptom: repeated prompts for the same secret in a loop or per request. Check the audit log —
+Symptom: repeated prompts for the same secret in a loop or per request. Check the audit log:
 repeated `approved` for one secret and one agent means the provider is being rebuilt.
 
 ### A failed grant must never stop the job
