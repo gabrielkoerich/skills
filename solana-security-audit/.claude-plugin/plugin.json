@@ -1,4 +1,4 @@
 {
   "name": "solana-security-audit",
-  "description": "Comprehensive Solana smart contract security auditor. Covers 50+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, oracle manipulation, Token-2022 extension risks, upgrade authority, on-chain randomness, and real-world case studies through 2026 (Loopscale, DeFiTuna, Drift)."
+  "description": "Comprehensive Solana smart contract security auditor. Covers 60+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, oracle manipulation, Token-2022 extension risks, donation and forced-balance accounting DoS, asymmetric paired accounting, loss-blind refreshes, JIT deposit sniping, durable-nonce replay on admin instructions, the on-chain/off-chain trust boundary (forged events, keeper keys), upgrade authority, on-chain randomness, and real-world case studies through 2026 (Loopscale, DeFiTuna, Drift)."
 }
