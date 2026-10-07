@@ -1,0 +1,4 @@
+{
+  "name": "ui-screenshot",
+  "description": "Capture a PNG screenshot of any URL with a headless Chromium-family browser over CDP (Brave preferred, no Playwright needed), with phone viewports, browser language lists and a layout check. Use it whenever the user asks you to look at, check or visually verify a page or a frontend change, test it on mobile, or test a language redirect. Output PNG goes to /tmp/ui-shot.png by default; read it back with the Read tool."
+}
