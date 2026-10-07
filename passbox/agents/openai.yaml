@@ -1,0 +1,4 @@
+version: 1
+display_name: "Passbox"
+short_description: "Read secrets from passbox, inject them into a child process, and stop Touch ID prompts in an unattended job using injection at launch or a scoped grant token. Use when a script, daemon or agent needs a credential, when repeated fingerprint prompts are blocking something long-running, or when working on the passbox store itself."
+default_prompt: "Use the passbox skill for this task."
