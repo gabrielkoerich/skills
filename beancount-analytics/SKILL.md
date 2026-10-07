@@ -18,7 +18,7 @@ Generate fast financial summaries from a Beancount ledger, including:
 pip install beancount
 
 # Using uv
-uv install beancount
+uv add beancount
 ```
 
 ## Commands
