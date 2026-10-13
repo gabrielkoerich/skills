@@ -61,8 +61,3 @@ jobs:
           zola-version: "0.19.2"
           deploy: "true"
           cloudflare-token: ${{ secrets.CF_API_TOKEN }}
-          extra: |
-            author = "Gabriel Koerich"
-            home_url = "https://gabrielkoerich.com"
-            tagline = "Senior Engineer · AI Workflows · Solana / DeFi"
-            nav = [{ name = "Docs", url = "@/_index.md" }, { name = "Projects", url = "https://projects.gabrielkoerich.com" }]
