@@ -61,3 +61,4 @@ jobs:
           zola-version: "0.19.2"
           deploy: "true"
           cloudflare-token: ${{ secrets.CF_API_TOKEN }}
+          indexnow-key: 1d0e571ac19d48adf5e168b3585deb31
