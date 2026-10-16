@@ -1,6 +1,6 @@
 ---
 name: solana-security-audit
-description: "Comprehensive Solana smart contract security auditor. Covers 60+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, oracle manipulation, Token-2022 extension risks, donation and forced-balance accounting DoS, asymmetric paired accounting, loss-blind refreshes, JIT deposit sniping, durable-nonce replay on admin instructions, the on-chain/off-chain trust boundary (forged events, keeper keys), upgrade authority, on-chain randomness, and real-world case studies through 2026 (Loopscale, DeFiTuna, Drift)."
+description: "Comprehensive Solana smart contract security auditor. Covers 65+ attack vectors across Anchor, native Rust, and Pinocchio: sealevel attacks, arithmetic safety, CPI exploits, oracle manipulation, Token-2022 extension risks, donation and forced-balance accounting DoS, asymmetric paired accounting, loss-blind refreshes, JIT deposit sniping, exposure limits on the wrong base or grouping, multi-asset denomination collapse, durable-nonce replay on admin instructions, the on-chain/off-chain trust boundary (forged events, CPI log spoofing, unauthenticated webhooks, sponsored fee payers, keeper keys), upgrade authority, on-chain randomness, and real-world case studies through 2026 (Loopscale, DeFiTuna, Drift)."
 ---
 
 # Solana Security Audit
@@ -75,7 +75,7 @@ description: "Comprehensive Solana smart contract security auditor. Covers 60+ a
  - H50: State compression / cNFT proof validation
  - H51: Address Lookup Table risks
 
-### Section I: Economic & Accounting Invariants (52-59)
+### Section I: Economic & Accounting Invariants (52-61)
  - I52: Donation / forced-balance griefing on strict accounting invariants (`require_eq!` against a donatable balance)
  - I53: Vault share-price inflation via donation (first depositor, round to zero)
  - I54: Griefable liveness on attacker-influenced inputs
@@ -84,11 +84,15 @@ description: "Comprehensive Solana smart contract security auditor. Covers 60+ a
  - I57: Just-in-time deposits against a stale upstream rate
  - I58: Full-balance sweep instead of measured delta
  - I59: Unbounded protocol-funded subsidy
+ - I60: Exposure limits on the wrong base (fixed liabilities in the total) or the wrong grouping (names instead of failure domains)
+ - I61: Denomination collapse in multi-asset accounting (secondary-asset value claimed as primary at par)
 
-### Section J: On-Chain / Off-Chain Trust Boundary (60-62)
- - J60: Unauthenticated identity fields in emitted events
- - J61: On-chain action not binding the account off-chain code assumes
- - J62: Keeper key acting on unvalidated off-chain input
+### Section J: On-Chain / Off-Chain Trust Boundary (62-66)
+ - J62: Unauthenticated identity fields in emitted events
+ - J63: On-chain action not binding the account off-chain code assumes
+ - J64: Keeper key acting on unvalidated off-chain input
+ - J65: Forged transaction provenance at the consumer (CPI log attribution, signer read from an event, unauthenticated webhook)
+ - J66: Sponsored fee payer signing user-shaped transactions (uncapped priority fee)
 
 For detailed patterns with full insecure/secure/recommended code, see [VULNERABILITY_PATTERNS.md](references/VULNERABILITY_PATTERNS.md).
 
@@ -105,7 +109,7 @@ For detailed patterns with full insecure/secure/recommended code, see [VULNERABI
 ## When NOT to Use
 
 - For non-Solana blockchain code (use `evm-contract-audit` for Solidity)
-- For off-chain client code that doesn't contain program logic
+- For off-chain code in a repo with no Solana program (indexers, keepers, webhooks or a fee-sponsoring API shipped with the program are in scope under Section J)
 - For pure frontend/UI reviews with no on-chain interaction logic
 - For development best practices, testing, or Token-2022 compatibility guidance (use `solana-best-practices`)
 
@@ -140,6 +144,10 @@ For detailed patterns with full insecure/secure/recommended code, see [VULNERABI
 - "The rate limiter bounds how much can be booked" -- A rejected refresh does not move the timestamp, so the same increase is accepted later once enough time has gone by. Rate limiters delay.
 - "It's our own event, we emitted it" -- If the event fields came from instruction arguments, you emitted whatever the caller sent. Build events consumed by trusted off-chain code from `ctx.accounts`.
 - "The keeper isn't part of the audit" -- If it holds a key the program trusts to act for users, it is a privileged role, and its inputs are attack surface.
+- "Each position is under its cap, so we are diversified" -- Only if the cap is grouped by real failure domain and measured against loss-absorbing funds. Positions behind one bridge or adapter fail together, and a total that includes queued withdrawals lets a position exceed the buffer it is sized against.
+- "Both assets are stablecoins, we count them at par" -- Then every path that turns secondary-asset value into a primary-asset claim (fee claims, yield, injections, combined balance checks) is a par swap an attacker can use during a depeg.
+- "Only our program can emit our events" -- Any program can write a `Program data:` line. A parser that loses track of the invocation stack after a CPI, or a webhook whose body is trusted without refetching the transaction, accepts events nobody emitted.
+- "Sponsorship needs a login, so it is safe" -- A login says who asked, not what the sponsor will pay. If the caller sets the priority fee or compute price, they set the sponsor's loss.
 - "We block durable nonces, so admin freshness is handled" -- Blocking `AdvanceNonceAccount` only restores the default blockhash expiry. Check that every privileged handler has the guard, that any opt-out flag's setter is guarded too, and remember it does nothing against a stolen key.
 
 ## How This Skill Works
@@ -148,7 +156,7 @@ When invoked, I will:
 
 1. **Locate Solana programs** -- Find `lib.rs` files under `programs/`, check for `#[program]`, `entrypoint!`, or Pinocchio markers
 2. **Determine framework** -- Anchor (with protections), native Rust (manual checks), or Pinocchio (zero-copy, no protections)
-3. **Scan for all attack vectors** -- Check each instruction handler and account struct against 62 patterns across sections A-J
+3. **Scan for all attack vectors** -- Check each instruction handler and account struct against 66 patterns across sections A-J
 4. **Report findings** with severity, file location, vulnerable code, and recommended fix
 5. **Prioritize by severity** -- CRITICAL findings first, then HIGH, then MEDIUM
 
@@ -258,14 +266,18 @@ When invoked, I will:
 | I57 | JIT Deposit Against Stale Rate | MEDIUM-HIGH | Refresh the upstream rate in the same transaction before minting shares |
 | I58 | Full-Balance Sweep vs Delta | MEDIUM-HIGH | Credit `after - before` around your own CPI, never `account.amount` |
 | I59 | Unbounded Subsidy | MEDIUM | Compute subsidized amounts on chain, cap per user, provide a reclaim path |
+| I60 | Exposure Base / Grouping | HIGH | Cap = loss-absorbing funds, checked against the same quantity, grouped by explicit failure domain |
+| I61 | Denomination Collapse | MEDIUM-HIGH | Fees, yield and claims keep their source asset, solvency checked per asset |
 
 ### Section J: On-Chain / Off-Chain Trust Boundary
 
 | # | Attack | Severity | What to Check |
 |---|--------|----------|---------------|
-| J60 | Unauthenticated Event Identity | HIGH | `emit!` reads `ctx.accounts.*.key()`, never instruction arguments |
-| J61 | Unbound Account vs Off-Chain Assumption | MEDIUM | PDA constraints on every path, not only the create branch |
-| J62 | Keeper Key on Unvalidated Input | MEDIUM-HIGH | Audit the input channel that steers the keeper key, along with the key |
+| J62 | Unauthenticated Event Identity | HIGH | `emit!` reads `ctx.accounts.*.key()`, never instruction arguments |
+| J63 | Unbound Account vs Off-Chain Assumption | MEDIUM | PDA constraints on every path, not only the create branch |
+| J64 | Keeper Key on Unvalidated Input | MEDIUM-HIGH | Audit the input channel that steers the keeper key, along with the key |
+| J65 | Forged Transaction Provenance | MEDIUM-HIGH | Invocation-stack log parsing, signers from the message, webhooks refetched from RPC |
+| J66 | Sponsored Fee Payer | MEDIUM | Capped priority fee set on the server, decode before signing, session bound to the owner |
 
 ## Scanning Workflow
 
@@ -425,12 +437,12 @@ rg -n -i "require_gt!\(shares|zero.?share|virtual_" programs/
 
 **Triage every hit by its operator**:
 - `>=` in the safe direction (live >= tracked): fine, a donation is absorbed.
-- `==` between a live balance and tracked state: an **I52 finding**. Then check whether the gap survives a deposit and withdraw cycle (it almost always does) and whether any instruction can re-sync the tracked value. With no re-sync path, escalate to CRITICAL and say that recovery needs a program upgrade.
+- `==` between a live balance and tracked state: an **I52 finding**. Then check whether the gap survives a deposit and withdraw cycle (it almost always does) and whether any instruction can re-sync the tracked value. With no re-sync path, escalate to CRITICAL and say that recovery needs a program upgrade. An admin bookkeeping instruction that can book exactly the surplus (a loss or injection entry) counts as a re-sync path: then rate the finding by how long users stay blocked before an admin acts, usually MEDIUM to HIGH.
 - `<=`, or `==` in the other direction: look for the reverse bug, a shortfall that goes unnoticed.
 
 Programs often get this right in one helper and wrong in another. When the main asset path uses a tolerant check, grep the helpers for secondary assets and newly added collateral, which is where a strict check tends to survive.
 
-### Step 4.7: Scan the Accounting Model (I55-I59)
+### Step 4.7: Scan the Accounting Model (I55-I61)
 
 Step 4.6 finds checks that exist and are wrong. This step finds accounting that is never checked. It is mostly reading, and these greps tell you where to read.
 
@@ -451,7 +463,21 @@ rg -n "reload\(\)\?;" programs/ -A 12 | rg "\.amount"
 
 # I59: caller-controlled subsidies from a shared treasury
 rg -n -i "treasury|subsid|rent" programs/ -B 4 -A 10 | rg "transfer|lamports"
+
+# I60: exposure weight from one base, target or check against another, families from id slices
+rg -n -i "max_weight|max_exposure|target" programs/ -B 6 -A 12
+rg -n -i "fn parent|family|group" programs/ -A 6 | rg "\[\.\.|\[0\.\."
+
+# I61: value that loses its asset on the way to a claim
+rg -n -i "fn \w*claim\w*|accumulated_\w*fee|unclaimed" programs/ -A 20 | rg -i "mint|asset|primary"
+
+# I54 rate-limiter variant: a live receipt balance valued and APY-gated
+rg -n -i "apy|max_rate|rate_limit" programs/ -B 6 -A 6 | rg "\.amount|require|return Err"
 ```
+
+**I57 has two layers.** Check cached upstream rates, and also the vault's own cached price: a deposit that only checks the price's age mints shares against yield that is earned but not yet booked, and the next update pays part of it to the new shares.
+
+**For I60**, write the exposure promise as one inequality (for example "losing any one failure domain is covered by the junior buffer") and check that the code enforces that exact inequality. Then list every position with the programs its CPIs reach, and group them by shared dependency rather than by name.
 
 **The question that finds I55 and I56**, which no grep can ask for you: for each quantity the program tracks, which paths move it, and do they all move its counterpart? Build the table. A field written in six places whose pair is written in four is the finding, and the two missing paths are usually a fee path and an admin path.
 
@@ -487,9 +513,9 @@ For each privileged instruction, answer the checklist in [H47 of VULNERABILITY_P
 
 Report it as: *"`transfer_admin`, `change_config` and `claim_fees` carry no program-enforced expiry or sequence number. A signature obtained today (durable nonce, social engineering, or an old hardware-wallet approval) stays executable indefinitely. Recommend an expiry and a sequence number, or a timelocked two-step flow with a guardian veto."* Flag single-step authority transfers here too, since they compound this (B18).
 
-### Step 4.9: Scan the Off-Chain Trust Boundary (J60-J62)
+### Step 4.9: Scan the Off-Chain Trust Boundary (J62-J66)
 
-Run this only when the repo ships the consumers (indexer, keeper, worker, bot) with the program. If it does, they are in scope: an attacker who cannot move funds on chain can often make a trusted keeper move them.
+Run this only when the repo ships the consumers (indexer, webhook receiver, keeper, worker, bot, transaction-building API) with the program. If it does, they are in scope: an attacker who cannot move funds on chain can often make a trusted keeper move them.
 
 ```bash
 # 1. What can the keeper key do, and does any of it act for a user?
@@ -500,9 +526,16 @@ rg -n "emit!\(" programs/ -A 10 | rg -v "ctx\.accounts|\.key\(\)"
 
 # 3. Off-chain consumers of those events
 rg -l -i "keeper|crank|cron|worker|queue|indexer" --glob '!programs/**' .
+
+# 4. J65: how does the consumer decide a log is ours, and who signed?
+rg -n "Program data:|logMessages|invoke \[" --glob '!programs/**' . -B 3 -A 12
+rg -n -i "webhook|app\.post|router\.post" --glob '!programs/**' . -A 20 | rg -i "auth|secret|signature|getTransaction"
+
+# 5. J66: what does a sponsored fee payer sign?
+rg -n -i "feePayer\s*=|partialSign|sponsor|priorityFee|setComputeUnitPrice" --glob '!programs/**' . -B 4 -A 6
 ```
 
-Then trace one path end to end: instruction, emitted event, indexer row, keeper action, on-chain effect. At each hop, ask what an unprivileged attacker controls. Look hard at consumer checks where both sides of a comparison come from the same event field: they read as validation and enforce nothing. Also check the queue for retry caps, a terminal failure state, and whether one job type can starve another.
+Then trace one path end to end: instruction, emitted event, indexer row, keeper action, on-chain effect. At each hop, ask what an unprivileged attacker controls. For the first hop, ask how the consumer learned of the transaction (a webhook body, or a refetch from its own RPC) and how it decided which program wrote each log line. A wrapper program can CPI into yours and then log a fake event of its own. Look hard at consumer checks where both sides of a comparison come from the same event field: they read as validation and enforce nothing. Also check the queue for retry caps, a terminal failure state, and whether one job type can starve another.
 
 ### Step 5: Cross-Reference Findings
 
@@ -598,7 +631,8 @@ Use the finding template below. Group by severity.
 - I53 Share-price inflation via donation -- first depositor captures later deposits through rounding
 - I56 Rejecting adverse observations -- the protocol quotes a pre-loss price it cannot update while informed holders exit
 - I58 Full-balance sweep vs measured delta -- a donation is booked as proceeds or as yield
-- J60 Unauthenticated event identity -- an unprivileged attacker steers a trusted keeper key
+- J62 Unauthenticated event identity -- an unprivileged attacker steers a trusted keeper key
+- I60 Exposure limit on the wrong base or grouping -- one compliant position or shared-dependency failure exceeds the buffer and reaches senior funds
 
 ### MEDIUM (Improve before mainnet)
 - C21 Remaining accounts -- unvalidated dynamic accounts
@@ -614,8 +648,11 @@ Use the finding template below. Group by severity.
 - I55 Asymmetric paired accounting -- ghost debt, caps released before the risk leaves, fee basis drift
 - I57 JIT deposit against a stale rate -- a late depositor captures earlier yield
 - I59 Unbounded protocol-funded subsidy -- shared treasury drained at transaction-fee cost
-- J61 Unbound account vs off-chain assumption -- jobs that can never settle, queue starvation
-- J62 Keeper key on unvalidated input -- severity follows what the keeper may do
+- J63 Unbound account vs off-chain assumption -- jobs that can never settle, queue starvation
+- J64 Keeper key on unvalidated input -- severity follows what the keeper may do
+- I61 Denomination collapse -- secondary-asset value claimed as primary at par (HIGH with a depeg path)
+- J65 Forged transaction provenance -- CPI log spoofing, signer read from an event, unauthenticated webhook (severity follows what the keeper may do)
+- J66 Sponsored fee payer -- a caller-chosen priority fee drains the sponsor wallet
 
 ## Testing Recommendations
 
@@ -718,8 +755,27 @@ describe("security audit tests", () => {
   // I59: Subsidy
   it("refuses to subsidize a second account for the same user", async () => {});
 
-  // J60: Event identity
+  // I54 rate-limiter variant
+  it("still refreshes after receipt tokens are donated to the receipt account", async () => {});
+
+  // I57 own-price variant
+  it("gives a deposit made just before an update no share of that update's gain", async () => {});
+
+  // I60: Exposure base and grouping
+  it("rejects a position larger than the junior buffer after large withdrawal requests", async () => {});
+  it("caps the sum of positions that share one bridge or adapter", async () => {});
+
+  // I61: Denomination
+  it("settles a fee charged in a secondary asset in that asset", async () => {});
+
+  // J62: Event identity
   it("emits the signer's key, not a key passed in instruction data", async () => {});
+  it("ignores an event that references another user's job id", async () => {});
+
+  // J65 / J66 (consumer-side tests)
+  it("ignores a Program data log written by a wrapper after a depth-2 CPI returns", async () => {});
+  it("rejects a webhook body for a signature RPC cannot find", async () => {});
+  it("refuses to sponsor a transaction whose priority fee exceeds the cap", async () => {});
 });
 ```
 

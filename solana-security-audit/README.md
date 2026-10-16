@@ -1,6 +1,6 @@
 # Solana Security Audit
 
-Comprehensive Solana smart contract security auditor covering 62 attack vectors across Anchor, native Rust, and Pinocchio frameworks.
+Comprehensive Solana smart contract security auditor covering 66 attack vectors across Anchor, native Rust, and Pinocchio frameworks.
 
 ## Overview
 
@@ -18,8 +18,8 @@ This skill systematically scans Solana programs for security vulnerabilities acr
 | F: Oracle & Price Feeds | F36-F38 (3) | Pyth/Switchboard staleness & confidence, spot-price manipulation, feed substitution |
 | G: Token-2022 Extensions | G39-G43 (5) | Program confusion, transfer fees, transfer hooks, permanent delegate, amount semantics |
 | H: Modern Anchor & Runtime | H44-H51 (8) | init_if_needed, zero-copy, randomness, durable nonce, upgrade authority, compute DoS, cNFT, ALT |
-| I: Economic & Accounting Invariants | I52-I59 (8) | Donation DoS, share-price inflation, paired accounting, loss-blind refresh, JIT deposits, full-balance sweeps, unbounded subsidy |
-| J: On-Chain / Off-Chain Trust Boundary | J60-J62 (3) | Forged event identity, unbound accounts vs off-chain assumptions, keeper keys on unvalidated input |
+| I: Economic & Accounting Invariants | I52-I61 (10) | Donation DoS, share-price inflation, paired accounting, loss-blind refresh, JIT deposits, full-balance sweeps, unbounded subsidy, exposure base and grouping, denomination collapse |
+| J: On-Chain / Off-Chain Trust Boundary | J62-J66 (5) | Forged event identity, unbound accounts vs off-chain assumptions, keeper keys on unvalidated input, forged transaction provenance (CPI logs, webhooks), sponsored fee payers |
 
 ## Sources
 
