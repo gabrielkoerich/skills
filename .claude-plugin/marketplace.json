@@ -41,6 +41,11 @@
       "homepage": "https://camsnap.ai"
     },
     {
+      "name": "compress-pdf",
+      "source": "./compress-pdf",
+      "description": "Shrink a scanned PDF under a size limit by recompressing each full-page image. Use when the user asks to compress a PDF, make a PDF smaller, or get a PDF under a size such as 1 MB or 3 MB. Run /compress-pdf."
+    },
+    {
       "name": "contract-decoder",
       "source": "./contract-decoder",
       "description": "Decode and reverse-engineer smart contract binaries for security research. Solana: extract instructions, discriminators, PDAs, and error codes from .so files. EVM: decompile bytecode to recover function selectors and storage layout. Use for bug bounty recon, verifying deployed code, or analyzing closed-source contracts."
