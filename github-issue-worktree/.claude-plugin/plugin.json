@@ -1,4 +1,4 @@
 {
   "name": "github-issue-worktree",
-  "description": "Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories. Use it when the user explicity ask to work in a given github issue."
+  "description": "Manage an isolated worktree per GitHub issue. Register the branch with `gh issue develop`, then create, list, and remove the worktree with `git cow` only, by following the git-worktrees skill. The default directory is `~/.worktrees/<project>/`. Use it when the user explicitly asks to work on a GitHub issue."
 }
