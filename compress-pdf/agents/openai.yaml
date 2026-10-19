@@ -1,0 +1,4 @@
+version: 1
+display_name: "Compress PDF"
+short_description: "Shrink a scanned PDF under a size limit by recompressing each full-page image. Use when the user asks to compress a PDF, make a PDF smaller, or get a PDF under a size such as 1 MB or 3 MB. Run /compress-pdf."
+default_prompt: "Use the compress-pdf skill for this task."
