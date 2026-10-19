@@ -1,4 +1,4 @@
 version: 1
-display_name: "Git Worktrees"
-short_description: "Manage plain Git worktree feature branches without issue linking. Create a feature branch worktree, develop in isolation, push, and open a PR with commit-based changes summary."
+display_name: "git-worktrees"
+short_description: "Create, list, and remove worktrees with git cow. Copy-on-write, so they use less disk space. Default directory ~/.worktrees/<project>/."
 default_prompt: "Use the git-worktrees skill for this task."

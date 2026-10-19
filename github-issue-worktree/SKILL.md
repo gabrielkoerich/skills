@@ -1,11 +1,11 @@
 ---
 name: github-issue-worktree
-description: Manage Git worktrees for isolated development environments per GitHub issue. Use `gh issue develop` to register linked branches and `git worktree` for isolated directories. Use it when the user explicity ask to work in a given github issue.
+description: Manage an isolated worktree per GitHub issue. Register the branch with `gh issue develop`, then create, list, and remove the worktree with `git cow` only, by following the git-worktrees skill. The default directory is `~/.worktrees/<project>/`. Use it when the user explicitly asks to work on a GitHub issue.
 ---
 
 # Git Issue Worktree Workflow Skill
 
-This skill defines a standardized workflow for managing tasks using Git worktrees, enabling isolated development environments for each issue while maintaining a clean main workspace.
+This skill is the issue workflow. The worktree belongs to the git-worktrees skill. Read that skill and follow it. Call `git cow` only. A new worktree goes in `~/.worktrees/<project>/`. If `git cow list` already has the branch under `<project>/.claude/worktrees`, use that path.
 
 ---
 
@@ -65,8 +65,7 @@ Git worktree allows you to have multiple working directories attached to the sam
 │                                                                 │
 │  4. CLEANUP (after merge)                                       │
 │     ├── Update labels: status:in-progress → status:done         │
-│     ├── Remove local worktree + local branch                   │
-│     └── Prune stale worktree metadata                           │
+│     └── git cow remove --warm, from the main checkout          │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -77,22 +76,20 @@ Git worktree allows you to have multiple working directories attached to the sam
 
 Define names first and reuse them in all commands:
 
-- `REPO_ROOT`: absolute repository root path from `git rev-parse --show-toplevel`
-- `PROJECT_NAME`: directory name derived from `basename "$REPO_ROOT"`
+- `PROJECT_NAME`: directory name of the main checkout
 - `WORKTREE_ROOT`: `~/.worktrees/<project-name>/`
 - `BRANCH_NAME`: `gh-task-{issueId}-{shortTitle}`
 - `shortTitle`: issue title slug (lowercase, spaces and special characters replaced with `-`)
 - `WORKTREE_PATH`: `~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}`
 
-Compute these before creating any worktree:
+Compute these before creating any worktree. This stays correct when the current directory is already a worktree:
 
 ```bash
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-PROJECT_NAME="$(basename "$REPO_ROOT")"
+common=$(git rev-parse --path-format=absolute --git-common-dir)
+PROJECT_NAME=$(basename "$(dirname "$common")")
 WORKTREE_ROOT="$HOME/.worktrees/$PROJECT_NAME"
 BRANCH_NAME="gh-task-{issueId}-{shortTitle}"
 WORKTREE_PATH="$WORKTREE_ROOT/$BRANCH_NAME"
-mkdir -p "$WORKTREE_ROOT"
 ```
 
 ## Step-by-Step Instructions
@@ -130,17 +127,11 @@ gh issue develop {issueId} \
 #### 1.3 Create the Worktree from the Linked Branch
 
 ```bash
-# Attach a separate working directory to the branch created above
-git worktree add ~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle} gh-task-{issueId}-{shortTitle}
-
-# Navigate to the new worktree
+git cow add ~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle} gh-task-{issueId}-{shortTitle}
 cd ~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}
 ```
 
-**What this does:**
-- `gh issue develop` creates and links the branch in GitHub's Development graph
-- `git worktree add` creates a separate local directory for that linked branch
-- The new worktree shares the same `.git` object database (space efficient)
+The branch already exists, so the path comes first. Follow the git-worktrees skill for that command.
 
 **Important:** Avoid `gh issue develop --checkout` when you plan to use worktrees. A branch can only be checked out in one worktree at a time.
 
@@ -238,21 +229,13 @@ gh issue edit {issueId} \
 
 #### 4.2 Remove Worktree and Local Branch
 
-```bash
-# Navigate back to main repository
-
-# Remove the worktree (this also deletes the directory)
-git worktree remove ~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}
-
-# Clean up local branch after merge
-git branch -d gh-task-{issueId}-{shortTitle}
-```
-
-#### 4.3 Prune Metadata
+From the main checkout, follow the git-worktrees skill:
 
 ```bash
-git worktree prune
+git cow remove --warm ~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}
 ```
+
+This removes the worktree and deletes the branch when it is merged.
 
 ---
 
@@ -261,38 +244,16 @@ git worktree prune
 ### Worktree Management
 
 ```bash
-# List all worktrees
-git worktree list
-
-# Create new worktree
-git worktree add <path> [<branch>]
-
-# Remove worktree
-git worktree remove <path>
-
-# Prune stale worktrees (removes tracking for deleted directories)
-git worktree prune
-
-# Lock a worktree (prevent automatic removal)
-git worktree lock <path>
-
-# Unlock a worktree
-git worktree unlock <path>
+git cow list
+git cow add ~/.worktrees/<project-name>/gh-task-{id} gh-task-{id}
+git cow remove --warm ~/.worktrees/<project-name>/gh-task-{id}
 ```
 
 ### Branch from Specific Base
 
 ```bash
-# Preferred: register linked branch first, then attach worktree
 gh issue develop {id} --base main --name gh-task-{id}
-git worktree add ~/.worktrees/<project-name>/gh-task-{id} gh-task-{id}
-```
-
-### Move Worktree
-
-```bash
-# Relocate a worktree
-git worktree move <old-path> <new-path>
+git cow add ~/.worktrees/<project-name>/gh-task-{id} gh-task-{id}
 ```
 
 ---
@@ -307,26 +268,12 @@ git worktree move <old-path> <new-path>
 
 ### Worktree Root Strategy
 
-Use a dedicated directory outside repositories to avoid status noise and accidental commits.
-
-- Recommended: `~/.worktrees/<project-name>/`
-- Alternative: `./worktrees/` if you want repo-local organization
-- Required for project-local mode: keep `/worktrees/` in `.gitignore`
-
-Compute the default worktree root from the current repository:
+The default directory is `~/.worktrees/<project-name>/`. Follow the git-worktrees skill for the path. An existing Claude Code worktree under `<project>/.claude/worktrees` stays there.
 
 ```bash
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-PROJECT_NAME="$(basename "$REPO_ROOT")"
+common=$(git rev-parse --path-format=absolute --git-common-dir)
+PROJECT_NAME=$(basename "$(dirname "$common")")
 WORKTREE_ROOT="$HOME/.worktrees/$PROJECT_NAME"
-mkdir -p "$WORKTREE_ROOT"
-```
-
-If you use a project-local root, ignore it in Git:
-
-```bash
-echo "/worktrees/" >> .gitignore
-git add .gitignore
 ```
 
 ### Example
@@ -355,26 +302,15 @@ For issue #42 "Add user authentication":
 ### Worktree Already Exists
 
 ```bash
-# If you get "already checked out" error
-git worktree list  # Check existing worktrees
-git worktree remove <path>  # Remove if stale
+git cow list
 ```
 
-### Permission Errors
-
-```bash
-# If worktree removal fails due to permissions
-# Manually delete directory, then:
-git worktree prune
-```
+Reuse the path it prints for that branch.
 
 ### Branch Already Exists
 
 ```bash
-# Create worktree from existing branch
-git worktree add ~/.worktrees/<project-name>/gh-task-{id} gh-task-{id}
-
-# Optionally register the existing branch to an issue
+git cow add ~/.worktrees/<project-name>/gh-task-{id} gh-task-{id}
 gh issue develop {id} --name gh-task-{id}
 ```
 
@@ -404,31 +340,13 @@ BRANCH_NAME="gh-task-${ISSUE_ID}-${BRANCH_SLUG}"
 
 # Configurable defaults
 BASE_BRANCH="${BASE_BRANCH:-main}"
-REPO_ROOT=$(git rev-parse --show-toplevel)
-REPO_NAME=$(basename "$REPO_ROOT")
+common=$(git rev-parse --path-format=absolute --git-common-dir)
+REPO_NAME=$(basename "$(dirname "$common")")
 WORKTREE_ROOT="${WORKTREE_ROOT:-$HOME/.worktrees/$REPO_NAME}"
 WORKTREE_PATH="$WORKTREE_ROOT/$BRANCH_NAME"
 
-mkdir -p "$WORKTREE_ROOT"
-
-# If using project-local worktrees, ensure they are ignored by git
-case "$WORKTREE_ROOT/" in
-  "$REPO_ROOT"/*)
-    IGNORE_REL="/${WORKTREE_ROOT#$REPO_ROOT/}/"
-    touch "$REPO_ROOT/.gitignore"
-    if ! grep -Fxq "$IGNORE_REL" "$REPO_ROOT/.gitignore"; then
-      echo "$IGNORE_REL" >> "$REPO_ROOT/.gitignore"
-      echo "📝 Added $IGNORE_REL to .gitignore"
-    fi
-    ;;
-esac
-
-# Idempotency: if branch is already checked out in another worktree, reuse that path
-EXISTING_BRANCH_PATH=$(git worktree list --porcelain \
-  | awk -v b="refs/heads/$BRANCH_NAME" '
-      $1=="worktree"{wt=$2}
-      $1=="branch" && $2==b{print wt; exit}
-    ')
+# If the branch is already checked out, reuse that path
+EXISTING_BRANCH_PATH=$(git cow list | awk -F '\t' -v b="$BRANCH_NAME" '$2==b {print $1; exit}')
 
 if [ -n "$EXISTING_BRANCH_PATH" ]; then
   echo "ℹ️ Branch $BRANCH_NAME is already checked out at:"
@@ -437,13 +355,9 @@ if [ -n "$EXISTING_BRANCH_PATH" ]; then
   exit 0
 fi
 
-# Prevent path collisions by adding numeric suffix if needed
 if [ -e "$WORKTREE_PATH" ]; then
-  i=2
-  while [ -e "${WORKTREE_PATH}-$i" ]; do
-    i=$((i + 1))
-  done
-  WORKTREE_PATH="${WORKTREE_PATH}-$i"
+  echo "Path already exists: $WORKTREE_PATH"
+  exit 1
 fi
 
 # 1. Comment on issue
@@ -468,7 +382,7 @@ gh issue develop --list "$ISSUE_ID"
 
 # 3. Create local worktree from linked branch
 echo "🔧 Creating worktree..."
-git worktree add "$WORKTREE_PATH" "$BRANCH_NAME"
+git cow add "$WORKTREE_PATH" "$BRANCH_NAME"
 
 echo "✅ Worktree created at: $WORKTREE_PATH"
 echo "📁 Navigate with: cd $WORKTREE_PATH"
@@ -486,7 +400,7 @@ echo "  6. Use 'Related to #${ISSUE_ID}' (relation only) or 'Closes #${ISSUE_ID}
 
 ## Related Documentation
 
-- [Git Worktree Documentation](https://git-scm.com/docs/git-worktree)
+- the git-worktrees skill
 - [GitHub CLI Documentation](https://cli.github.com/manual/)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 
@@ -498,7 +412,7 @@ Use this checklist for each task:
 
 - [ ] Comment on issue with "## 🚀 Starting Work" and plan
 - [ ] Register branch link: `gh issue develop {id} --base main --name gh-task-{id}-{title}`
-- [ ] Create worktree: `git worktree add ~/.worktrees/<project-name>/gh-task-{id}-{title} gh-task-{id}-{title}`
+- [ ] Create worktree: `git cow add ~/.worktrees/<project-name>/gh-task-{id}-{title} gh-task-{id}-{title}`
 - [ ] Implement solution in worktree
 - [ ] Commit changes with descriptive messages
 - [ ] Push branch to remote
@@ -506,5 +420,4 @@ Use this checklist for each task:
 - [ ] Ensure PR description includes `Closes #{issueId}` (auto-close) or `Related to #{issueId}` (relation only)
 - [ ] Comment "## ✅ Task Completed" on issue
 - [ ] Update labels: remove `status:in-progress`, add `status:done`
-- [ ] Remove worktree and local branch after merge
-- [ ] Prune metadata: `git worktree prune`
+- [ ] From the main checkout, `git cow remove --warm` on the worktree path
