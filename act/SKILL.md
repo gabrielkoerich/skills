@@ -1,6 +1,6 @@
 ---
 name: act
-description: "Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing."
+description: "Run GitHub Actions workflows locally with act. Use it whenever you create or change a file in .github/workflows, before pushing that change, to debug a failing CI job without a push and wait, and whenever the user asks to run, test or reproduce CI locally. Prefer it over pushing to see if a workflow works."
 ---
 
 # act Skill
@@ -14,11 +14,13 @@ Run GitHub Actions workflows locally with [act](https://github.com/nektos/act). 
 
 ## Apple Silicon
 
-Always pass `--container-architecture linux/amd64` on Apple M-series chips:
+Pass `--container-architecture linux/arm64` on Apple M-series chips. It runs natively, about three times faster than emulation for a Rust build:
 
 ```bash
-act push --container-architecture linux/amd64
+act push --container-architecture linux/arm64
 ```
+
+Use `linux/amd64` only when a step is tied to x86_64, such as downloading an `x86_64` release binary or building an image with `--platform linux/amd64`. That runs under QEMU, which is slow and differs from a real x86_64 runner: QEMU keeps the process's original environment where the kernel reports it, so a test that reads `/proc/<pid>/environ` or `ps eww` after a program wiped its own environment fails under act and passes on GitHub.
 
 ## Running workflows
 
@@ -63,6 +65,17 @@ act push -P macos-latest=catthehacker/ubuntu:act-latest
 ```
 
 If macOS-specific behavior is needed, test those jobs on real GitHub Actions.
+
+### Tools the act image lacks
+
+`catthehacker/ubuntu:act-latest` is smaller than GitHub's runner image. `cargo` and `shellcheck` are missing, and a step that assumes them fails with `command not found` (exit 127) under act only. Make the workflow install what it uses, which also pins it on GitHub:
+
+```yaml
+- uses: dtolnay/rust-toolchain@stable
+- run: command -v shellcheck >/dev/null || { sudo apt-get update -q && sudo apt-get install -yq shellcheck; }
+```
+
+Under `linux/amd64` emulation a Rust build is slow, several minutes cold, so run act in the background and read the step summary from its log.
 
 ### GitHub Actions that need event context
 
@@ -115,7 +128,7 @@ The `.secrets` file format is `KEY=VALUE`, one per line.
 | `--env KEY=VAL` | Set environment variable |
 | `--env-file .env` | Load env vars from file |
 | `--matrix key:val` | Run specific matrix configuration only |
-| `--container-architecture` | Force container arch (e.g. `linux/amd64`) |
+| `--container-architecture` | Force container arch (e.g. `linux/arm64`) |
 | `-P platform=image` | Custom image per platform |
 
 ## Listing workflows
@@ -146,7 +159,7 @@ act workflow_dispatch --input version=1.2.3
 ### Test a single job quickly
 
 ```bash
-act push -j lint --container-architecture linux/amd64
+act push -j lint --container-architecture linux/arm64
 ```
 
 ### Validate workflow syntax without running
@@ -158,7 +171,7 @@ act push -n
 ### Run with bind mount (faster iteration)
 
 ```bash
-act push -j test -b --container-architecture linux/amd64
+act push -j test -b --container-architecture linux/arm64
 ```
 
 Note: `-b` mounts the working directory directly into the container instead of copying. Faster, but any file changes inside the container affect your local files.
@@ -166,7 +179,7 @@ Note: `-b` mounts the working directory directly into the container instead of c
 ### Debug a failing step
 
 ```bash
-act push -j test -v --container-architecture linux/amd64
+act push -j test -v --container-architecture linux/arm64
 ```
 
 The `-v` flag shows detailed Docker and action output.
