@@ -11,7 +11,7 @@
     {
       "name": "act",
       "source": "./act",
-      "description": "Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing."
+      "description": "Run GitHub Actions workflows locally with act. Use it whenever you create or change a file in .github/workflows, before pushing that change, to debug a failing CI job without a push and wait, and whenever the user asks to run, test or reproduce CI locally. Prefer it over pushing to see if a workflow works."
     },
     {
       "name": "apple-calendar",
@@ -107,11 +107,6 @@
       "source": "./openai-whisper",
       "description": "Local speech-to-text with the Whisper CLI (no API key).",
       "homepage": "https://openai.com/research/whisper"
-    },
-    {
-      "name": "passbox",
-      "source": "./passbox",
-      "description": "Read secrets from passbox, inject them into a child process, and stop Touch ID prompts in an unattended job using injection at launch or a scoped grant token. Use when a script, daemon or agent needs a credential, when repeated fingerprint prompts are blocking something long-running, or when working on the passbox store itself."
     },
     {
       "name": "qmd",

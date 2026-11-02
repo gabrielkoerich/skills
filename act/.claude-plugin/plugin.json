@@ -1,4 +1,4 @@
 {
   "name": "act",
-  "description": "Run GitHub Actions workflows locally using act. Test CI pipelines, debug jobs, and validate workflows before pushing."
+  "description": "Run GitHub Actions workflows locally with act. Use it whenever you create or change a file in .github/workflows, before pushing that change, to debug a failing CI job without a push and wait, and whenever the user asks to run, test or reproduce CI locally. Prefer it over pushing to see if a workflow works."
 }
