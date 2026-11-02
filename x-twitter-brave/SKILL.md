@@ -50,7 +50,8 @@ bun run read.ts https://x.com/username/status/1234567890
 
 ### Get Bookmarks
 ```bash
-bun run bookmarks.ts
+bun run bookmarks.ts              # scrolls up to 15 times, stops when nothing new loads
+bun run bookmarks.ts --scrolls 40 # scroll further back
 ```
 
 ### Search
