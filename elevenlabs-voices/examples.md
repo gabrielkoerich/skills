@@ -1,23 +1,21 @@
-# ElevenLabs Voice Personas - Usage Examples v2.0
+# ElevenLabs Voice Personas: usage examples v2.0
 
-## Table of Contents
+## Contents
 
-1. [Basic Voice Selection](#basic-voice-selection)
-2. [Multi-Language Support](#multi-language-support)
-3. [Streaming Mode](#streaming-mode)
-4. [Sound Effects](#sound-effects)
-5. [Batch Processing](#batch-processing)
-6. [Cost Tracking](#cost-tracking)
-7. [Voice Design](#voice-design)
-8. [Pronunciation Dictionary](#pronunciation-dictionary)
-9. [Agent Integration](#agent-integration)
-10. [Advanced Patterns](#advanced-patterns)
+1. [Basic voice selection](#basic-voice-selection)
+2. [Multi-language support](#multi-language-support)
+3. [Streaming mode](#streaming-mode)
+4. [Sound effects](#sound-effects)
+5. [Batch processing](#batch-processing)
+6. [Cost tracking](#cost-tracking)
+7. [Voice design](#voice-design)
+8. [Pronunciation dictionary](#pronunciation-dictionary)
+9. [Agent integration](#agent-integration)
+10. [Advanced patterns](#advanced-patterns)
 
----
+## Basic voice selection
 
-## Basic Voice Selection
-
-### Switching Voices
+### Switching voices
 ```bash
 # Use Rachel (warm, friendly)
 python3 scripts/tts.py --text "Hello there!" --voice rachel
@@ -30,7 +28,7 @@ python3 scripts/tts.py --text "Breaking news..." --voice broadcaster
 python3 scripts/tts.py --text "Today we learn..." --voice educator
 ```
 
-### Voice by Use Case
+### Voice by use case
 ```bash
 # Audiobook narration
 python3 scripts/tts.py --text "Chapter One" --voice storyteller
@@ -42,11 +40,9 @@ python3 scripts/tts.py --text "Q4 Results" --voice professional
 python3 scripts/tts.py --text "Breathe deeply..." --voice calm
 ```
 
----
+## Multi-language support
 
-## Multi-Language Support
-
-### Basic Language Synthesis
+### Basic language synthesis
 ```bash
 # German
 python3 scripts/tts.py --text "Guten Tag! Wie geht es Ihnen?" --voice rachel --lang de
@@ -67,14 +63,14 @@ python3 scripts/tts.py --text "こんにちは、お元気ですか？" --voice 
 python3 scripts/tts.py --text "你好，你好吗？" --voice adam --lang zh
 ```
 
-### List All Languages
+### List all languages
 ```bash
 python3 scripts/tts.py --languages
 ```
 
-### Language-Specific Examples
+### Language examples
 
-**German Business Presentation:**
+German Business Presentation:
 ```bash
 python3 scripts/tts.py \
   --text "Willkommen zur Quartalsübersicht. Heute präsentieren wir unsere Ergebnisse." \
@@ -83,7 +79,7 @@ python3 scripts/tts.py \
   --output german_presentation.mp3
 ```
 
-**French Storytelling:**
+French Storytelling:
 ```bash
 python3 scripts/tts.py \
   --text "Il était une fois, dans un royaume lointain, une princesse courageuse..." \
@@ -92,7 +88,7 @@ python3 scripts/tts.py \
   --output french_story.mp3
 ```
 
-**Spanish Tutorial:**
+Spanish Tutorial:
 ```bash
 python3 scripts/tts.py \
   --text "En esta lección, aprenderemos los conceptos básicos." \
@@ -101,17 +97,15 @@ python3 scripts/tts.py \
   --output spanish_tutorial.mp3
 ```
 
----
+## Streaming mode
 
-## Streaming Mode
-
-### Basic Streaming
+### Basic streaming
 ```bash
 # Stream audio as it generates (shows progress)
 python3 scripts/tts.py --text "This is a longer piece of content..." --voice rachel --stream
 ```
 
-### Streaming Long Content
+### Streaming long content
 ```bash
 # Good for audiobook chapters
 python3 scripts/tts.py \
@@ -121,17 +115,15 @@ python3 scripts/tts.py \
   --output chapter1.mp3
 ```
 
-### When to Use Streaming
+### When to use streaming
 
-- **Long texts**: More responsive for lengthy content
-- **Previewing**: Hear audio before full generation completes
-- **Memory efficiency**: Writes chunks instead of loading all in memory
+- Long texts respond faster.
+- You hear audio before generation finishes.
+- It writes chunks as they arrive, so the whole file never sits in memory.
 
----
+## Sound effects
 
-## Sound Effects
-
-### Basic Sound Generation
+### Basic sound generation
 ```bash
 # Thunder
 python3 scripts/sfx.py --prompt "Thunder rumbling in the distance"
@@ -143,9 +135,9 @@ python3 scripts/sfx.py --prompt "Cat purring contentedly" --output cat.mp3
 python3 scripts/sfx.py --prompt "Busy city traffic at rush hour" --duration 10
 ```
 
-### SFX Categories
+### SFX categories
 
-**Nature:**
+Nature:
 ```bash
 python3 scripts/sfx.py --prompt "Heavy rain on a tin roof" --duration 15
 python3 scripts/sfx.py --prompt "Wind howling through bare trees"
@@ -153,7 +145,7 @@ python3 scripts/sfx.py --prompt "Ocean waves crashing on rocky shore"
 python3 scripts/sfx.py --prompt "Crickets chirping on a summer night" --duration 10
 ```
 
-**Urban/Mechanical:**
+Urban/Mechanical:
 ```bash
 python3 scripts/sfx.py --prompt "Subway train arriving at platform"
 python3 scripts/sfx.py --prompt "Old elevator door opening with a creak"
@@ -161,7 +153,7 @@ python3 scripts/sfx.py --prompt "Typing on a mechanical keyboard"
 python3 scripts/sfx.py --prompt "Coffee machine brewing espresso"
 ```
 
-**Actions/Foley:**
+Actions/Foley:
 ```bash
 python3 scripts/sfx.py --prompt "Footsteps on wooden floor approaching"
 python3 scripts/sfx.py --prompt "Door creaking open slowly"
@@ -169,7 +161,7 @@ python3 scripts/sfx.py --prompt "Glass shattering on hard floor"
 python3 scripts/sfx.py --prompt "Pages of a book being flipped"
 ```
 
-**Sci-Fi/Fantasy:**
+Sci-Fi/Fantasy:
 ```bash
 python3 scripts/sfx.py --prompt "Spaceship engine powering up" --duration 8
 python3 scripts/sfx.py --prompt "Laser gun firing in space"
@@ -177,14 +169,14 @@ python3 scripts/sfx.py --prompt "Magic spell casting with sparkles and energy"
 python3 scripts/sfx.py --prompt "Portal opening with swirling energy"
 ```
 
-**Ambient:**
+Ambient:
 ```bash
 python3 scripts/sfx.py --prompt "Coffee shop background with quiet chatter" --duration 20
 python3 scripts/sfx.py --prompt "Peaceful forest with birds singing" --duration 15
 python3 scripts/sfx.py --prompt "Fireplace crackling warmly" --duration 10
 ```
 
-### Batch Sound Effects
+### Batch sound effects
 
 Create `sounds.json`:
 ```json
@@ -199,11 +191,9 @@ Create `sounds.json`:
 python3 scripts/sfx.py --batch sounds.json --output-dir ./sfx
 ```
 
----
+## Batch processing
 
-## Batch Processing
-
-### Text File Input
+### Text file input
 
 Create `texts.txt`:
 ```
@@ -216,7 +206,7 @@ Let's dive right in!
 python3 scripts/tts.py --batch texts.txt --voice adam --output-dir ./podcast
 ```
 
-### JSON Input with Per-Item Settings
+### JSON input with settings per item
 
 Create `batch.json`:
 ```json
@@ -243,7 +233,7 @@ Create `batch.json`:
 python3 scripts/tts.py --batch batch.json --output-dir ./news
 ```
 
-### Multi-Language Batch
+### Multi-language batch
 
 Create `multilingual.json`:
 ```json
@@ -261,16 +251,14 @@ Create `multilingual.json`:
 python3 scripts/tts.py --batch multilingual.json --output-dir ./greetings
 ```
 
----
+## Cost tracking
 
-## Cost Tracking
-
-### View Statistics
+### View statistics
 ```bash
 python3 scripts/tts.py --stats
 ```
 
-**Output:**
+Output:
 ```
 📊 ElevenLabs Usage Statistics
 
@@ -290,14 +278,14 @@ python3 scripts/tts.py --stats
   2024-01-20 13:45 |   2100 chars | george
 ```
 
-### Reset Statistics
+### Reset statistics
 ```bash
 python3 scripts/tts.py --reset-stats
 ```
 
-### Cost Planning
+### Cost planning
 
-Calculate before large jobs:
+Estimate the cost before a large job:
 ```bash
 # Check file size
 wc -c my_book.txt  # e.g., 150000 characters
@@ -305,11 +293,9 @@ wc -c my_book.txt  # e.g., 150000 characters
 # Estimate cost: 150,000 / 1000 * $0.30 = $45 (Starter plan)
 ```
 
----
+## Voice design
 
-## Voice Design
-
-### Create a Custom Voice
+### Create a custom voice
 
 ```bash
 # Female, middle-aged, American accent
@@ -336,7 +322,7 @@ python3 scripts/voice-design.py \
   --description "Wise storyteller with a mysterious quality"
 ```
 
-### Preview with Custom Text
+### Preview with custom text
 
 ```bash
 python3 scripts/voice-design.py \
@@ -347,7 +333,7 @@ python3 scripts/voice-design.py \
   --output preview.mp3
 ```
 
-### Save to Library
+### Save to library
 
 ```bash
 python3 scripts/voice-design.py \
@@ -358,13 +344,11 @@ python3 scripts/voice-design.py \
   --save "DocuNarrator"
 ```
 
-After saving, add to `voices.json` to use with tts.py.
+After you save a voice, add it to `voices.json` to use it with tts.py.
 
----
+## Pronunciation dictionary
 
-## Pronunciation Dictionary
-
-### Basic Configuration
+### Basic configuration
 
 Edit `pronunciations.json`:
 ```json
@@ -379,7 +363,7 @@ Edit `pronunciations.json`:
 }
 ```
 
-### Technical Terms
+### Technical terms
 
 ```json
 {
@@ -393,7 +377,7 @@ Edit `pronunciations.json`:
 }
 ```
 
-### Brand Names
+### Brand names
 
 ```json
 {
@@ -416,11 +400,9 @@ python3 scripts/tts.py --text "Configure your nginx server" --voice rachel
 python3 scripts/tts.py --text "Configure your nginx server" --voice rachel --no-pronunciations
 ```
 
----
+## Agent integration
 
-## Agent Integration
-
-### Configure Agent TTS
+### Configure agent TTS
 
 Edit `~/.claude/claude.json`:
 ```json
@@ -437,7 +419,7 @@ Edit `~/.claude/claude.json`:
 }
 ```
 
-### Using in Agent Chat
+### Agent chat
 
 ```
 User: /tts on
@@ -450,7 +432,7 @@ User: /tts off
 Bot: TTS disabled.
 ```
 
-### Direct Script Execution
+### Direct script execution
 
 ```
 User: Generate speech saying "Hello world" with the Adam voice
@@ -458,7 +440,7 @@ User: Generate speech saying "Hello world" with the Adam voice
 Bot: [Runs tts.py script and returns audio file]
 ```
 
-### Combining with Other Skills
+### Combining with other skills
 
 ```
 User: Summarize this article and read it aloud
@@ -466,13 +448,11 @@ User: Summarize this article and read it aloud
 Bot: [Summarizes, then uses TTS to speak]
 ```
 
----
+## Advanced patterns
 
-## Advanced Patterns
+### Voice comparison test
 
-### Voice Comparison Test
-
-Generate same text with multiple voices:
+Generate the same text with several voices:
 ```bash
 TEXT="Welcome to our product demonstration."
 
@@ -481,7 +461,7 @@ for voice in rachel adam george alice; do
 done
 ```
 
-### Audiobook Chapter Generator
+### Audiobook chapter generator
 
 ```bash
 #!/bin/bash
@@ -499,7 +479,7 @@ for chapter in chapters/*.txt; do
 done
 ```
 
-### Multi-Voice Dialog
+### Dialog with many voices
 
 Create `dialog.json`:
 ```json
@@ -515,7 +495,7 @@ Create `dialog.json`:
 python3 scripts/tts.py --batch dialog.json --output-dir ./dialog
 ```
 
-### Localization Pipeline
+### Localization pipeline
 
 ```bash
 #!/bin/bash
@@ -534,7 +514,7 @@ TEXT_FR="Bienvenue dans notre application"
 python3 scripts/tts.py --text "$TEXT_FR" --voice rachel --lang fr --output welcome_fr.mp3
 ```
 
-### SFX + TTS Combination
+### SFX and TTS together
 
 Create a podcast intro with sound effects and voice:
 ```bash
@@ -550,11 +530,9 @@ python3 scripts/tts.py --text "Welcome back to Tech Talk, the podcast where we e
 # ffmpeg -i intro_music.mp3 -i intro_voice.mp3 -filter_complex "[0:a][1:a]concat=n=2:v=0:a=1" podcast_intro.mp3
 ```
 
----
+## Voice selection guide
 
-## Voice Selection Guide
-
-### By Content Type
+### By content type
 
 | Content | Primary | Alternative |
 |---------|---------|-------------|
@@ -569,7 +547,7 @@ python3 scripts/tts.py --text "Welcome back to Tech Talk, the podcast where we e
 | Motivation/Sports | charlie (energetic) | will (optimist) |
 | Social Media | liam (social) | jessica (playful) |
 
-### By Accent
+### By accent
 
 | Accent | Voices |
 |--------|--------|
@@ -577,7 +555,7 @@ python3 scripts/tts.py --text "Welcome back to Tech Talk, the podcast where we e
 | 🇬🇧 British | george, alice, lily, daniel |
 | 🇦🇺 Australian | charlie |
 
-### By Gender
+### By gender
 
 | Gender | Voices |
 |--------|--------|

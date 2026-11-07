@@ -16,7 +16,7 @@
 Prefer `create-solana-dapp` and pick a kit/framework-kit compatible template for new projects.
 
 ## Provider setup (Next.js App Router)
-Create a single client and provide it via SolanaProvider.
+Create a single client and pass it to SolanaProvider.
 
 Example `app/providers.tsx`:
 
@@ -62,9 +62,9 @@ When you need custom instructions, build them using `@solana-program/*` and send
 
 ## Data fetching and subscriptions
 
-* Prefer watchers/subscriptions rather than manual polling.
+* Prefer watchers/subscriptions over manual polling.
 * Clean up subscriptions with abort handles returned by watchers.
-* For Next.js: keep server components server-side; only leaf components that call hooks should be client components.
+* For Next.js: keep server components on the server. Only leaf components that call hooks should be client components.
 
 ## Transaction UX checklist
 
@@ -81,8 +81,7 @@ When you need custom instructions, build them using `@solana-program/*` and send
 
 ## When to use ConnectorKit (optional)
 
-If you need a headless connector with composable UI elements and explicit state control, use ConnectorKit.
-Typical reasons:
+If you need a headless connector with composable UI elements and explicit state control, use ConnectorKit. Typical reasons:
 
 * You want a headless wallet connection core (useful across frameworks)
 * You want more control over wallet/account state than a single provider gives

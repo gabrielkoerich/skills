@@ -36,7 +36,7 @@ INTELBRAS_DVR_USERNAME=admin
 INTELBRAS_DVR_PASSWORD=your_actual_dvr_password
 ```
 
-**Security Note:** The `.env` file is git-ignored. Never commit credentials to the repository!
+The `.env` file is git-ignored. Never commit credentials to the repository.
 
 ### 2. Camera Configuration
 
@@ -126,6 +126,6 @@ BACKLEFT: media/cameras/BACKLEFT.jpg
 - Default port is 80 (HTTP)
 - RTSP camera streams use port 554
 - Some models support HTTPS on port 443
-- Alarm may have rate limits - avoid rapid successive calls
+- The alarm may have rate limits, so avoid rapid repeated calls
 - Camera snapshots require ffmpeg
-- Credentials are read from environment variables first, then fall back to config file
+- Credentials are read from environment variables first, then from the config file

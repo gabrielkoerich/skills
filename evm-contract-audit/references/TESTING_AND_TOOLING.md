@@ -1,10 +1,10 @@
 # Security Testing & Tooling Guide
 
-How to write exploit PoCs, invariant tests, and fuzz tests for smart contract auditing using Foundry and Hardhat.
+How to write exploit PoCs, invariant tests, and fuzz tests with Foundry and Hardhat when you audit smart contracts.
 
 ---
 
-## Foundry (Forge) — Primary Audit Tooling
+## Foundry (Forge): Primary Audit Tooling
 
 ### Setting Up an Exploit PoC
 
@@ -100,7 +100,7 @@ contract FlashLoanExploitTest is Test {
 
 ### Invariant Testing (Stateful Fuzz Testing)
 
-Invariant tests verify properties that should ALWAYS hold, across random sequences of function calls.
+Invariant tests check properties that must always hold across random sequences of function calls.
 
 ```solidity
 // test/invariants/VaultInvariant.t.sol
@@ -278,7 +278,7 @@ forge inspect src/MyContract.sol:MyContract storage-layout --pretty
 
 ---
 
-## Hardhat — Alternative Testing
+## Hardhat: Alternative Testing
 
 ### Exploit PoC with Hardhat
 

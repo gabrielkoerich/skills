@@ -65,7 +65,7 @@ Sources: [SlowMist Security Best Practices](https://github.com/slowmist/solana-s
 
 **Severity**: High
 
-Calculating without checking for overflow/underflow. Rust wraps silently in release builds.
+Arithmetic without overflow or underflow checks. Rust wraps silently in release builds.
 
 ```rust
 // VULNERABLE
@@ -85,7 +85,7 @@ let user_balance = ctx.accounts.user.balance
 
 **Severity**: High
 
-Using `try_round_u64()` for rounding leads to precision problems that enable arbitrage attacks.
+Rounding with `try_round_u64()` loses precision in a way that enables arbitrage attacks.
 
 ```rust
 // VULNERABLE
@@ -107,7 +107,7 @@ Decimal::from(collateral_amount)
 
 **Severity**: High
 
-`saturating_add` / `saturating_sub` / `saturating_mul` clamp to min/max instead of failing, producing silently wrong results.
+`saturating_add`, `saturating_sub` and `saturating_mul` clamp to the min or max value instead of failing, so the result is silently wrong.
 
 ```rust
 // VULNERABLE -- saturating_sub returns 0 instead of failing when overpaying
@@ -147,7 +147,7 @@ let result = dividend
 
 **Severity**: High
 
-Calling functions that return `Result` without handling the error (missing `?`).
+The code calls a function that returns `Result` and does not handle the error (missing `?`).
 
 ```rust
 // VULNERABLE -- Result ignored, transfer may have failed silently
@@ -171,7 +171,7 @@ spl_token::instruction::transfer(
 
 **Severity**: Low
 
-Not checking if the signer is a legitimate administrator when initializing global config accounts. Anyone can create a fake global state.
+The program initializes global config accounts without checking that the signer is the admin. Anyone can create a fake global state.
 
 ```rust
 // VULNERABLE -- anyone can call init_market
@@ -180,7 +180,7 @@ fn init_market(accounts: &[AccountInfo]) -> ProgramResult {
 }
 ```
 
-**Fix**: Hardcode admin key or use a PDA with admin seeds:
+**Fix**: Hardcode the admin key or use a PDA with admin seeds:
 ```rust
 const ADMIN: Pubkey = pubkey!("AdminPubkeyHere...");
 
@@ -195,7 +195,7 @@ fn init_market(accounts: &[AccountInfo]) -> ProgramResult {
 
 **Severity**: High
 
-Not verifying that the expected signer actually signed the transaction.
+The program does not verify that the expected signer signed the transaction.
 
 **Fix** (native):
 ```rust
@@ -211,7 +211,7 @@ if !payer_account.is_signer {
 
 **Severity**: High
 
-Not verifying that a state account is marked as writable before modifying it.
+The program modifies a state account without verifying that it is marked writable.
 
 **Fix** (native):
 ```rust
@@ -227,7 +227,7 @@ if !hello_state_account.is_writable {
 
 **Severity**: High
 
-Reading account data without verifying the account is owned by the expected program. Attacker creates a fake account with crafted data.
+The program reads account data without verifying that the expected program owns the account. An attacker creates a fake account with crafted data.
 
 ```rust
 // VULNERABLE -- pyth_price_info could be owned by an attacker's program
@@ -247,7 +247,7 @@ if pyth_price_info.owner.ne(&program_id) {
 
 **Severity**: High
 
-Not checking if an account has already been initialized, allowing re-initialization attacks.
+The program does not check whether an account is already initialized, which allows re-initialization attacks.
 
 **Fix** (native):
 ```rust
@@ -259,13 +259,13 @@ hello_state.is_initialized = true;
 hello_state.serialize(&mut &mut hello_state_account.data.borrow_mut()[..])?;
 ```
 
-**Fix** (Anchor): Use `#[account(init, ...)]` -- fails if account already exists.
+**Fix** (Anchor): Use `#[account(init, ...)]`, which fails if the account already exists.
 
 ### 11. PDA Substitution
 
 **Severity**: High
 
-Using an unchecked account as a PDA seed input, allowing attacker to substitute a different base account and derive a different PDA.
+The program uses an unchecked account as a PDA seed. An attacker substitutes a different base account and derives a different PDA.
 
 ```rust
 // VULNERABLE -- config_pda_info can be replaced by an unofficial account
@@ -274,13 +274,13 @@ let seeds = &[b"user_pda_desc".as_ref(), config_pda_info.key.as_ref(), &[bump]];
 let user_pda_pubkey = Pubkey::create_program_address(seeds, program_id)?;
 ```
 
-**Fix**: Derive PDAs from unique, verified accounts (e.g., program-owned config accounts).
+**Fix**: Derive PDAs from unique, verified accounts (for example, program-owned config accounts).
 
 ### 12. Missing System Account Check
 
 **Severity**: High
 
-Not verifying system/sysvar accounts before use. Attacker passes a fake token program or sysvar.
+The program uses system or sysvar accounts without verifying them. An attacker passes a fake token program or sysvar.
 
 ```rust
 // VULNERABLE -- token_program_id not validated
@@ -290,7 +290,7 @@ spl_token_transfer(TokenTransferParams {
 })?;
 ```
 
-**Fix**: Hardcode expected addresses and validate:
+**Fix**: Hardcode the expected addresses and validate them:
 ```rust
 if *token_program_id.key != spl_token::ID {
     return Err(ProgramError::IncorrectProgramId);
@@ -307,7 +307,7 @@ Or in Anchor: `Program<'info, Token>`.
 
 **Severity**: Low
 
-When an account is "deleted" (lamports set to zero), the data can still be read within the same transaction. Reading without checking lamports leads to stale data access.
+When an account is "deleted" (lamports set to zero), its data can still be read in the same transaction. A read without a lamports check returns stale data.
 
 **Fix**: Check lamports before reading:
 ```rust
@@ -320,7 +320,7 @@ if **the_account_to_read.try_borrow_lamports()? > 0 {
 
 **Severity**: High
 
-Not checking Pyth oracle price feed status before using the price. Oracle may be stale or in error state.
+The program uses a Pyth price without checking the price feed status. The price may be stale or the feed may be in an error state.
 
 ```rust
 // Must check status before using price
@@ -335,7 +335,7 @@ if pyth_price.agg.status != PriceStatus::Trading {
 
 **Severity**: High
 
-When changing account owner, delegated permissions and amounts are not reset, leaving stale authorizations.
+When the account owner changes, the delegated permissions and amounts are not reset, so stale authorizations remain.
 
 ```rust
 // VULNERABLE
@@ -388,7 +388,7 @@ msg!("Supply: {}", ctx.accounts.mint.supply); // Correct post-mint value
 
 **Severity**: High
 
-Using `as` for integer casts silently truncates or wraps values. This is especially dangerous when casting user input or calculated values.
+Integer casts with `as` silently truncate or wrap values. This is most dangerous on user input and calculated values.
 
 ```rust
 // VULNERABLE -- silent truncation
@@ -412,13 +412,13 @@ let positive = u64::try_from(value_i64)
 let big = u128::from(amount_u64);
 ```
 
-**Key rule**: Never use `as` for narrowing casts on user-provided or calculated values. Always use `try_from()`.
+**Rule**: Never use `as` for narrowing casts on user-provided or calculated values. Always use `try_from()`.
 
 ### 18. Authority Transfer Pitfalls
 
 **Severity**: High
 
-Single-step authority transfers are dangerous: if the new authority key is wrong, the program is permanently locked.
+A single-step authority transfer is dangerous: if the new authority key is wrong, the program is permanently locked.
 
 ```rust
 // VULNERABLE -- single-step transfer, no recovery possible
@@ -428,7 +428,7 @@ pub fn transfer_authority(ctx: Context<TransferAuth>, new_authority: Pubkey) -> 
 }
 ```
 
-**Fix**: Implement two-step nominate/accept pattern:
+**Fix**: Use a two-step nominate and accept pattern:
 ```rust
 pub fn nominate_authority(ctx: Context<NominateAuth>, nominee: Pubkey) -> Result<()> {
     require!(nominee != Pubkey::default(), ErrorCode::InvalidAuthority);
@@ -464,7 +464,7 @@ pub fn cancel_nomination(ctx: Context<CancelNomination>) -> Result<()> {
 
 **Severity**: Medium
 
-Improper use of `realloc` with the `zero_init` parameter can expose stale data or waste compute.
+Wrong use of the `realloc` `zero_init` parameter can expose stale data or waste compute.
 
 ```rust
 // VULNERABLE -- zero_init=false after shrink+grow exposes old data
@@ -498,7 +498,7 @@ pub data_account: Account<'info, DynamicData>,
 
 **Severity**: Critical
 
-Forwarding user wallets as signers to third-party CPIs allows malicious programs to drain the user's funds.
+If a program forwards user wallets as signers to third-party CPIs, a malicious program can drain the user's funds.
 
 ```rust
 // VULNERABLE -- user wallet forwarded to arbitrary CPI
@@ -541,13 +541,13 @@ pub fn interact_with_protocol(ctx: Context<Interact>) -> Result<()> {
 }
 ```
 
-**Key rule**: Never forward user wallets as signers to third-party CPIs. Use protocol PDAs as intermediary authorities. Check balances before/after CPI.
+**Rule**: Never forward user wallets as signers to third-party CPIs. Use protocol PDAs as intermediary authorities. Check balances before and after the CPI.
 
 ### 21. Security Dependency Chain
 
 **Severity**: High
 
-When validation of one account depends on another account, and that root account is unconstrained, the entire validation chain is broken.
+When the validation of one account depends on another account, and that root account is unconstrained, the whole validation chain is broken.
 
 ```rust
 // VULNERABLE -- config is unconstrained, so all downstream checks are meaningless
@@ -565,7 +565,7 @@ pub struct Withdraw<'info> {
 }
 ```
 
-**Fix**: Anchor every dependency chain to a verified root (PDA or hardcoded key):
+**Fix**: Start every dependency chain from a verified root (PDA or hardcoded key):
 ```rust
 #[derive(Accounts)]
 pub struct Withdraw<'info> {
@@ -587,13 +587,13 @@ pub struct Withdraw<'info> {
 }
 ```
 
-**Key rule**: Every validation chain must start from a verified root account (PDA or hardcoded). One unconstrained account poisons all downstream constraints.
+**Rule**: Every validation chain must start from a verified root account (PDA or hardcoded). One unconstrained account breaks every constraint that depends on it.
 
 ### 22. Frontrunning / Missing Slippage Protection
 
 **Severity**: High
 
-Without expected-value checks, attackers can manipulate state between transaction submission and execution (sandwich attacks, MEV).
+Without expected-value checks, an attacker can manipulate state between transaction submission and execution (sandwich attacks, MEV).
 
 ```rust
 // VULNERABLE -- no slippage protection
@@ -673,13 +673,13 @@ pub fn process_batch(ctx: Context<ProcessBatch>) -> Result<()> {
 }
 ```
 
-**Key rule**: Treat `remaining_accounts` as fully untrusted. Validate ownership, discriminator, and data for every account. Document the expected format.
+**Rule**: Treat `remaining_accounts` as untrusted. Validate the ownership, discriminator and data of every account. Document the expected format.
 
 ### 24. Unsafe Rust
 
 **Severity**: High
 
-`unsafe` blocks bypass Rust's memory safety guarantees. In Solana programs, this can lead to memory corruption, data leaks, or exploitable behavior.
+`unsafe` blocks bypass Rust's memory safety guarantees. In Solana programs this can cause memory corruption, data leaks or exploitable behavior.
 
 ```rust
 // VULNERABLE -- unnecessary unsafe for performance
@@ -706,7 +706,7 @@ pub fn safe_copy(ctx: Context<SafeCopy>) -> Result<()> {
 ```
 
 **Rules**:
-- [ ] Minimize `unsafe` blocks -- use safe alternatives first
+- [ ] Minimize `unsafe` blocks, try safe alternatives first
 - [ ] If `unsafe` is necessary, validate ALL inputs before the block
 - [ ] Document WHY unsafe is needed with `// SAFETY:` comments
 - [ ] Encapsulate unsafe code in safe abstractions
@@ -716,7 +716,7 @@ pub fn safe_copy(ctx: Context<SafeCopy>) -> Result<()> {
 
 **Severity**: Medium
 
-`vec![N]` creates a vector with one element (the value N), while `vec![0; N]` creates a vector with N zeros. This is a common Rust mistake.
+`vec![N]` creates a vector with one element (the value N). `vec![0; N]` creates a vector with N zeros. Rust developers often mix them up.
 
 ```rust
 // VULNERABLE -- creates vec with ONE element (value 100), not 100 elements
@@ -738,13 +738,13 @@ for _ in 0..100 {
 }
 ```
 
-**Key rule**: When creating fixed-size vectors, always use `vec![default_value; count]` syntax. Prefer `push`/`extend` for dynamic building.
+**Rule**: For fixed-size vectors, always use the `vec![default_value; count]` syntax. Prefer `push`/`extend` for dynamic building.
 
 ### 26. Seed Collisions
 
 **Severity**: High
 
-PDAs with overlapping seed patterns can collide, allowing one user or feature to access another's account.
+PDAs with overlapping seed patterns can collide, so one user or feature can access another's account.
 
 ```rust
 // VULNERABLE -- seeds can collide between features
@@ -786,7 +786,7 @@ pub admin_vault: Account<'info, AdminVault>,
 pub pool: Account<'info, Pool>,
 ```
 
-**Key rule**: Use unique string prefixes per account type. Include all discriminating data (user pubkey, IDs, type tags) in seeds. Test for collisions across features.
+**Rule**: Use a unique string prefix for each account type. Include all discriminating data (user pubkey, IDs, type tags) in seeds. Test for collisions across features.
 
 ---
 
@@ -796,7 +796,7 @@ pub pool: Account<'info, Pool>,
 
 **Severity**: High
 
-Holding references to accounts that are closed by CPIs within the same transaction can lead to reading zeroed or reallocated memory.
+If the program holds a reference to an account that a CPI closes in the same transaction, it can read zeroed or reallocated memory.
 
 ```rust
 // VULNERABLE -- reference held across CPI that closes the account
@@ -813,7 +813,7 @@ pub fn process(ctx: Context<Process>) -> Result<()> {
 }
 ```
 
-**Fix**: Don't hold references across CPIs that close accounts. Reload or re-fetch after CPI:
+**Fix**: Do not hold references across CPIs that close accounts. Reload or re-fetch after the CPI:
 ```rust
 pub fn process(ctx: Context<Process>) -> Result<()> {
     // Do all reads BEFORE closing
@@ -834,7 +834,7 @@ pub fn process(ctx: Context<Process>) -> Result<()> {
 
 **Severity**: Medium
 
-Temporarily changing an account's owner (e.g., assigning to System Program then back) can cause the runtime to zero the account data.
+A temporary owner change (for example, assign to the System Program and then back) can cause the runtime to zero the account data.
 
 ```rust
 // VULNERABLE -- temporary owner change wipes data
@@ -913,7 +913,7 @@ pub fn process_batch(ctx: Context<ProcessBatch>, offset: u32, count: u32) -> Res
 
 **Severity**: Medium
 
-Complex Anchor constraints can have subtle edge cases with zero values, max values, or same-account parameters.
+Complex Anchor constraints can miss edge cases: zero values, max values, or the same account passed for two parameters.
 
 ```rust
 // VULNERABLE -- constraint doesn't handle edge case
@@ -946,7 +946,7 @@ pub user_state: Account<'info, UserState>,
 
 **Severity**: High
 
-Ed25519 signature verification via instruction introspection can be bypassed if the program doesn't validate the instruction's position, pubkey, message, and signature properly.
+An attacker can bypass Ed25519 signature verification through instruction introspection if the program does not validate the instruction's position, pubkey, message and signature.
 
 ```rust
 // VULNERABLE -- doesn't validate instruction position or full signature data
@@ -995,7 +995,7 @@ pub fn verify_sig(
 }
 ```
 
-**Key rule**: Always validate instruction position, program ID, pubkey, message content, and signature. Use nonces to prevent replay attacks.
+**Rule**: Always validate instruction position, program ID, pubkey, message content and signature. Use nonces to prevent replay attacks.
 
 ---
 
@@ -1003,7 +1003,7 @@ pub fn verify_sig(
 
 ### Case 1: Wormhole Bridge Hack -- Sysvar Not Checked
 
-The `verify_signatures` function used `load_current_index()` without validating that the sysvar account was actually the Instructions sysvar. An attacker passed a fake account.
+The `verify_signatures` function called `load_current_index()` without checking that the sysvar account was the Instructions sysvar. An attacker passed a fake account.
 
 ```rust
 // VULNERABLE
@@ -1026,11 +1026,11 @@ let current_instruction = solana_program::sysvar::instructions::load_current_ind
 
 ### Case 2: PDA Account Without Caller/Beneficiary Validation
 
-A DeFi protocol used a PDA as the vault authority, but the withdrawal function only verified the depositor's signature -- not that the depositor owned the deposit notes being burned. Any signed caller could burn another user's tokens and redirect funds.
+A DeFi protocol used a PDA as the vault authority. The withdrawal function verified the depositor's signature, but it did not check that the depositor owned the deposit notes it burned. Any signed caller could burn another user's tokens and redirect funds.
 
 **Root cause**: The `deposit_note_account` and `withdraw_account` were not derived from or validated against the depositor.
 
-**Fix**: Derive the deposit account PDA from both `reserve.key()` and `depositor.key()` as seeds, ensuring only the depositor can interact with their own deposit:
+**Fix**: Derive the deposit account PDA from both `reserve.key()` and `depositor.key()` as seeds, so only the depositor can use their own deposit:
 ```rust
 #[account(mut,
     seeds = [
@@ -1046,9 +1046,9 @@ pub deposit_account: AccountInfo<'info>,
 
 **Impact**: $115M loss (October 2022)
 
-Attacker manipulated the MNGO/USD oracle price on a thin-liquidity market by buying massive MNGO-PERP positions across two accounts, then pumping the spot price. The inflated collateral value let the attacker borrow $115M from Mango's lending pools.
+The attacker manipulated the MNGO/USD oracle price on a thin-liquidity market. They bought large MNGO-PERP positions across two accounts, then pumped the spot price. The inflated collateral value let the attacker borrow $115M from Mango's lending pools.
 
-**Root cause**: No oracle sanity checks, no position size limits, thin liquidity on the MNGO market allowed price manipulation.
+**Root cause**: The protocol had no oracle sanity checks and no position size limits, and thin liquidity on the MNGO market allowed price manipulation.
 
 **Lessons**:
 - [ ] Validate oracle prices against TWAP or multiple sources
@@ -1060,7 +1060,7 @@ Attacker manipulated the MNGO/USD oracle price on a thin-liquidity market by buy
 
 **Impact**: $48M loss (March 2022)
 
-The Cashio CASH stablecoin minting function failed to validate that the `bank` account passed to the `mint_collateral` instruction actually matched the protocol's expected bank. An attacker passed a fake bank with a worthless token as collateral and minted unlimited CASH tokens.
+The Cashio CASH stablecoin minting function did not validate that the `bank` account passed to the `mint_collateral` instruction matched the protocol's expected bank. An attacker passed a fake bank with a worthless token as collateral and minted unlimited CASH tokens.
 
 **Root cause**: The `bank` account in the `BurnCash` / `MintCash` instructions was not validated against a known set of approved banks. No `has_one` or `seeds` constraint linked it.
 

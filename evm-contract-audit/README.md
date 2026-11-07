@@ -1,10 +1,10 @@
 # EVM Smart Contract Security Auditor
 
-Comprehensive EVM/Solidity security audit skill covering 13 vulnerability vectors. Learned from EVMbench — a benchmark of 120 real high-severity vulnerabilities from 40 Code4rena audit competitions targeting production DeFi protocols.
+EVM/Solidity security audit skill that covers 13 vulnerability vectors. It is based on EVMbench, a benchmark of 120 real high-severity vulnerabilities from 40 Code4rena audit competitions on production DeFi protocols.
 
 ## Overview
 
-This skill systematically scans Solidity smart contracts for known attack patterns, guided by real-world vulnerability data. Each vulnerability includes detection heuristics, insecure/secure code examples, and references to actual production exploits.
+The skill scans Solidity smart contracts for known attack patterns, using real-world vulnerability data. Each vulnerability has detection heuristics, insecure and secure code examples, and references to production exploits.
 
 ## Vulnerability Vectors Covered
 
@@ -26,21 +26,21 @@ This skill systematically scans Solidity smart contracts for known attack patter
 
 ## Real-World Case Studies
 
-Drawn directly from EVMbench's dataset of production vulnerabilities:
+From EVMbench's dataset of production vulnerabilities:
 
-1. **Phi Protocol H-06** — Reentrancy via ETH refund draining all curator ETH
-2. **Basin H-01** — Permissionless UUPS upgrade enabling total asset drain (1-line fix)
-3. **Noya H-08** — Cross-vault theft via flash loan and trusted sender bypass
-4. **BendDAO** — NFT liquidation without ownership verification (1-tx exploit)
-5. **Abracadabra H-02** — Rounding error amplification breaking AMM pricing invariant
+1. Phi Protocol H-06: reentrancy through an ETH refund drains all curator ETH
+2. Basin H-01: a permissionless UUPS upgrade allows a total asset drain (1-line fix)
+3. Noya H-08: cross-vault theft through a flash loan and a trusted sender bypass
+4. BendDAO: NFT liquidation without an ownership check (1-tx exploit)
+5. Abracadabra H-02: an amplified rounding error breaks the AMM pricing invariant
 
 ## Usage
 
-Invoke when auditing any EVM/Solidity smart contract. The skill will scan for all 13 vulnerability vectors using grep-based heuristics and manual code review patterns.
+Use it to audit any EVM/Solidity smart contract. The skill scans for all 13 vulnerability vectors with grep-based heuristics and manual code review patterns.
 
 ## Key Insight
 
-> Discovery is the main bottleneck. With hints about which mechanism is broken, agents patch 94% of vulnerabilities. Without hints, ~40%. This skill encodes systematic search patterns to maximize discovery.
+> Discovery is the main bottleneck. With hints about which mechanism is broken, agents patch 94% of vulnerabilities. Without hints, they patch ~40%. This skill gives systematic search patterns to find more bugs.
 
 ## Reference Files
 
@@ -59,7 +59,7 @@ Invoke when auditing any EVM/Solidity smart contract. The skill will scan for al
 
 ## External References
 
-- [EVMbench (frontier-evals)](https://github.com/openai/frontier-evals/tree/main/project/evmbench) — 120+ vulnerabilities, exploit harness, grading
-- [Code4rena Reports](https://code4rena.com/reports) — Real audit findings
-- [SWC Registry](https://swcregistry.io/) — Smart Contract Weakness Classification
-- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/) — Secure building blocks
+- [EVMbench (frontier-evals)](https://github.com/openai/frontier-evals/tree/main/project/evmbench): 120+ vulnerabilities, exploit harness, grading
+- [Code4rena Reports](https://code4rena.com/reports): Real audit findings
+- [SWC Registry](https://swcregistry.io/): Smart Contract Weakness Classification
+- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/): Secure building blocks

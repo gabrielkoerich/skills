@@ -1,21 +1,21 @@
 # Programs with Pinocchio
 
-Pinocchio is a minimalist Rust library for crafting Solana programs without the heavyweight `solana-program` crate. It delivers significant performance gains through zero-copy techniques and minimal dependencies.
+Pinocchio is a minimal Rust library for writing Solana programs without the heavy `solana-program` crate. Zero-copy techniques and few dependencies make it much faster.
 
 ## When to Use Pinocchio
 
 Use Pinocchio when you need:
-- **Maximum compute efficiency**: 84% CU savings compared to Anchor
-- **Minimal binary size**: Leaner code paths and smaller deployments
-- **Zero external dependencies**: Only Solana SDK types required
-- **Fine-grained control**: Direct memory access and byte-level operations
-- **no_std environments**: Embedded or constrained contexts
+- Maximum compute efficiency: 84% CU savings compared to Anchor
+- Minimal binary size: shorter code paths and smaller deployments
+- Zero external dependencies: only Solana SDK types required
+- Fine-grained control: direct memory access and byte-level operations
+- no_std environments: embedded or constrained contexts
 
 ## Core Architecture
 
 ### Program Structure Validation Checklist
 
-Before building/deploying, verify lib.rs contains all required components:
+Before you build or deploy, verify that lib.rs contains all required components:
 
 - [ ] `entrypoint!(process_instruction)` macro
 - [ ] `pub const ID: Address = Address::new_from_array([...])` with correct program ID
@@ -49,24 +49,24 @@ fn process_instruction(
 }
 ```
 
-Single-byte discriminators support 255 instructions; use two bytes for up to 65,535 variants.
+Single-byte discriminators support 255 instructions. Use two bytes for up to 65,535 variants.
 
 ### Panic Handler Configuration
 
-**For std environments (SBF builds):**
+For std environments (SBF builds):
 ```rust
 entrypoint!(process_instruction);
 // Remove nostd_panic_handler!() - std provides panic handling
 ```
 
-**For no_std environments:**
+For no_std environments:
 ```rust
 #![no_std]
 entrypoint!(process_instruction);
 nostd_panic_handler!();
 ```
 
-**Critical**: Never include both - causes duplicate lang item error in SBF builds.
+Critical: never include both. It causes a duplicate lang item error in SBF builds.
 
 ### Program ID Declaration
 
@@ -76,7 +76,8 @@ pub const ID: Address = Address::new_from_array([
     0xXX, 0xXX, ..., 0xXX,
 ]);
 ```
-// Note: Use `Address::new_from_array()` not `Address::new()`
+
+Use `Address::new_from_array()`, not `Address::new()`.
 
 ### Recommended Import Structure
 
@@ -126,7 +127,7 @@ impl<'a> Deposit<'a> {
 
 ## Account Validation
 
-Pinocchio requires manual validation. Wrap all checks in `TryFrom` implementations:
+Pinocchio has no automatic validation. Put all checks in `TryFrom` implementations:
 
 ### Account Struct Validation
 
@@ -254,7 +255,7 @@ impl Mint {
 
 ### Token2022 Support
 
-Token2022 requires discriminator-based validation due to variable account sizes with extensions:
+Token2022 needs discriminator-based validation because extensions make account sizes variable:
 
 ```rust
 pub const TOKEN_2022_PROGRAM_ID: [u8; 32] = [...];
@@ -461,7 +462,7 @@ let config = unsafe { &*(data.as_ptr() as *const Config) };
 
 ## Error Handling
 
-Use `thiserror` for descriptive errors (supports `no_std`):
+Use `thiserror` for descriptive errors (it supports `no_std`):
 
 ```rust
 use thiserror::Error;
@@ -559,7 +560,7 @@ Respect Solana's memory limits: 4KB stack per function, 32KB total heap.
 
 ### Skip Redundant Checks
 
-If a CPI will fail on incorrect accounts anyway, skip pre-validation:
+If a CPI fails on wrong accounts anyway, skip the pre-validation:
 
 ```rust
 // Instead of validating ATA derivation, compute expected address
@@ -635,7 +636,7 @@ After `cargo build-sbf`:
 
 ### Dependency Compatibility Issues
 
-**If SBF build fails with "edition2024" errors:**
+If the SBF build fails with "edition2024" errors:
 ```bash
 # Downgrade problematic dependencies to compatible versions
 cargo update base64ct --precise 1.6.0
@@ -643,9 +644,9 @@ cargo update constant_time_eq --precise 0.4.1
 cargo update blake3 --precise 1.5.5
 ```
 
-**When to apply**: Only when encountering Cargo "edition2024" errors during `cargo build-sbf`. These downgrades resolve toolchain compatibility issues while maintaining functionality.
+Apply these only when Cargo reports "edition2024" errors during `cargo build-sbf`. The downgrades fix toolchain compatibility issues and keep functionality.
 
-**Note**: These specific versions were tested and verified to work with current Solana toolchain. Regular `cargo update` may pull incompatible versions.
+These versions were tested with the current Solana toolchain. A regular `cargo update` may pull incompatible versions.
 
 ## Security Checklist
 
@@ -656,4 +657,4 @@ cargo update blake3 --precise 1.5.5
 - [ ] Use checked math (`checked_add`, `checked_sub`, etc.)
 - [ ] Mark closed accounts to prevent revival attacks
 - [ ] Validate instruction data length before parsing
-- [ ] Check for duplicate mutable accounts when accepting multiple of same type
+- [ ] Check for duplicate mutable accounts when accepting several accounts of the same type

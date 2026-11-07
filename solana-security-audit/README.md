@@ -1,10 +1,10 @@
 # Solana Security Audit
 
-Comprehensive Solana smart contract security auditor covering 66 attack vectors across Anchor, native Rust, and Pinocchio frameworks.
+A Solana smart contract security auditor that covers 66 attack vectors in Anchor, native Rust, and Pinocchio programs.
 
 ## Overview
 
-This skill systematically scans Solana programs for security vulnerabilities across 10 categories: core sealevel attacks, extended security patterns, advanced patterns, native Rust pitfalls, Pinocchio-specific concerns, oracle & price feed security, Token-2022 extension risks, modern Anchor & runtime concerns, economic and accounting invariants, and the on-chain/off-chain trust boundary. Each vulnerability includes insecure and secure code patterns with detection commands.
+The skill scans Solana programs for security vulnerabilities in 10 categories: core sealevel attacks, extended security patterns, advanced patterns, native Rust pitfalls, Pinocchio-specific concerns, oracle & price feed security, Token-2022 extension risks, modern Anchor & runtime concerns, economic and accounting invariants, and the on-chain/off-chain trust boundary. Each vulnerability comes with insecure and secure code patterns and detection commands.
 
 ## Attack Vectors Covered
 
@@ -23,13 +23,13 @@ This skill systematically scans Solana programs for security vulnerabilities acr
 
 ## Sources
 
-- [Sealevel Attacks](https://github.com/coral-xyz/sealevel-attacks) -- Original 11 attack patterns
-- [SlowMist Best Practices](https://github.com/slowmist/solana-smart-contract-security-best-practices) -- Comprehensive vulnerability catalog
-- [Safe Solana Builder](https://github.com/Frankcastleauditor/safe-solana-builder) -- Framework-agnostic patterns
-- [Awesome Solana Security](https://github.com/0xMacro/awesome-solana-security) -- Curated resource list
-- [Neodyme Common Pitfalls](https://neodyme.io/blog/solana_common_pitfalls/) -- Native Rust pitfalls
-- [Ackee Auditors Bootcamp](https://github.com/Ackee-Blockchain/Solana-Auditors-Bootcamp) -- Audit training
+- [Sealevel Attacks](https://github.com/coral-xyz/sealevel-attacks): Original 11 attack patterns
+- [SlowMist Best Practices](https://github.com/slowmist/solana-smart-contract-security-best-practices): Comprehensive vulnerability catalog
+- [Safe Solana Builder](https://github.com/Frankcastleauditor/safe-solana-builder): Framework-agnostic patterns
+- [Awesome Solana Security](https://github.com/0xMacro/awesome-solana-security): Curated resource list
+- [Neodyme Common Pitfalls](https://neodyme.io/blog/solana_common_pitfalls/): Native Rust pitfalls
+- [Ackee Auditors Bootcamp](https://github.com/Ackee-Blockchain/Solana-Auditors-Bootcamp): Audit training
 - [Pyth](https://docs.pyth.network/price-feeds/best-practices) & [Switchboard](https://docs.switchboard.xyz/) oracle best practices
-- [OpenZeppelin ERC-4626 inflation attack](https://docs.openzeppelin.com/contracts/5.x/erc4626) -- donation-based share-price manipulation (I53)
+- [OpenZeppelin ERC-4626 inflation attack](https://docs.openzeppelin.com/contracts/5.x/erc4626): donation-based share-price manipulation (I53)
 - [SPL Token-2022 Extensions](https://solana.com/developers/guides/token-extensions/getting-started)
 - Real-world exploits: Wormhole ($320M), Mango ($115M), Cashio ($48M), Loopscale ($5.8M, 2025), DeFiTuna ($580K, 2026), Drift ($270M, 2026)

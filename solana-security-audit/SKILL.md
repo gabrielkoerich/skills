@@ -115,50 +115,50 @@ For detailed patterns with full insecure/secure/recommended code, see [VULNERABI
 
 ## Rationalizations to Reject
 
-- "Anchor handles this automatically" -- Only if you use the correct types (`Signer<'info>`, `Account<'info, T>`, `Program<'info, T>`). Using raw `AccountInfo<'info>` bypasses all Anchor protections.
-- "This account is always passed correctly by our frontend" -- Attackers craft their own transactions. Every account must be validated on-chain.
-- "We check the data inside the instruction body" -- Constraints must be in the `#[derive(Accounts)]` struct for Anchor to enforce them before the instruction executes.
-- "The PDA can only be derived one way" -- Multiple valid bumps exist for the same seeds. Only the canonical bump (from `find_program_address`) is safe.
-- "Nobody would pass the same account twice" -- Duplicate mutable accounts can cause silent data overwrites.
-- "We zero the data when closing" -- Without the closed-account discriminator and a force-defund mechanism, lamport top-ups can revive accounts.
-- "Rust prevents overflow by default" -- Only in debug mode. Release builds (BPF) wrap silently. Always use `checked_*()` or set `overflow-checks = true`.
-- "The account data is fresh, we just wrote it" -- After CPI, Anchor's deserialized account structs are stale. Always call `.reload()`.
-- "We validate the account before CPI" -- After CPI returns, the account may have changed owner, been closed, or had lamports drained. Re-validate.
-- "Our state transitions are straightforward" -- Without explicit state machine enforcement, attackers can skip states or replay transitions.
-- "High code coverage means we're safe" -- Saber's comprehensive fuzzers missed a rounding bug worth $1M/day. Test economic invariants, not just code paths.
-- "The oracle gives us the price" -- A price without a staleness bound and confidence check is a stale/uncertain number. Solana has no native flash loans, but one atomic transaction can move a spot price, read it, and revert. Loopscale lost $5.8M pricing illiquid collateral off a manipulable source.
-- "We support Token-2022, we use InterfaceAccount" -- `InterfaceAccount` proves the account is a token account, not that the mint is safe. A permanent delegate can burn your vault, a transfer fee makes received < sent, a transfer hook can reenter you. Screen extensions or allow-list mints.
-- "We credit the amount the user deposited" -- On a fee-on-transfer mint the vault receives less than the requested amount. Credit the measured balance delta (`after - before`), never the requested amount.
-- "The mint address can't change" -- With `MintCloseAuthority`, a mint can be closed and its address reused for a different account. Re-validate mint state, don't trust a cached pubkey.
-- "Our program is upgradeable so we can fix bugs" -- A single-key upgrade authority is a rug and a single point of failure: a leaked key swaps in a draining program past every on-chain check. Use a multisig + timelock, or make it immutable.
-- "We seed randomness from the clock/slot" -- Clock, slot, and recent blockhash are predictable and validator-influenceable. Attackers grind or bias them. Use a VRF (Switchboard On-Demand, ORAO).
-- "The transaction was signed by the council, so it's authorized" -- Durable nonces let a signed transaction execute weeks later, out of context. Drift lost ~$270M this way. Bind privileged actions to program-enforced expiries and sequence numbers.
-- "Only our program can move tokens into this account" -- False for every SPL token account, PDA-owned ones and ATAs included. Anyone can transfer in without the recipient's consent, and anyone can send lamports with `system_program::transfer`. A live balance is an upper bound.
-- "A donation only makes the pool richer" -- Not when a check requires the balance to *equal* internal bookkeeping. Then a 1-unit donation blocks every instruction behind that check, and if withdrawals sit behind it, funds stay stuck until a program upgrade.
-- "It's just griefing, no funds are stolen" -- Rank griefing by how long it lasts and what it blocks. A permanent failure on a withdrawal path with no on-chain recovery is critical.
-- "We measure the balance on chain, so it's accurate" -- Accurate numbers can still be attacker-influenced. Ask who else can move that number, and what breaks when they do.
-- "Our admin instructions sit behind a multisig, so freshness doesn't matter" -- A multisig proves *who* signed, never *when* the transaction runs. Without a program-enforced expiry and sequence number, every admin signature stays valid until someone uses it.
-- "Paying someone's rent is harmless" -- Initializing state for another user can also make choices for them. If that state sets a fee recipient or delegate and the user cannot change it later, the payer has decided for a user who never signed.
-- "The account type is checked, so it's the right account" -- `Account<'info, T>` proves the discriminator and owner, not *which instance*. In a program with many pools or markets, an account from another pool passes every type check. Bind identity with PDA seeds that include the pool id.
-- "The refresh reverts on a loss, so losses can't be booked wrong" -- It also means the one transaction that can see the loss changes nothing. The protocol keeps quoting its pre-loss price while informed holders exit.
-- "The rate limiter bounds how much can be booked" -- A rejected refresh does not move the timestamp, so the same increase is accepted later once enough time has gone by. Rate limiters delay.
-- "It's our own event, we emitted it" -- If the event fields came from instruction arguments, you emitted whatever the caller sent. Build events consumed by trusted off-chain code from `ctx.accounts`.
-- "The keeper isn't part of the audit" -- If it holds a key the program trusts to act for users, it is a privileged role, and its inputs are attack surface.
-- "Each position is under its cap, so we are diversified" -- Only if the cap is grouped by real failure domain and measured against loss-absorbing funds. Positions behind one bridge or adapter fail together, and a total that includes queued withdrawals lets a position exceed the buffer it is sized against.
-- "Both assets are stablecoins, we count them at par" -- Then every path that turns secondary-asset value into a primary-asset claim (fee claims, yield, injections, combined balance checks) is a par swap an attacker can use during a depeg.
-- "Only our program can emit our events" -- Any program can write a `Program data:` line. A parser that loses track of the invocation stack after a CPI, or a webhook whose body is trusted without refetching the transaction, accepts events nobody emitted.
-- "Sponsorship needs a login, so it is safe" -- A login says who asked, not what the sponsor will pay. If the caller sets the priority fee or compute price, they set the sponsor's loss.
-- "We block durable nonces, so admin freshness is handled" -- Blocking `AdvanceNonceAccount` only restores the default blockhash expiry. Check that every privileged handler has the guard, that any opt-out flag's setter is guarded too, and remember it does nothing against a stolen key.
+- "Anchor handles this automatically": Only if you use the correct types (`Signer<'info>`, `Account<'info, T>`, `Program<'info, T>`). Using raw `AccountInfo<'info>` bypasses all Anchor protections.
+- "This account is always passed correctly by our frontend": Attackers craft their own transactions. Every account must be validated on-chain.
+- "We check the data inside the instruction body": Constraints must be in the `#[derive(Accounts)]` struct for Anchor to enforce them before the instruction executes.
+- "The PDA can only be derived one way": Multiple valid bumps exist for the same seeds. Only the canonical bump (from `find_program_address`) is safe.
+- "Nobody would pass the same account twice": Duplicate mutable accounts can cause silent data overwrites.
+- "We zero the data when closing": Without the closed-account discriminator and a force-defund mechanism, lamport top-ups can revive accounts.
+- "Rust prevents overflow by default": Only in debug mode. Release builds (BPF) wrap silently. Always use `checked_*()` or set `overflow-checks = true`.
+- "The account data is fresh, we just wrote it": After CPI, Anchor's deserialized account structs are stale. Always call `.reload()`.
+- "We validate the account before CPI": After CPI returns, the account may have changed owner, been closed, or had lamports drained. Re-validate.
+- "Our state transitions are straightforward": Without explicit state machine enforcement, attackers can skip states or replay transitions.
+- "High code coverage means we're safe": Saber's comprehensive fuzzers missed a rounding bug worth $1M/day. Test economic invariants as well as code paths.
+- "The oracle gives us the price": A price without a staleness bound and confidence check is a stale/uncertain number. Solana has no native flash loans, but one atomic transaction can move a spot price, read it, and revert. Loopscale lost $5.8M pricing illiquid collateral off a manipulable source.
+- "We support Token-2022, we use InterfaceAccount": `InterfaceAccount` proves the account is a token account, not that the mint is safe. A permanent delegate can burn your vault, a transfer fee makes received < sent, a transfer hook can reenter you. Screen extensions or allow-list mints.
+- "We credit the amount the user deposited": On a fee-on-transfer mint the vault receives less than the requested amount. Credit the measured balance delta (`after - before`), never the requested amount.
+- "The mint address can't change": With `MintCloseAuthority`, a mint can be closed and its address reused for a different account. Re-validate mint state instead of trusting a cached pubkey.
+- "Our program is upgradeable so we can fix bugs": A single-key upgrade authority is a rug and a single point of failure: a leaked key swaps in a draining program past every on-chain check. Use a multisig + timelock, or make it immutable.
+- "We seed randomness from the clock/slot": Clock, slot, and recent blockhash are predictable and validator-influenceable. Attackers grind or bias them. Use a VRF (Switchboard On-Demand, ORAO).
+- "The transaction was signed by the council, so it's authorized": Durable nonces let a signed transaction execute weeks later, out of context. Drift lost ~$270M this way. Bind privileged actions to program-enforced expiries and sequence numbers.
+- "Only our program can move tokens into this account": False for every SPL token account, PDA-owned ones and ATAs included. Anyone can transfer in without the recipient's consent, and anyone can send lamports with `system_program::transfer`. A live balance is an upper bound.
+- "A donation only makes the pool richer": Not when a check requires the balance to *equal* internal bookkeeping. Then a 1-unit donation blocks every instruction behind that check, and if withdrawals sit behind it, funds stay stuck until a program upgrade.
+- "It's just griefing, no funds are stolen": Rank griefing by how long it lasts and what it blocks. A permanent failure on a withdrawal path with no on-chain recovery is critical.
+- "We measure the balance on chain, so it's accurate": Accurate numbers can still be attacker-influenced. Ask who else can move that number, and what breaks when they do.
+- "Our admin instructions sit behind a multisig, so freshness doesn't matter": A multisig proves *who* signed, never *when* the transaction runs. Without a program-enforced expiry and sequence number, every admin signature stays valid until someone uses it.
+- "Paying someone's rent is harmless": Initializing state for another user can also make choices for them. If that state sets a fee recipient or delegate and the user cannot change it later, the payer has decided for a user who never signed.
+- "The account type is checked, so it's the right account": `Account<'info, T>` proves the discriminator and owner, not *which instance*. In a program with many pools or markets, an account from another pool passes every type check. Bind identity with PDA seeds that include the pool id.
+- "The refresh reverts on a loss, so losses can't be booked wrong": It also means the one transaction that can see the loss changes nothing. The protocol keeps quoting its pre-loss price while informed holders exit.
+- "The rate limiter bounds how much can be booked": A rejected refresh does not move the timestamp, so the same increase is accepted later once enough time has gone by. A rate limiter only delays it.
+- "It's our own event, we emitted it": If the event fields came from instruction arguments, you emitted whatever the caller sent. Build events consumed by trusted off-chain code from `ctx.accounts`.
+- "The keeper isn't part of the audit": If it holds a key the program trusts to act for users, it is a privileged role, and its inputs are attack surface.
+- "Each position is under its cap, so we are diversified": Only if the cap is grouped by real failure domain and measured against loss-absorbing funds. Positions behind one bridge or adapter fail together, and a total that includes queued withdrawals lets a position exceed the buffer it is sized against.
+- "Both assets are stablecoins, we count them at par": Then every path that turns secondary-asset value into a primary-asset claim (fee claims, yield, injections, combined balance checks) is a par swap an attacker can use during a depeg.
+- "Only our program can emit our events": Any program can write a `Program data:` line. A parser that loses track of the invocation stack after a CPI, or a webhook whose body is trusted without refetching the transaction, accepts events nobody emitted.
+- "Sponsorship needs a login, so it is safe": A login says who asked, not what the sponsor will pay. If the caller sets the priority fee or compute price, they set the sponsor's loss.
+- "We block durable nonces, so admin freshness is handled": Blocking `AdvanceNonceAccount` only restores the default blockhash expiry. Check that every privileged handler has the guard, that any opt-out flag's setter is guarded too, and remember it does nothing against a stolen key.
 
 ## How This Skill Works
 
-When invoked, I will:
+Follow these steps:
 
-1. **Locate Solana programs** -- Find `lib.rs` files under `programs/`, check for `#[program]`, `entrypoint!`, or Pinocchio markers
-2. **Determine framework** -- Anchor (with protections), native Rust (manual checks), or Pinocchio (zero-copy, no protections)
-3. **Scan for all attack vectors** -- Check each instruction handler and account struct against 66 patterns across sections A-J
-4. **Report findings** with severity, file location, vulnerable code, and recommended fix
-5. **Prioritize by severity** -- CRITICAL findings first, then HIGH, then MEDIUM
+1. Locate Solana programs: find `lib.rs` files under `programs/` and check for `#[program]`, `entrypoint!`, or Pinocchio markers.
+2. Determine the framework: Anchor (with protections), native Rust (manual checks), or Pinocchio (zero-copy, no protections).
+3. Scan for all attack vectors: check each instruction handler and account struct against 66 patterns in sections A-J.
+4. Report findings with severity, file location, vulnerable code, and recommended fix.
+5. Prioritize by severity: CRITICAL findings first, then HIGH, then MEDIUM.
 
 ## Quick Reference Tables
 
@@ -299,7 +299,7 @@ rg "pinocchio" Cargo.toml
 rg "overflow-checks" Cargo.toml
 ```
 
-Determine framework: Anchor provides built-in protections when correct types are used; native and Pinocchio need manual checks for everything.
+Anchor gives built-in protections when you use the correct types. Native and Pinocchio programs need manual checks for everything.
 
 ### Step 2: Scan Account Structs (Most Vulnerabilities Live Here)
 
@@ -435,16 +435,16 @@ rg -n -i "total_assets|share_price|rate" programs/ -A 6 | rg -i "supply|mint_to|
 rg -n -i "require_gt!\(shares|zero.?share|virtual_" programs/
 ```
 
-**Triage every hit by its operator**:
-- `>=` in the safe direction (live >= tracked): fine, a donation is absorbed.
-- `==` between a live balance and tracked state: an **I52 finding**. Then check whether the gap survives a deposit and withdraw cycle (it almost always does) and whether any instruction can re-sync the tracked value. With no re-sync path, escalate to CRITICAL and say that recovery needs a program upgrade. An admin bookkeeping instruction that can book exactly the surplus (a loss or injection entry) counts as a re-sync path: then rate the finding by how long users stay blocked before an admin acts, usually MEDIUM to HIGH.
+Triage every hit by its operator:
+- `>=` in the safe direction (live >= tracked): fine, the check absorbs a donation.
+- `==` between a live balance and tracked state: an I52 finding. Then check whether the gap survives a deposit and withdraw cycle (it almost always does) and whether any instruction can re-sync the tracked value. With no re-sync path, escalate to CRITICAL and say that recovery needs a program upgrade. An admin bookkeeping instruction that can book exactly the surplus (a loss or injection entry) counts as a re-sync path: then rate the finding by how long users stay blocked before an admin acts, usually MEDIUM to HIGH.
 - `<=`, or `==` in the other direction: look for the reverse bug, a shortfall that goes unnoticed.
 
 Programs often get this right in one helper and wrong in another. When the main asset path uses a tolerant check, grep the helpers for secondary assets and newly added collateral, which is where a strict check tends to survive.
 
 ### Step 4.7: Scan the Accounting Model (I55-I61)
 
-Step 4.6 finds checks that exist and are wrong. This step finds accounting that is never checked. It is mostly reading, and these greps tell you where to read.
+Step 4.6 finds checks that exist and are wrong. This step finds accounting that is never checked. It is mostly reading, and these greps show where to read.
 
 ```bash
 # I55: paired fields, build a write-site table per field and compare the pairs
@@ -475,11 +475,11 @@ rg -n -i "fn \w*claim\w*|accumulated_\w*fee|unclaimed" programs/ -A 20 | rg -i "
 rg -n -i "apy|max_rate|rate_limit" programs/ -B 6 -A 6 | rg "\.amount|require|return Err"
 ```
 
-**I57 has two layers.** Check cached upstream rates, and also the vault's own cached price: a deposit that only checks the price's age mints shares against yield that is earned but not yet booked, and the next update pays part of it to the new shares.
+I57 has two layers. Check cached upstream rates and also the vault's own cached price. A deposit that only checks the price's age mints shares against yield that is earned but not yet booked, and the next update pays part of it to the new shares.
 
-**For I60**, write the exposure promise as one inequality (for example "losing any one failure domain is covered by the junior buffer") and check that the code enforces that exact inequality. Then list every position with the programs its CPIs reach, and group them by shared dependency rather than by name.
+For I60, write the exposure promise as one inequality (for example "losing any one failure domain is covered by the junior buffer") and check that the code enforces that exact inequality. Then list every position with the programs its CPIs reach, and group them by shared dependency rather than by name.
 
-**The question that finds I55 and I56**, which no grep can ask for you: for each quantity the program tracks, which paths move it, and do they all move its counterpart? Build the table. A field written in six places whose pair is written in four is the finding, and the two missing paths are usually a fee path and an admin path.
+To find I55 and I56, ask this for each quantity the program tracks: which paths move it, and do they all move its counterpart? No grep can ask it for you. Build the table. A field written in six places whose pair is written in four is the finding, and the two missing paths are usually a fee path and an admin path.
 
 ### Step 4.8: Scan Admin Instructions for Durable-Nonce Exposure (H47)
 
@@ -501,17 +501,17 @@ rg -n -i "propose|timelock|pending_|accept_" programs/
 rg -n "sysvar::instructions|load_instruction_at_checked|load_current_index_checked" programs/
 ```
 
-**If there is no nonce block**, recommend one (see the H47 mitigation in VULNERABILITY_PATTERNS.md).
+If there is no nonce block, recommend one (see the H47 mitigation in VULNERABILITY_PATTERNS.md).
 
-**If there is one**, look for gaps. List the privileged handlers yourself and compare that list with the handlers carrying the guard. Never trust the list of files a PR touched. Two things hide gaps, so check them by hand:
-- **Nested account structs.** A handler's outer `Context<T>` may carry no gate itself, with the privileged signer inside an embedded shared accounts struct. Resolve one level of nesting before comparing.
-- **Other privileged gates.** A handler gated on a hardcoded address constant instead of a config field is privileged too, and a grep for config fields will not see it.
+If there is one, look for gaps. List the privileged handlers yourself and compare that list with the handlers carrying the guard. Never trust the list of files a PR touched. Two things hide gaps, so check them by hand:
+- Nested account structs: a handler's outer `Context<T>` may carry no gate itself, with the privileged signer inside an embedded shared accounts struct. Resolve one level of nesting before comparing.
+- Other privileged gates: a handler gated on a hardcoded address constant instead of a config field is privileged too, and a grep for config fields will not see it.
 
 Then confirm: the sysvar account is pinned with `address = sysvar::instructions::ID`, any opt-out flag's setter is guarded too, the guard runs before any state change, and a zero default in reused padding means blocked. Say in the report that this only restores the blockhash expiry. It does not bind freshness and does not help against a stolen key.
 
 For each privileged instruction, answer the checklist in [H47 of VULNERABILITY_PATTERNS.md](references/VULNERABILITY_PATTERNS.md#h47-durable-nonce-replay--out-of-context-signing).
 
-Report it as: *"`transfer_admin`, `change_config` and `claim_fees` carry no program-enforced expiry or sequence number. A signature obtained today (durable nonce, social engineering, or an old hardware-wallet approval) stays executable indefinitely. Recommend an expiry and a sequence number, or a timelocked two-step flow with a guardian veto."* Flag single-step authority transfers here too, since they compound this (B18).
+Report it as: *"`transfer_admin`, `change_config` and `claim_fees` carry no program-enforced expiry or sequence number. A signature obtained today (durable nonce, social engineering, or an old hardware-wallet approval) stays executable indefinitely. Recommend an expiry and a sequence number, or a timelocked two-step flow with a guardian veto."* Flag single-step authority transfers here too, since they make this worse (B18).
 
 ### Step 4.9: Scan the Off-Chain Trust Boundary (J62-J66)
 
@@ -583,76 +583,76 @@ Use the finding template below. Group by severity.
 ## Priority Guidelines
 
 ### CRITICAL (Block deployment)
-- A0 Missing signer authorization -- unauthorized access to any instruction
-- A4 Re-initialization -- attacker can overwrite account data
-- A5 Arbitrary CPI -- attacker-controlled program execution
-- A7 Non-canonical bump seeds -- PDA spoofing
-- A9 Unsafe account closing -- account revival attacks
-- B13 SOL balance drainage via CPI -- fund theft
-- B19 CPI signer forwarding -- user wallet drained via malicious CPI
-- C25 Unconstrained dependency chain root -- all downstream validation bypassed
-- D29 invoke vs invoke_signed misuse -- unauthorized PDA signing
-- D30 Unsafe native account closure -- account revival
-- F36 Oracle staleness & confidence -- acting on stale/uncertain prices (Mango, Loopscale)
-- F37 Manipulable price source -- spot/illiquid oracle moved in-tx (Loopscale, Nirvana)
-- H48 Program upgrade authority -- single-key rug / full-fund compromise
-- I52 Donation-forced invariant failure *on a withdrawal path* -- funds unwithdrawable without a program upgrade
+- A0 Missing signer authorization: unauthorized access to any instruction
+- A4 Re-initialization: attacker can overwrite account data
+- A5 Arbitrary CPI: attacker-controlled program execution
+- A7 Non-canonical bump seeds: PDA spoofing
+- A9 Unsafe account closing: account revival attacks
+- B13 SOL balance drainage via CPI: fund theft
+- B19 CPI signer forwarding: user wallet drained via malicious CPI
+- C25 Unconstrained dependency chain root: all downstream validation bypassed
+- D29 invoke vs invoke_signed misuse: unauthorized PDA signing
+- D30 Unsafe native account closure: account revival
+- F36 Oracle staleness & confidence: acting on stale/uncertain prices (Mango, Loopscale)
+- F37 Manipulable price source: spot/illiquid oracle moved in-tx (Loopscale, Nirvana)
+- H48 Program upgrade authority: single-key rug / full-fund compromise
+- I52 Donation-forced invariant failure *on a withdrawal path*: funds unwithdrawable without a program upgrade
 
 ### HIGH (Fix before mainnet)
-- A1 Account data mismatch -- operations on wrong accounts
-- A2 Missing owner check -- fake account data injection
-- A3 Type cosplay -- wrong account type accepted
-- A6 Duplicate mutable accounts -- silent data corruption
-- A8 PDA sharing -- cross-user fund access
-- A10 Sysvar address spoofing -- fake sysvar data
-- B11 Stale data after CPI -- reading pre-CPI values
-- B12 Arithmetic safety -- overflow, precision loss, division by zero
-- B14 Post-CPI ownership change -- account taken over during CPI
-- B15 State machine inconsistency -- skipped or replayed transitions
-- B16 Atomicity violations -- multi-instruction exploits
-- B17 Casting vulnerabilities -- silent truncation via `as`
-- B18 Authority transfer -- single-step, irrecoverable
-- B20 Missing slippage protection -- sandwich attacks
-- C22 Seed collisions -- cross-feature PDA overlap
-- C23 Ed25519 introspection -- signature verification bypass
-- C27 Non-atomic init race -- rent thief pattern
-- D28 Borsh deserialization -- buffer overread
-- D31 Missing validation sequence -- native program gaps
-- D32 Unsafe Rust -- memory safety bypass
-- F38 Oracle account substitution -- attacker-supplied feed
-- G39 Token program confusion -- classic vs Token-2022 mismatch / fake token program
-- G40 Transfer fee accounting -- over-credit on fee-on-transfer mints
-- G41 Transfer hook risks -- reentrancy / DoS via mint-controlled hook
-- G42 Dangerous mint extensions -- permanent delegate / freeze seizure
-- H44 init_if_needed re-init -- reset authority/state on repeat call
-- H46 Insecure randomness -- predictable clock/slot/blockhash seeds
-- H47 Durable nonce replay -- pre-signed tx executed out of context (Drift)
-- I52 Donation / forced-balance griefing -- a 1-unit transfer blocks every instruction behind a `require_eq!`
-- I53 Share-price inflation via donation -- first depositor captures later deposits through rounding
-- I56 Rejecting adverse observations -- the protocol quotes a pre-loss price it cannot update while informed holders exit
-- I58 Full-balance sweep vs measured delta -- a donation is booked as proceeds or as yield
-- J62 Unauthenticated event identity -- an unprivileged attacker steers a trusted keeper key
-- I60 Exposure limit on the wrong base or grouping -- one compliant position or shared-dependency failure exceeds the buffer and reaches senior funds
+- A1 Account data mismatch: operations on wrong accounts
+- A2 Missing owner check: fake account data injection
+- A3 Type cosplay: wrong account type accepted
+- A6 Duplicate mutable accounts: silent data corruption
+- A8 PDA sharing: cross-user fund access
+- A10 Sysvar address spoofing: fake sysvar data
+- B11 Stale data after CPI: reading pre-CPI values
+- B12 Arithmetic safety: overflow, precision loss, division by zero
+- B14 Post-CPI ownership change: account taken over during CPI
+- B15 State machine inconsistency: skipped or replayed transitions
+- B16 Atomicity violations: multi-instruction exploits
+- B17 Casting vulnerabilities: silent truncation via `as`
+- B18 Authority transfer: single-step, irrecoverable
+- B20 Missing slippage protection: sandwich attacks
+- C22 Seed collisions: cross-feature PDA overlap
+- C23 Ed25519 introspection: signature verification bypass
+- C27 Non-atomic init race: rent thief pattern
+- D28 Borsh deserialization: buffer overread
+- D31 Missing validation sequence: native program gaps
+- D32 Unsafe Rust: memory safety bypass
+- F38 Oracle account substitution: attacker-supplied feed
+- G39 Token program confusion: classic vs Token-2022 mismatch / fake token program
+- G40 Transfer fee accounting: over-credit on fee-on-transfer mints
+- G41 Transfer hook risks: reentrancy / DoS via mint-controlled hook
+- G42 Dangerous mint extensions: permanent delegate / freeze seizure
+- H44 init_if_needed re-init: reset authority/state on repeat call
+- H46 Insecure randomness: predictable clock/slot/blockhash seeds
+- H47 Durable nonce replay: pre-signed tx executed out of context (Drift)
+- I52 Donation / forced-balance griefing: a 1-unit transfer blocks every instruction behind a `require_eq!`
+- I53 Share-price inflation via donation: first depositor captures later deposits through rounding
+- I56 Rejecting adverse observations: the protocol quotes a pre-loss price it cannot update while informed holders exit
+- I58 Full-balance sweep vs measured delta: a donation is booked as proceeds or as yield
+- J62 Unauthenticated event identity: an unprivileged attacker steers a trusted keeper key
+- I60 Exposure limit on the wrong base or grouping: one compliant position or shared-dependency failure exceeds the buffer and reaches senior funds
 
 ### MEDIUM (Improve before mainnet)
-- C21 Remaining accounts -- unvalidated dynamic accounts
-- C24 Reallocation stale data -- old data exposure
-- G43 Amount-semantics extensions -- interest-bearing/non-transferable/confidential mispricing
-- H45 Zero-copy / AccountLoader -- uninitialized memory, type confusion
-- H49 Compute budget exhaustion -- DoS on critical paths
-- H50 State compression / cNFT -- unverified merkle proof
-- H51 Address Lookup Table -- reliance on tx construction for security
-- C26 Rent-exemption violations -- account garbage collection
-- E33-35 Pinocchio framework gaps -- manual everything
-- I54 Griefable liveness -- attacker-influenced inputs on critical paths (HIGH if the failure sticks)
-- I55 Asymmetric paired accounting -- ghost debt, caps released before the risk leaves, fee basis drift
-- I57 JIT deposit against a stale rate -- a late depositor captures earlier yield
-- I59 Unbounded protocol-funded subsidy -- shared treasury drained at transaction-fee cost
-- J63 Unbound account vs off-chain assumption -- jobs that can never settle, queue starvation
-- J64 Keeper key on unvalidated input -- severity follows what the keeper may do
-- I61 Denomination collapse -- secondary-asset value claimed as primary at par (HIGH with a depeg path)
-- J65 Forged transaction provenance -- CPI log spoofing, signer read from an event, unauthenticated webhook (severity follows what the keeper may do)
-- J66 Sponsored fee payer -- a caller-chosen priority fee drains the sponsor wallet
+- C21 Remaining accounts: unvalidated dynamic accounts
+- C24 Reallocation stale data: old data exposure
+- G43 Amount-semantics extensions: interest-bearing/non-transferable/confidential mispricing
+- H45 Zero-copy / AccountLoader: uninitialized memory, type confusion
+- H49 Compute budget exhaustion: DoS on critical paths
+- H50 State compression / cNFT: unverified merkle proof
+- H51 Address Lookup Table: reliance on tx construction for security
+- C26 Rent-exemption violations: account garbage collection
+- E33-35 Pinocchio framework gaps: manual everything
+- I54 Griefable liveness: attacker-influenced inputs on critical paths (HIGH if the failure sticks)
+- I55 Asymmetric paired accounting: ghost debt, caps released before the risk leaves, fee basis drift
+- I57 JIT deposit against a stale rate: a late depositor captures earlier yield
+- I59 Unbounded protocol-funded subsidy: shared treasury drained at transaction-fee cost
+- J63 Unbound account vs off-chain assumption: jobs that can never settle, queue starvation
+- J64 Keeper key on unvalidated input: severity follows what the keeper may do
+- I61 Denomination collapse: secondary-asset value claimed as primary at par (HIGH with a depeg path)
+- J65 Forged transaction provenance: CPI log spoofing, signer read from an event, unauthenticated webhook (severity follows what the keeper may do)
+- J66 Sponsored fee payer: a caller-chosen priority fee drains the sponsor wallet
 
 ## Testing Recommendations
 
@@ -779,7 +779,7 @@ describe("security audit tests", () => {
 });
 ```
 
-**Write the donation test first.** For every program-owned token account, send 1 unit from an unrelated wallet, then run the full instruction set. Anything that breaks is an I52 finding. It takes a few lines and covers code added later too.
+Write the donation test first. For every program-owned token account, send 1 unit from an unrelated wallet, then run the full instruction set. Anything that breaks is an I52 finding. The test is a few lines long and also covers code added later.
 
 ```typescript
 // I52 harness sketch
@@ -811,37 +811,37 @@ await program.methods.settleYield().accounts({ /* ... */ }).rpc();
 | ERC-4626 inflation attack (bug class, all chains) | varies | Share price read off a donatable balance, deposit rounds to zero | I53 |
 | Donation DoS (bug class, common audit finding) | liveness | `require_eq!` between a program-owned token balance and internal bookkeeping | I52 |
 
-The Drift, web3.js, and Step incidents are labeled operational: they are not catchable by reviewing on-chain program code, but auditors should still flag the underlying risk (durable-nonce assumptions, dependency supply chain, single-key admin authority).
+The table labels the Drift, web3.js, and Step incidents operational because a review of on-chain program code cannot catch them. Auditors should still flag the underlying risk (durable-nonce assumptions, dependency supply chain, single-key admin authority).
 
 ## Tools & Resources
 
 ### Audit Tools
-- [Trident](https://github.com/Ackee-Blockchain/trident) -- Fuzzing framework for Solana programs
-- [Anchor X-ray](https://github.com/trailofbits/anchor-x-ray) -- Account visualization (Trail of Bits)
-- [Sec3 IDL Guesser](https://github.com/nickvdp/idl-guesser) -- Reverse-engineer program IDLs
-- `cargo-audit` -- Dependency vulnerability scanner
-- `cargo clippy` -- Lint for common Rust mistakes
+- [Trident](https://github.com/Ackee-Blockchain/trident): Fuzzing framework for Solana programs
+- [Anchor X-ray](https://github.com/trailofbits/anchor-x-ray): Account visualization (Trail of Bits)
+- [Sec3 IDL Guesser](https://github.com/nickvdp/idl-guesser): Reverse-engineer program IDLs
+- `cargo-audit`: Dependency vulnerability scanner
+- `cargo clippy`: Lint for common Rust mistakes
 
 ### Learning Resources
-- [Sealevel Attacks](https://github.com/coral-xyz/sealevel-attacks) -- Original 11 attack examples
-- [SlowMist Best Practices](https://github.com/slowmist/solana-smart-contract-security-best-practices) -- Comprehensive vulnerability catalog
-- [Safe Solana Builder](https://github.com/Frankcastleauditor/safe-solana-builder) -- Framework-agnostic patterns
-- [Awesome Solana Security](https://github.com/0xMacro/awesome-solana-security) -- Curated resource list
-- [Solana Security by Example](https://github.com/ubadineke/solana-security-by-example) -- Interactive examples
-- [Neodyme Common Pitfalls](https://neodyme.io/blog/solana_common_pitfalls/) -- Native Rust pitfalls
-- [Helius Security Guide](https://www.helius.dev/blog/a-hitchhikers-guide-to-solana-program-security) -- Practical walkthrough
-- [Ackee Auditors Bootcamp](https://github.com/Ackee-Blockchain/Solana-Auditors-Bootcamp) -- 7-week audit training
+- [Sealevel Attacks](https://github.com/coral-xyz/sealevel-attacks): Original 11 attack examples
+- [SlowMist Best Practices](https://github.com/slowmist/solana-smart-contract-security-best-practices): Comprehensive vulnerability catalog
+- [Safe Solana Builder](https://github.com/Frankcastleauditor/safe-solana-builder): Framework-agnostic patterns
+- [Awesome Solana Security](https://github.com/0xMacro/awesome-solana-security): Curated resource list
+- [Solana Security by Example](https://github.com/ubadineke/solana-security-by-example): Interactive examples
+- [Neodyme Common Pitfalls](https://neodyme.io/blog/solana_common_pitfalls/): Native Rust pitfalls
+- [Helius Security Guide](https://www.helius.dev/blog/a-hitchhikers-guide-to-solana-program-security): Practical walkthrough
+- [Ackee Auditors Bootcamp](https://github.com/Ackee-Blockchain/Solana-Auditors-Bootcamp): 7-week audit training
 
 ### Related Skills
-- [solana-best-practices](../solana-best-practices/SKILL.md) -- Development practices, Token-2022 compatibility, testing methodology (31 patterns + 14 practices)
-- [solana-dev](../solana-dev/SKILL.md) -- End-to-end development playbook (UI, SDK, Anchor, Pinocchio, testing, payments)
+- [solana-best-practices](../solana-best-practices/SKILL.md): Development practices, Token-2022 compatibility, testing methodology (31 patterns + 14 practices)
+- [solana-dev](../solana-dev/SKILL.md): End-to-end development playbook (UI, SDK, Anchor, Pinocchio, testing, payments)
 
 ### Oracle & Token-2022 References
-- [Pyth Price Feeds Best Practices](https://docs.pyth.network/price-feeds/best-practices) -- staleness, confidence, exponent handling
-- [Pyth on Solana](https://docs.pyth.network/price-feeds/use-real-time-data/solana) -- `pyth-solana-receiver-sdk`, `PriceUpdateV2`, `get_price_no_older_than`
-- [Switchboard On-Demand (Solana)](https://docs.switchboard.xyz/) -- `PullFeedAccountData`, staleness/variance gating
-- [SPL Token-2022 Extensions Guide](https://solana.com/developers/guides/token-extensions/getting-started) -- transfer hooks, fees, permanent delegate, confidential transfers
-- [Anchor Token Interface](https://www.anchor-lang.com/docs/tokens) -- `InterfaceAccount`, `TokenInterface` for Token-2022
+- [Pyth Price Feeds Best Practices](https://docs.pyth.network/price-feeds/best-practices): staleness, confidence, exponent handling
+- [Pyth on Solana](https://docs.pyth.network/price-feeds/use-real-time-data/solana): `pyth-solana-receiver-sdk`, `PriceUpdateV2`, `get_price_no_older_than`
+- [Switchboard On-Demand (Solana)](https://docs.switchboard.xyz/): `PullFeedAccountData`, staleness/variance gating
+- [SPL Token-2022 Extensions Guide](https://solana.com/developers/guides/token-extensions/getting-started): transfer hooks, fees, permanent delegate, confidential transfers
+- [Anchor Token Interface](https://www.anchor-lang.com/docs/tokens): `InterfaceAccount`, `TokenInterface` for Token-2022
 
 ### Incident Post-Mortems (2024-2026)
 - [Helius: Complete History of Solana Hacks](https://www.helius.dev/blog/solana-hacks)

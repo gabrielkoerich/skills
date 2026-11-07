@@ -5,11 +5,11 @@ description: Audits EVM/Solidity smart contracts for security vulnerabilities. C
 
 # EVM Smart Contract Security Auditor
 
-Systematic security audit skill for Solidity smart contracts on EVM-compatible chains. Derived from EVMbench research analyzing 120 high-severity vulnerabilities from 40 real Code4rena audit competitions, supplemented with established EVM vulnerability knowledge.
+Security audit skill for Solidity smart contracts on EVM-compatible chains. It is based on EVMbench, a study of 120 high-severity vulnerabilities from 40 real Code4rena audit competitions, and on established EVM vulnerability knowledge.
 
 ## Key Insight from EVMbench
 
-> **Discovery is the bottleneck.** When agents are told *which mechanism* is broken, they can patch 94% of vulnerabilities. Without hints, they patch ~40%. The hard part is finding the bug in a large codebase — not understanding or fixing it. This skill focuses on systematic search patterns to maximize discovery coverage.
+> Discovery is the bottleneck. When agents know which mechanism is broken, they patch 94% of vulnerabilities. Without hints, they patch ~40%. The hard part is to find the bug in a large codebase. Understanding and fixing it is easier. This skill gives systematic search patterns to find more bugs.
 
 ## Vulnerability Vectors
 
@@ -29,7 +29,7 @@ Systematic security audit skill for Solidity smart contracts on EVM-compatible c
 | 11 | [Token Standard Pitfalls](#11-token-standard-pitfalls) | MEDIUM | Multiple |
 | 12 | [Denial of Service](#12-denial-of-service) | MEDIUM | Taiko H-01 |
 
-For detailed vulnerability patterns with insecure/secure code examples and real-world case studies, see [VULNERABILITY_PATTERNS.md](references/VULNERABILITY_PATTERNS.md).
+[VULNERABILITY_PATTERNS.md](references/VULNERABILITY_PATTERNS.md) has the detailed patterns, with insecure and secure code examples and real-world case studies.
 
 ## When to Use
 
@@ -42,47 +42,48 @@ For detailed vulnerability patterns with insecure/secure code examples and real-
 
 ## When NOT to Use
 
-- For non-EVM chains (use `solana-security-audit` for Solana, `solana-best-practices` for Solana)
+- For non-EVM chains (for Solana, use `solana-security-audit` or `solana-best-practices`)
 - For off-chain backend code with no on-chain interaction
 - For pure frontend/UI reviews
 - For Vyper contracts (patterns differ, though many concepts overlap)
 
 ## Rationalizations to Reject
 
-- **"We use OpenZeppelin"** — OZ provides building blocks, not security guarantees. Misusing `Ownable`, skipping `nonReentrant`, or wrong inheritance order still creates vulnerabilities.
-- **"This function is internal"** — Internal functions are called by public ones. Trace the full call path; an unsafe internal function reached from a public entry point is exploitable.
-- **"The frontend validates this"** — Attackers bypass frontends. Every on-chain function can be called directly via cast/ethers with arbitrary calldata.
-- **"We have tests"** — Tests prove the happy path works, not that attack paths don't. EVMbench showed that existing test suites miss exploitable vulnerabilities in production codebases.
-- **"It's behind a timelock"** — Timelocks protect against malicious governance, not against logic bugs or permissionless function calls.
-- **"No one would do that"** — If the chain allows it, someone will do it. Smart contracts operate in an adversarial "dark forest" where automated bots scan for exploitable patterns constantly.
+- **"We use OpenZeppelin"**: OZ gives building blocks and no security guarantee. Misusing `Ownable`, skipping `nonReentrant`, or the wrong inheritance order still creates vulnerabilities.
+- **"This function is internal"**: public functions call internal ones. Trace the full call path. An unsafe internal function is exploitable when a public entry point reaches it.
+- **"The frontend validates this"**: attackers skip the frontend. They can call every on-chain function directly with cast/ethers and arbitrary calldata.
+- **"We have tests"**: tests show that the happy path works. They do not show that attack paths fail. EVMbench showed that existing test suites miss exploitable vulnerabilities in production codebases.
+- **"It's behind a timelock"**: a timelock protects against malicious governance. It does not stop logic bugs or permissionless function calls.
+- **"No one would do that"**: if the chain allows it, someone will do it. Smart contracts run in an adversarial "dark forest" where automated bots scan for exploitable patterns all the time.
 
 ## Finding Equivalence Test (from EVMbench LLM Judge)
 
-Two findings are the **same vulnerability** if and only if:
+Two findings are the same vulnerability if and only if:
 1. Same underlying security flaw/mechanism
 2. Same code path/function
-3. **Fixing one would fix the other**
+3. Fixing one would fix the other
 4. An attack for one would work against the other
 
-**Be lenient** with terminology differences, different attack scenarios for same root cause, exposition style.
-**Be strict** about different vulnerability types, different root causes, different code locations, vague descriptions.
+Be lenient about different terminology, different attack scenarios for the same root cause, and exposition style.
 
-See [DETECTION_GRADING.md](references/DETECTION_GRADING.md) for full grading criteria, hint system insights, and the optimal detection workflow.
+Be strict about different vulnerability types, root causes and code locations, and about vague descriptions.
+
+[DETECTION_GRADING.md](references/DETECTION_GRADING.md) has the full grading criteria, what the hint system showed, and the optimal detection workflow.
 
 ## How This Skill Works
 
-When invoked, I will:
+When invoked, the skill runs these steps:
 
-1. **Map the codebase** — Identify contracts in scope, inheritance hierarchy, external dependencies
-2. **Scan for all 13 attack vectors** — Check each function and contract against the patterns below
-3. **Trace value flows** — Follow ETH/token transfers end-to-end, checking for invariant violations
-4. **Analyze trust boundaries** — Identify where contracts trust external calls, oracles, or other protocols
-5. **Report findings** with severity, file location, vulnerable code, attack scenario, and recommended fix
-6. **Prioritize by impact** — Focus on loss-of-funds vulnerabilities first (CRITICAL), then other severities
+1. Map the codebase: find the contracts in scope, the inheritance hierarchy and external dependencies
+2. Scan for all 13 attack vectors: check each function and contract against the patterns below
+3. Trace value flows: follow ETH/token transfers end to end and check for invariant violations
+4. Analyze trust boundaries: find where contracts trust external calls, oracles, or other protocols
+5. Report findings with severity, file location, vulnerable code, attack scenario, and recommended fix
+6. Prioritize by impact: loss-of-funds vulnerabilities (CRITICAL) first, then other severities
 
 ## Audit Methodology (from EVMbench)
 
-The EVMbench paper's evaluation of expert-level auditing reveals this optimal workflow:
+The EVMbench paper's evaluation of expert-level auditing points to this workflow:
 
 ### Step 1: Understand Scope and Architecture
 
@@ -107,7 +108,7 @@ rg "safeTransfer|safeTransferFrom|transferFrom" --type sol
 
 ### Step 2: Scan for High-Severity Patterns (Loss of Funds)
 
-**Focus on these first** — EVMbench only includes vulnerabilities that lead to loss of user or platform funds.
+Check these first. EVMbench only includes vulnerabilities that lead to loss of user or platform funds.
 
 ```bash
 # Reentrancy (#0): external calls before state updates
@@ -146,7 +147,7 @@ For each finding from Step 2:
 
 ### Step 4: Verify Comprehensive Coverage
 
-**Critical lesson from EVMbench**: Agents that stop after finding one vulnerability miss others. Real codebases have multiple independent vulnerabilities.
+EVMbench showed that agents that stop after the first vulnerability miss the others. Real codebases have multiple independent vulnerabilities.
 
 - Revisit each contract in scope after initial scan
 - Check interactions between contracts (cross-contract bugs)
@@ -155,7 +156,7 @@ For each finding from Step 2:
 
 ### Step 5: Report
 
-Use the finding template below. Write findings incrementally as you discover them.
+Use the finding template below. Write each finding down as you find it.
 
 ## Scanning Quick Reference
 
@@ -225,35 +226,35 @@ rg "\.approve\(|safeApprove\(|increaseAllowance|forceApprove" --type sol -n
 
 ## Priority Guidelines
 
-### CRITICAL (Block deployment — direct loss of funds)
-- #0 Reentrancy — state changes after external calls
-- #1 Missing access control — unauthorized fund withdrawal or admin actions
-- #2 Flash loan exploitation — single-tx fund drain
-- #3 Unsafe upgrades — permissionless proxy upgrade to malicious implementation
-- #7 Signature bypass — forged or replayed signatures granting access
-- #8 Trust boundary violation — cross-contract/cross-vault theft
+### CRITICAL (block deployment, direct loss of funds)
+- #0 Reentrancy: state changes after external calls
+- #1 Missing access control: unauthorized fund withdrawal or admin actions
+- #2 Flash loan exploitation: single-tx fund drain
+- #3 Unsafe upgrades: permissionless proxy upgrade to malicious implementation
+- #7 Signature bypass: forged or replayed signatures granting access
+- #8 Trust boundary violation: cross-contract/cross-vault theft
 
-### HIGH (Fix before mainnet — potential loss of funds)
-- #4 Price/oracle manipulation — manipulable price feeds enabling unfair trades
-- #5 Integer/rounding errors — precision loss enabling value extraction
-- #6 Front-running/race conditions — MEV-exploitable state transitions
-- #9 Unsafe external calls — unchecked return values, unvalidated callbacks
-- #10 Logic/state errors — incorrect invariants, wrong validation order
+### HIGH (fix before mainnet, potential loss of funds)
+- #4 Price/oracle manipulation: manipulable price feeds enabling unfair trades
+- #5 Integer/rounding errors: precision loss enabling value extraction
+- #6 Front-running/race conditions: MEV-exploitable state transitions
+- #9 Unsafe external calls: unchecked return values, unvalidated callbacks
+- #10 Logic/state errors: incorrect invariants, wrong validation order
 
-### MEDIUM (Fix recommended — limited or indirect impact)
-- #11 Token standard pitfalls — fee-on-transfer, rebasing, ERC777 hooks
-- #12 Denial of service — gas griefing, unbounded loops, blocked withdrawals
+### MEDIUM (fix recommended, limited or indirect impact)
+- #11 Token standard pitfalls: fee-on-transfer, rebasing, ERC777 hooks
+- #12 Denial of service: gas griefing, unbounded loops, blocked withdrawals
 
 ## Common Failure Modes (from EVMbench)
 
-When auditing, avoid these mistakes observed in EVMbench:
+Avoid these mistakes, all seen in EVMbench:
 
-1. **Reporting broad themes instead of specific vulnerabilities** — "there's an access control issue" is not enough. Identify the exact function, the exact missing check, and the exact exploit path.
-2. **Stopping after finding one bug** — Real codebases have multiple independent vulnerabilities. Keep scanning.
-3. **Wrong vulnerability targeted** — The patch addresses a different issue than the actual exploitable one.
-4. **Narrow fix that doesn't block the exploit path** — Mitigating a surface symptom while leaving the core exploit viable.
-5. **Not checking balances after exploit attempts** — Always verify the actual on-chain state change.
-6. **Giving up too early on complex exploits** — Multi-step exploits (flash loan + reentrancy + cross-contract) are real and common.
+1. Reporting broad themes instead of specific vulnerabilities. "There's an access control issue" is not enough. Name the exact function, the exact missing check, and the exact exploit path.
+2. Stopping after the first bug. Real codebases have multiple independent vulnerabilities. Keep scanning.
+3. Targeting the wrong vulnerability. The patch fixes a different issue than the exploitable one.
+4. A narrow fix that leaves the exploit path open. It mitigates a surface symptom, and the core exploit still works.
+5. Not checking balances after exploit attempts. Always verify the actual on-chain state change.
+6. Giving up too early on complex exploits. Multi-step exploits (flash loan + reentrancy + cross-contract) are real and common.
 
 ## Reference Files
 
@@ -271,8 +272,8 @@ When auditing, avoid these mistakes observed in EVMbench:
 
 ## Additional Resources
 
-- [EVMbench (frontier-evals)](https://github.com/openai/frontier-evals/tree/main/project/evmbench) — 120 real vulnerabilities from 40 Code4rena audits, with exploit harness and grading
-- [SWC Registry](https://swcregistry.io/) — Smart Contract Weakness Classification
-- [Code4rena Reports](https://code4rena.com/reports) — Real audit findings
-- [OpenZeppelin Security](https://docs.openzeppelin.com/contracts/) — Secure contract building blocks
-- [Foundry Book](https://book.getfoundry.sh/) — Testing and exploitation tooling
+- [EVMbench (frontier-evals)](https://github.com/openai/frontier-evals/tree/main/project/evmbench): 120 real vulnerabilities from 40 Code4rena audits, with exploit harness and grading
+- [SWC Registry](https://swcregistry.io/): Smart Contract Weakness Classification
+- [Code4rena Reports](https://code4rena.com/reports): Real audit findings
+- [OpenZeppelin Security](https://docs.openzeppelin.com/contracts/): Secure contract building blocks
+- [Foundry Book](https://book.getfoundry.sh/): Testing and exploitation tooling

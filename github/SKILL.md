@@ -50,7 +50,7 @@ gh run view <run-id> --repo owner/repo --log-failed
 
 ## API for Advanced Queries
 
-The `gh api` command is useful for accessing data not available through other subcommands.
+Use `gh api` for data that the other subcommands do not return.
 
 Get PR with specific fields:
 
@@ -60,7 +60,7 @@ gh api repos/owner/repo/pulls/55 --jq '.title, .state, .user.login'
 
 ## JSON Output
 
-Most commands support `--json` for structured output. You can use `--jq` to filter:
+Most commands support `--json` for structured output. Filter it with `--jq`:
 
 ```bash
 gh issue list --repo owner/repo --json number,title --jq '.[] | "\(.number): \(.title)"'

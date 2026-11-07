@@ -9,7 +9,7 @@ Read and search X (Twitter) using browser automation with the logged-in Chrome p
 
 ## Prerequisites
 
-1. Chrome browser with **your profile** running
+1. Chrome running with your profile
 2. Logged into x.com in that profile
 
 ## Start Chrome (if not running)
@@ -52,10 +52,10 @@ Uses Chrome DevTools Protocol (CDP) to:
 
 ## Files
 
-- `timeline.ts` - Get user tweets
-- `read.ts` - Read tweet/thread with replies
-- `bookmarks.ts` - Get your bookmarks
-- `search.ts` - Search tweets
+- `timeline.ts`: get user tweets
+- `read.ts`: read a tweet/thread with replies
+- `bookmarks.ts`: get your bookmarks
+- `search.ts`: search tweets
 
 ## Troubleshooting
 
@@ -64,10 +64,10 @@ Uses Chrome DevTools Protocol (CDP) to:
 - Check port 18800 is accessible: `curl http://127.0.0.1:18800/json`
 
 **Empty results**
-- X may have changed their DOM structure
+- X may have changed its DOM structure
 - Try increasing the wait time in the scripts
 - Check if you're still logged in
 
 ## Rate Limits
 
-Built-in delays between requests to avoid rate limiting.
+The scripts wait between requests to avoid rate limits.

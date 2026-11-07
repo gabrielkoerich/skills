@@ -6,7 +6,7 @@ homepage: https://github.com/tobi/qmd
 
 # qmd - Local Markdown Search
 
-Local search engine for Markdown notes, docs, and knowledge bases. Index once, search fast. Use instead of `find` for file discovery across large directories.
+Local search engine for Markdown notes, docs, and knowledge bases. Index the files once, then search them. Use it instead of `find` for file discovery across large directories.
 
 ## Installation
 
@@ -31,15 +31,15 @@ qmd collection list
 
 - "search my notes / docs / knowledge base"
 - "find related notes"
-- "find files matching [pattern]" — use instead of `find` to avoid hangs on large directories
+- "find files matching [pattern]": use it instead of `find` to avoid hangs on large directories
 - "what did we decide about X?"
 
 ## Default Behavior (important)
 
-- Prefer `qmd search` (BM25) — it's instant and should be the default.
+- Prefer `qmd search` (BM25). It is instant and should be the default.
 - Use `qmd vsearch` only when keyword search fails and you need semantic similarity.
 - Avoid `qmd query` unless the user explicitly wants the highest quality hybrid results and can tolerate long runtimes.
-- **Always use `--json` flag** for structured output when invoking from an agent.
+- Always pass the `--json` flag for structured output when you call qmd from an agent.
 
 ## Search Commands
 
@@ -96,10 +96,10 @@ qmd multi-get "*.yaml" -l 50 --max-bytes 10240
 
 ## Output Formats
 
-- `--files` — paths + scores (for file discovery)
-- `--json` — structured with snippets
-- `--md` — markdown formatted
-- `-n 10` — limit results
+- `--files`: paths + scores (for file discovery)
+- `--json`: structured with snippets
+- `--md`: markdown formatted
+- `-n 10`: limit results
 
 ## Maintenance
 
@@ -133,11 +133,11 @@ Exposes tools: `qmd_search`, `qmd_vsearch`, `qmd_query`, `qmd_get`, `qmd_multi_g
 
 - `qmd search` is typically instant.
 - `qmd vsearch` can take ~1 minute on first run (loads local LLM).
-- `qmd query` adds LLM reranking — can be slow, avoid for interactive use.
+- `qmd query` adds LLM reranking. It can be slow, so avoid it for interactive use.
 
 ## Models (auto-downloaded)
 
-All run locally — no API keys needed.
+All models run locally. No API keys needed.
 
 - Embedding: embeddinggemma-300M
 - Reranking: qwen3-reranker-0.6b

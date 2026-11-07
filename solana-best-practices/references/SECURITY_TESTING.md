@@ -1,12 +1,12 @@
 # Security Testing Patterns
 
-TDD-style test patterns for discovering and verifying fixes for each vulnerability class. For every vulnerability found, the workflow is:
+TDD-style test patterns that find each vulnerability class and verify its fix. For every vulnerability you find:
 
-1. **Write an exploit test** that proves the vulnerability exists (test PASSES = vulnerability confirmed)
-2. **Apply the fix** to the program code
-3. **Run the test again** to confirm the exploit is now blocked (test PASSES = fix verified)
+1. Write an exploit test that proves the vulnerability exists (test PASSES = vulnerability confirmed).
+2. Apply the fix to the program code.
+3. Run the test again to confirm the fix blocks the exploit (test PASSES = fix verified).
 
-All tests use Anchor's TypeScript testing framework with `@coral-xyz/anchor` and `solana-bankrun` where applicable.
+All tests use Anchor's TypeScript test framework with `@coral-xyz/anchor`, plus `solana-bankrun` where it applies.
 
 Sources: [Zealynx Security Checklist](https://www.zealynx.io/blogs/solana-security-checklist), [Helius Security Guide](https://www.helius.dev/blog/a-hitchhikers-guide-to-solana-program-security)
 
