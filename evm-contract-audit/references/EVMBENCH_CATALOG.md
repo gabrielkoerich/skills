@@ -1,6 +1,6 @@
 # EVMbench Complete Vulnerability Catalog
 
-120+ high-severity vulnerabilities from 40 real Code4rena audits. Organized by attack category with frequency counts. Every vulnerability leads to direct or indirect loss of user/platform funds.
+120+ high-severity vulnerabilities from 40 real Code4rena audits, grouped by attack category with frequency counts. Every vulnerability leads to direct or indirect loss of user/platform funds.
 
 Source: [openai/frontier-evals](https://github.com/openai/frontier-evals/tree/main/project/evmbench)
 
@@ -22,7 +22,7 @@ Source: [openai/frontier-evals](https://github.com/openai/frontier-evals/tree/ma
 
 ## Category 1: Access Control / Authorization (~15 instances)
 
-The most frequent category. Functions missing ownership checks, role gates, or proper authorization.
+The most frequent category: functions that lack ownership checks, role checks or proper authorization.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -51,7 +51,7 @@ rg "function\s+_\w+.*(public|external)" --type sol -n
 
 ## Category 2: Logic & State Errors (~20 instances)
 
-The broadest category. Incorrect calculations, wrong validation order, missing invariant checks.
+The broadest category: incorrect calculations, wrong validation order and missing invariant checks.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -68,7 +68,7 @@ The broadest category. Incorrect calculations, wrong validation order, missing i
 | ThorWallet | H-01 | No handling if exchange limit exceeded |
 | BendDAO | multiple | Liquidation without ownership verification |
 
-**Detection priority**: High. Trace every state-changing path and verify invariants hold.
+**Detection priority**: High. Trace every state-changing path and verify that invariants hold.
 
 ```bash
 # Find accounting/balance operations
@@ -83,7 +83,7 @@ rg "require\(|if \(" --type sol -n -A 3
 
 ## Category 3: Reentrancy (~10 instances)
 
-External calls before state updates. Includes classic, cross-function, ERC721/1155 callback variants.
+External calls before state updates, in classic, cross-function and ERC721/1155 callback variants.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -110,7 +110,7 @@ rg "_safeMint|_safeTransfer|onERC721Received|onERC1155Received" --type sol -n
 
 ## Category 4: Integer Overflow/Underflow & Type Casting (~8 instances)
 
-Downcasting truncation, unchecked arithmetic, precision loss.
+Truncation on downcast, unchecked arithmetic and precision loss.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -139,7 +139,7 @@ rg "\/.*\*" --type sol -n  # Division before multiplication
 
 ## Category 5: Cross-Chain / Signature Replay (~6 instances)
 
-Missing `chainId` in signatures, replay across chains or across function calls.
+Signatures without `chainId`, and replay across chains or across function calls.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -177,7 +177,7 @@ rg "nonce|nonces" --type sol -n
 
 ## Category 6: Token Integration Issues (~5 instances)
 
-Rebasing tokens, fee-on-transfer, blacklists, incorrect event emissions.
+Rebasing tokens, fee-on-transfer, blacklists and incorrect event emissions.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -198,7 +198,7 @@ rg "balanceOf.*before|balanceOf.*after" --type sol -n
 
 ## Category 7: Staking / Governance Manipulation (~4 instances)
 
-Voting power lost, stake manipulation, governance flash loan attacks.
+Lost voting power, stake manipulation and governance flash loan attacks.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -216,7 +216,7 @@ rg "balanceOf.*votingPower|getVotes|getPastVotes" --type sol -n
 
 ## Category 8: Data Structure Corruption (~3 instances)
 
-Linked list invariant violations, incorrect array index management.
+Broken linked list invariants and incorrect array index handling.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -234,7 +234,7 @@ rg "delete.*\[|pop\(\)|push\(" --type sol -n
 
 ## Category 9: Griefing / Denial of Service (~5 instances)
 
-Permanent lockup of assets, blocking withdrawals, forced state changes.
+Assets locked forever, blocked withdrawals and forced state changes.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -254,7 +254,7 @@ rg "block\.timestamp.*deadline|endTime|expiry" --type sol -n
 
 ## Category 10: Smart Wallet / Signature Validation (~3 instances)
 
-Chained signature bypass, missing guard validation, checkpoint manipulation.
+Chained signature bypass, missing guard validation and checkpoint manipulation.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -272,7 +272,7 @@ rg "setFallbackHandler|setGuard" --type sol -n
 
 ## Category 11: Oracle / Price Manipulation (~3 instances)
 
-TWAP manipulation, spot price dependency, stale oracle data.
+TWAP manipulation, spot price dependency and stale oracle data.
 
 | Audit | Finding | Description |
 |-------|---------|-------------|
@@ -317,7 +317,7 @@ rg "updatedAt|staleness|heartbeat" --type sol -n
 - PoolTogether H-04: `mintYieldFee` callable by anyone
 
 ### Key Insight
-**Discovery difficulty correlates with:**
+Discovery difficulty correlates with:
 1. Number of contracts involved (cross-contract > single-contract)
 2. Domain-specific knowledge required (AMM math > simple auth check)
 3. Number of preconditions needed for exploitation
@@ -328,7 +328,7 @@ rg "updatedAt|staleness|heartbeat" --type sol -n
 ## Exploit Complexity
 
 Most EVMbench exploits are simple once found:
-- **Majority of patches**: ≤5 lines changed
-- **Majority of exploits**: 1–6 transactions
-- **Single-transaction exploits**: BendDAO (liquidation), Basin (upgrade), PoolTogether (mint)
-- **Multi-step exploits**: Noya (flash loan + cross-vault), Phi (reentrancy + metadata overwrite)
+- Most patches change ≤5 lines.
+- Most exploits take 1 to 6 transactions.
+- Single-transaction exploits: BendDAO (liquidation), Basin (upgrade), PoolTogether (mint)
+- Multi-step exploits: Noya (flash loan + cross-vault), Phi (reentrancy + metadata overwrite)

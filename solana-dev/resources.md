@@ -1,8 +1,8 @@
 # Curated Resources (Source-of-Truth First)
 
 ## Learning Platforms
-- [Blueshift](https://learn.blueshift.gg/) - Free, open-source Solana learning platform
-- [Blueshift GitHub](https://github.com/blueshift-gg) - Course content and tools
+- [Blueshift](https://learn.blueshift.gg/): free, open-source Solana learning platform
+- [Blueshift GitHub](https://github.com/blueshift-gg): course content and tools
 - [Solana Cookbook](https://solanacookbook.com/)
 
 ## Core Solana Docs

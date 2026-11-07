@@ -51,7 +51,7 @@ Output includes:
 
 ## Suggested Workflow
 
-1. Run `report.py` for `last-month` for an executive snapshot.
+1. Run `report.py` for `last-month` for a quick summary.
 2. Run `report.py` for `last-12-months` to inspect consistency and trend.
 3. Use `ask.py` for direct ad-hoc questions.
 4. If you need custom SQL-like analysis, run `bean-query` directly from your finance repo.

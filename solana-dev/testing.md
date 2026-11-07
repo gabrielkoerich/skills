@@ -2,13 +2,13 @@
 
 ## Testing Pyramid
 
-1. **Unit tests (fast)**: LiteSVM or Mollusk
-2. **Integration tests (realistic state)**: Surfpool
-3. **Cluster smoke tests**: devnet/testnet/mainnet as needed
+1. Unit tests (fast): LiteSVM or Mollusk
+2. Integration tests (realistic state): Surfpool
+3. Cluster smoke tests: devnet/testnet/mainnet as needed
 
 ## LiteSVM
 
-A lightweight Solana Virtual Machine that runs directly in your test process. Created by Aursen from Exotic Markets.
+A lightweight Solana Virtual Machine that runs inside your test process. Created by Aursen from Exotic Markets.
 
 ### When to Use LiteSVM
 
@@ -81,15 +81,15 @@ const result = svm.sendTransaction(tx);
 
 ### Account Types in LiteSVM
 
-**System Accounts:**
+System accounts:
 - Payer accounts (contain lamports)
 - Uninitialized accounts (empty, awaiting setup)
 
-**Program Accounts:**
+Program accounts:
 - Serialize with `borsh`, `bincode`, or `solana_program_pack`
 - Calculate rent-exempt minimum balance
 
-**Token Accounts:**
+Token accounts:
 - Use `spl_token::state::Mint` and `spl_token::state::Account`
 - Serialize with Pack trait
 
@@ -115,11 +115,11 @@ println!("CUs used: {}", result.compute_units_consumed);
 
 ## Mollusk
 
-A lightweight test harness providing direct interface to program execution without full validator runtime. Best for Rust-only testing with fine-grained control.
+A lightweight test harness that runs programs directly, without the full validator runtime. Best for Rust-only testing with fine-grained control.
 
 ### When to Use Mollusk
 
-- Fast execution for rapid development cycles
+- Fast execution for short development cycles
 - Precise account state manipulation for edge cases
 - Detailed performance metrics and CU benchmarking
 - Custom syscall testing
@@ -225,7 +225,7 @@ mollusk.sysvars.clock = Clock {
 
 ## Surfpool
 
-SDK and tooling suite for integration testing with realistic cluster state. Surfnet is the local network component (drop-in replacement for solana-test-validator).
+SDK and tools for integration testing with realistic cluster state. Surfnet is the local network component (drop-in replacement for solana-test-validator).
 
 ### When to Use Surfpool
 
@@ -346,4 +346,4 @@ jobs:
 - Use deterministic PDAs and seeded keypairs for reproducibility
 - Minimize fixtures; prefer programmatic account creation
 - Profile CU usage during development to catch regressions
-- Run integration tests in separate CI stage to control runtime
+- Run integration tests in a separate CI stage to control runtime

@@ -32,16 +32,15 @@ Use web3-compat helpers such as:
 - `toKitSigner(...)`
 
 ## When you still need @solana/web3.js
-Some methods outside web3-compat's compatibility surface may fall back to a legacy web3.js implementation.
-If that happens:
+Some methods outside web3-compat's compatibility surface may fall back to a legacy web3.js implementation. If that happens:
 - keep `@solana/web3.js` as an explicit dependency
 - isolate fallback usage to adapter modules only
-- avoid letting `PublicKey` bleed into your core domain types
+- keep `PublicKey` out of your core domain types
 
 ## Common mistakes to prevent
 - Mixing `Address` and `PublicKey` throughout the app (causes type drift and confusion)
 - Building transactions in one stack and signing in another without explicit conversion
-- Passing web3.js `Connection` into Kit-native code (or vice versa) rather than using a single source of truth
+- Passing web3.js `Connection` into Kit-native code (or the reverse) instead of using a single source of truth
 
 ## Decision checklist
 If you're about to add web3.js:

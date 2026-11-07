@@ -23,10 +23,10 @@ description: "Reviews Solana/Anchor programs for development best practices. Use
 ## Index
 
 ### Reference Files
-- [DEVELOPMENT_PATTERNS.md](references/DEVELOPMENT_PATTERNS.md) -- 14 practices with full vulnerable/secure code examples
-- [COMMON_MISTAKES.md](references/COMMON_MISTAKES.md) -- 31 vulnerability patterns + 4 case studies
-- [TOKEN_2022_SECURITY.md](references/TOKEN_2022_SECURITY.md) -- Token-2022 extension security (9 patterns)
-- [SECURITY_TESTING.md](references/SECURITY_TESTING.md) -- TDD-style exploit tests for each vulnerability class
+- [DEVELOPMENT_PATTERNS.md](references/DEVELOPMENT_PATTERNS.md): 14 practices with full vulnerable/secure code examples
+- [COMMON_MISTAKES.md](references/COMMON_MISTAKES.md): 31 vulnerability patterns + 4 case studies
+- [TOKEN_2022_SECURITY.md](references/TOKEN_2022_SECURITY.md): Token-2022 extension security (9 patterns)
+- [SECURITY_TESTING.md](references/SECURITY_TESTING.md): TDD-style exploit tests for each vulnerability class
 
 ### 14 Practice Areas
 | # | Practice | Category |
@@ -112,42 +112,42 @@ description: "Reviews Solana/Anchor programs for development best practices. Use
 
 ## Rationalizations to Reject
 
-- "Rust prevents overflow by default" -- Only in debug mode. Release builds wrap silently. Always use `checked_*()` arithmetic or set `overflow-checks = true` in Cargo.toml.
-- "Anchor handles everything" -- Only when you use the correct types. `AccountInfo<'info>` bypasses all checks. `unwrap()` panics your program.
-- "We'll add validation later" -- Validation is not a feature; it's structural. Missing it at write-time means missing it at audit-time.
-- "The space calculation is close enough" -- Off-by-one in account space causes silent data truncation or allocation failure. Calculate exactly.
-- "We don't need tests for constraints" -- Constraints are your security boundary. Every `has_one`, `constraint`, and `seeds` must have a negative test.
-- "The account data is fresh, we just wrote it" -- After CPI, Anchor's deserialized account structs are stale. Always call `.reload()`.
-- "Token-2022 is just like SPL Token" -- Token-2022 extensions (transfer fees, permanent delegates, CPI guards) change fundamental assumptions. Check every extension.
-- "We only accept known tokens" -- Governance changes or new pools can introduce Token-2022 tokens. Code defensively.
+- "Rust prevents overflow by default": Only in debug mode. Release builds wrap silently. Always use `checked_*()` arithmetic or set `overflow-checks = true` in Cargo.toml.
+- "Anchor handles everything": Only when you use the correct types. `AccountInfo<'info>` bypasses all checks. `unwrap()` panics your program.
+- "We'll add validation later": Validation is part of the program's structure. Validation that is missing when you write the code is still missing at audit time.
+- "The space calculation is close enough": An off-by-one error in account space causes silent data truncation or allocation failure. Calculate exactly.
+- "We don't need tests for constraints": Constraints are your security boundary. Every `has_one`, `constraint`, and `seeds` must have a negative test.
+- "The account data is fresh, we just wrote it": After CPI, Anchor's deserialized account structs are stale. Always call `.reload()`.
+- "Token-2022 is just like SPL Token": Token-2022 extensions (transfer fees, permanent delegates, CPI guards) change fundamental assumptions. Check every extension.
+- "We only accept known tokens": Governance changes or new pools can introduce Token-2022 tokens. Code defensively.
 
 ## How This Skill Works
 
-When invoked, follow a two-phase approach: **Discover**, then **Fix**.
+Work in two phases: discover, then fix.
 
 ### Phase 1: Discover (TDD Red)
 
-1. **Scan for Solana programs** in the codebase
-2. **Check each practice area** against the 14 development patterns
-3. **Scan for vulnerability patterns** across all 31 common mistakes
-4. **Check Token-2022 compatibility** if token operations are present
-5. **Report findings** grouped by severity (Block Deployment / Fix Before Mainnet / Improve)
-6. **For each finding, write an exploit test** that proves the vulnerability exists
+1. Scan the codebase for Solana programs.
+2. Check each practice area against the 14 development patterns.
+3. Scan for all 31 common mistakes.
+4. Check Token-2022 compatibility if the program has token operations.
+5. Report findings grouped by severity (Block Deployment / Fix Before Mainnet / Improve).
+6. For each finding, write an exploit test that proves the vulnerability exists.
    - Use the test patterns from [SECURITY_TESTING.md](references/SECURITY_TESTING.md)
    - The exploit test should PASS when the vulnerability is present (red = vulnerable)
-   - This provides evidence and a regression test
+   - The test is evidence and also a regression test
 
 ### Phase 2: Fix (TDD Green)
 
-7. **Apply the fix** using the secure code patterns from the reference files
-8. **Run the exploit test again** -- it should now FAIL (green = fixed)
-9. **Write a verification test** that confirms the correct behavior
-10. **Run the full test suite** to ensure no regressions
+7. Apply the fix with the secure code patterns from the reference files.
+8. Run the exploit test again. It should now FAIL (green = fixed).
+9. Write a verification test that confirms the correct behavior.
+10. Run the full test suite to catch regressions.
 
-This TDD approach ensures:
-- Every vulnerability has **proof** (the exploit test)
-- Every fix has **verification** (the exploit test now fails)
-- **No regressions** in existing functionality
+With this approach:
+- Every vulnerability has proof (the exploit test).
+- Every fix has verification (the exploit test now fails).
+- Existing functionality has no regressions.
 
 ## Quick Reference: 14 Practice Areas
 

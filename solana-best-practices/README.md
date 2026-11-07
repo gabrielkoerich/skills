@@ -1,10 +1,10 @@
 # Solana Best Practices
 
-Comprehensive Solana/Anchor development best practices for writing efficient, secure, and maintainable programs.
+Solana/Anchor development best practices for writing efficient, secure, and maintainable programs.
 
 ## Overview
 
-This skill guides development of Solana programs by enforcing best practices across security, performance, and code quality. It covers 14 practice areas, 31 vulnerability patterns, 9 Token-2022 security checks, and 4 real-world exploit case studies -- all with vulnerable/secure code examples.
+The skill enforces best practices for security, performance, and code quality in Solana programs. It covers 14 practice areas, 31 vulnerability patterns, 9 Token-2022 security checks, and 4 real-world exploit case studies, each with vulnerable and secure code examples.
 
 Based on [SlowMist's security best practices](https://github.com/slowmist/solana-smart-contract-security-best-practices), [Zealynx security checklist](https://www.zealynx.io/blogs/solana-security-checklist), [Helius security guide](https://www.helius.dev/blog/a-hitchhikers-guide-to-solana-program-security), and [bigjoejs' practical guide](https://github.com/bigjoefilms/Solana-program-development-security-best-practices).
 
@@ -27,7 +27,7 @@ Based on [SlowMist's security best practices](https://github.com/slowmist/solana
 | 13 | Upgradeability | Operations |
 | 14 | Compute Unit Management | Performance |
 
-Plus 31 vulnerability patterns covering arithmetic, account validation, state management, CPI security, frontrunning, Token-2022 extensions, and advanced issues (casting, heap exhaustion, Ed25519 introspection, etc.)
+The 31 vulnerability patterns cover arithmetic, account validation, state management, CPI security, frontrunning, Token-2022 extensions, and advanced issues (casting, heap exhaustion, Ed25519 introspection, and others).
 
 ## Case Studies
 

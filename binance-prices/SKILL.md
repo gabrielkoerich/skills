@@ -51,6 +51,6 @@ ETHUSDT: $2,345.67
 
 ## Notes
 
-- Uses public Binance API - no rate limits for basic queries
+- Uses the public Binance API, with no rate limits for basic queries
 - Returns real-time prices from Binance spot market
 - All prices are in the quote currency (USDT/BTC/ETH/BUSD)

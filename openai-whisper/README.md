@@ -17,11 +17,11 @@ whisper audio.wav --output_format json
 
 ## Agent Integration
 
-STT (Speech-to-Text) can be integrated with any AI agent.
+Any AI agent can use Whisper for speech-to-text (STT).
 
 ### Configuration
 
-STT config can be added to `~/.claude/claude.json`:
+Add the STT config to `~/.claude/claude.json`:
 
 ```json
 {

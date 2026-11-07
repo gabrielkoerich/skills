@@ -6,8 +6,7 @@ tags: [tts, speech, voice, audio, kokoro, mlx, metal, offline, free, local]
 
 # Kokoro TTS (local, Metal GPU)
 
-Kokoro-82M through `mlx-audio`. Runs on the Metal GPU on Apple Silicon. Apache-2.0,
-so commercial use is free. Sounds close to a paid API, unlike the `say` compact voices.
+Kokoro-82M through `mlx-audio`. Runs on the Metal GPU on Apple Silicon. Apache-2.0, so commercial use is free. Sounds close to a paid API, unlike the `say` compact voices.
 
 Use `macos-say` instead when you need zero startup latency and do not care about quality.
 
@@ -32,8 +31,7 @@ Ask before using `--play`. It makes noise on the user's machine.
 
 ## Voices
 
-First letter is language, second is gender. `af_heart` is the default and the
-best rated. `af_bella`, `am_michael`, `bf_emma` and `bm_george` are also strong.
+First letter is language, second is gender. `af_heart` is the default and the best rated. `af_bella`, `am_michael`, `bf_emma` and `bm_george` are also strong.
 
 | Prefix | Language | Voices |
 |--------|----------|--------|
@@ -47,13 +45,11 @@ best rated. `af_bella`, `am_michael`, `bf_emma` and `bm_george` are also strong.
 | `pf_` `pm_` | Brazilian Portuguese | dora / alex, santa |
 | `zf_` `zm_` | Mandarin | xiaobei, xiaoni, xiaoxiao, xiaoyi / yunjian, yunxi, yunxia, yunyang |
 
-Non-English voices past American and British English are not QA'd upstream. Check
-output before shipping them.
+Non-English voices past American and British English are not QA'd upstream. Check output before shipping them.
 
 ## Performance
 
-Roughly 5 seconds of fixed startup per call, for Python imports and model load.
-Synthesis itself runs faster than real time. A 21 second clip took 8 seconds total.
+Roughly 5 seconds of fixed startup per call, for Python imports and model load. Synthesis itself runs faster than real time. A 21 second clip took 8 seconds total.
 
 For many short calls in a row, run the HTTP server once instead:
 
@@ -80,7 +76,6 @@ Three install traps, all hit during setup:
 2. `misaki` alone lacks `num2words`. You need `misaki[en]`.
 3. `misaki` needs the spaCy English model, which is not a PyPI dependency.
 
-Costs 1.2 GB of venv, mostly torch pulled in by spaCy, plus the model in
-`~/.cache/huggingface`. Everything is isolated. System and Homebrew Python are untouched.
+Costs 1.2 GB of venv, mostly torch pulled in by spaCy, plus the model in `~/.cache/huggingface`. Everything is isolated. System and Homebrew Python are untouched.
 
 Remove with `trash ~/.local/share/kokoro-tts`.

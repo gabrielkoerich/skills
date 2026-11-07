@@ -1,12 +1,12 @@
 # Solidity & EVM-Specific Pitfalls
 
-Language-level and EVM-level pitfalls that go beyond high-level vulnerability patterns. Covers storage layout, assembly, post-Cancun changes, and precision issues.
+Language-level and EVM-level pitfalls that the high-level vulnerability patterns do not cover: storage layout, assembly, post-Cancun changes and precision issues.
 
 ---
 
 ## Storage Layout in Proxies
 
-When using proxy patterns (UUPS, Transparent, Beacon), storage lives in the proxy's context. If the implementation's storage layout changes between upgrades, slots collide.
+With proxy patterns (UUPS, Transparent, Beacon), storage lives in the proxy's context. If the implementation's storage layout changes between upgrades, slots collide.
 
 ```solidity
 // Implementation V1
@@ -65,7 +65,7 @@ rg -n "delegatecall|_implementation|ERC1967|UUPS|TransparentProxy" --type sol
 
 ## Constructor vs Initializer in Upgradeable Contracts
 
-Constructors run only on the implementation's deployment, NOT in the proxy's context.
+A constructor runs only when the implementation is deployed, NOT in the proxy's context.
 
 ```solidity
 // VULNERABLE: Constructor in upgradeable contract
@@ -136,7 +136,7 @@ rg -n "/ .*\*|\/.*\*" --type sol
 
 ### SELFDESTRUCT (EIP-6780)
 
-After Dencun (March 2024), `SELFDESTRUCT` no longer destroys contract code or clears storage. It only sends the ETH balance. Metamorphic contract patterns are broken.
+Since Dencun (March 2024), `SELFDESTRUCT` no longer destroys contract code or clears storage. It only sends the ETH balance. Metamorphic contract patterns no longer work.
 
 ```bash
 rg -n "selfdestruct|SELFDESTRUCT" --type sol
@@ -145,7 +145,7 @@ rg -n "selfdestruct|SELFDESTRUCT" --type sol
 
 ### Transient Storage (EIP-1153)
 
-New opcodes `TSTORE`/`TLOAD` -- data persists for one transaction only. Perfect for reentrancy guards.
+The new opcodes `TSTORE`/`TLOAD` keep data for one transaction only, which suits reentrancy guards well.
 
 ```solidity
 contract TransientReentrancyGuard {

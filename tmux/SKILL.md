@@ -76,7 +76,7 @@ To monitor:
 
 ## Orchestrating Coding Agents (Codex, Claude Code)
 
-tmux excels at running multiple coding agents in parallel:
+Use tmux to run several coding agents in parallel:
 
 ```bash
 SOCKET="${TMPDIR:-/tmp}/codex-army.sock"
@@ -103,10 +103,10 @@ done
 tmux -S "$SOCKET" capture-pane -p -t agent-1 -S -500
 ```
 
-**Tips:**
+Tips:
 
 - Use separate git worktrees for parallel fixes (no branch conflicts)
-- `pnpm install` first before running codex in fresh clones
+- Run `pnpm install` before running codex in fresh clones
 - Check for shell prompt (`❯` or `$`) to detect completion
 - Codex needs `--yolo` or `--full-auto` for non-interactive fixes
 

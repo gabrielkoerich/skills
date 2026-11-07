@@ -1,19 +1,19 @@
 # GitHub Secrets Manager
 
-A TypeScript/Bun CLI tool for managing GitHub repository, organization, and environment secrets via the GitHub API.
+A TypeScript/Bun CLI that manages GitHub repository, organization and environment secrets with the GitHub API.
 
 ## Features
 
-- 🔐 **List secrets** - View all secrets with metadata
-- ➕ **Add secrets** - Create new secrets with automatic encryption
-- 📝 **Update secrets** - Modify existing secrets
-- 🗑️ **Delete secrets** - Remove single or multiple secrets
-- 🔄 **Sync secrets** - Bulk import from JSON or .env files
-- 🏢 **Multi-level support** - Repository, organization, and environment secrets
+- List all secrets with their metadata
+- Add new secrets, encrypted automatically
+- Update existing secrets
+- Delete one secret or many
+- Sync secrets in bulk from JSON or `.env` files
+- Works at repository, organization and environment level
 
-## Why This Tool?
+## Why this tool?
 
-While `gh secret` covers basic operations (list, set, delete), this custom tool adds workflow features that `gh` doesn't provide:
+`gh secret` covers the basic operations (list, set, delete). This tool adds workflow features that `gh` does not have:
 
 | Feature | `gh secret` | github-secrets |
 |---------|-------------|----------------|
@@ -23,8 +23,7 @@ While `gh secret` covers basic operations (list, set, delete), this custom tool 
 | Batch delete multiple | One at a time | Comma-separated in one command |
 | Org secrets to selected repos | No | `--repos` flag |
 
-**Use `gh` for:** Quick single-secret operations.
-**Use github-secrets for:** Bulk sync workflows, exact replication of local `.env` files to GitHub, and safe preview before applying changes.
+Use `gh` for quick operations on one secret. Use github-secrets for bulk sync, exact copies of local `.env` files to GitHub, and a preview before you apply changes.
 
 ## Installation
 
@@ -35,17 +34,17 @@ bun install
 
 ## Configuration
 
-Set your GitHub Personal Access Token:
+Set a GitHub Personal Access Token:
 
 ```bash
 export GITHUB_TOKEN="ghp_your_token_here"
 ```
 
-**Required scopes:**
-- `repo` - For repository secrets
-- `admin:org` - For organization secrets
+Required scopes:
+- `repo`: repository secrets
+- `admin:org`: organization secrets
 
-## Quick Start
+## Quick start
 
 ```bash
 # List repository secrets
@@ -135,7 +134,7 @@ bun run sync --owner <owner> --repo <repo> --file secrets.json --dry-run
 bun run sync --owner <owner> --repo <repo> --file secrets.json --delete-missing
 ```
 
-**JSON format:**
+JSON format:
 ```json
 {
   "API_KEY": "value1",
@@ -157,7 +156,7 @@ bun test --coverage
 bun run typecheck
 ```
 
-## Project Structure
+## Project structure
 
 ```
 github-secrets/
@@ -173,9 +172,9 @@ github-secrets/
 └── tsconfig.json
 ```
 
-## API Reference
+## API reference
 
-The `GitHubSecretsClient` class provides direct programmatic access:
+Use the `GitHubSecretsClient` class to call the API from code:
 
 ```typescript
 import GitHubSecretsClient from './src/client';
@@ -194,10 +193,10 @@ await client.deleteRepoSecret('owner', 'repo', 'SECRET_NAME');
 
 ## Security
 
-- Secrets are encrypted using libsodium sealed boxes before transmission
-- Secret values are never logged or stored locally
-- Always use environment variables for tokens
-- Use `--dry-run` to preview changes before applying
+- The tool encrypts secrets with libsodium sealed boxes before it sends them
+- The tool never logs secret values or stores them locally
+- Always keep tokens in environment variables
+- Use `--dry-run` to preview changes before you apply them
 
 ## License
 

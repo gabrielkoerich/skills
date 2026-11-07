@@ -1,11 +1,10 @@
 # IDLs + client generation (Codama / Shank / Kinobi)
 
 ## Goal
-Never hand-maintain multiple program clients by manually re-implementing serializers.
-Prefer an IDL-driven, code-generated workflow.
+Never maintain several program clients by re-implementing serializers by hand. Prefer an IDL-driven, code-generated workflow.
 
 ## Codama (preferred)
-- Use Codama as the "single program description format" to generate:
+- Use Codama as the single program description format to generate:
   - TypeScript clients (including Kit-friendly output)
   - Rust clients (when available/needed)
   - documentation artifacts
@@ -30,7 +29,7 @@ If the program is native:
 - `clients/rust/<name>/` (generated Rust client)
 
 ## Generation guardrails
-- Codegen outputs should be checked into git if:
+- Check codegen outputs into git if:
   - you need deterministic builds
   - you want users to consume the client without running codegen
 - Otherwise, keep codegen in CI and publish artifacts.

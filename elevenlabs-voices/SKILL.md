@@ -7,23 +7,21 @@ tags: [tts, voice, speech, elevenlabs, audio, sound-effects, voice-design, multi
 
 # ElevenLabs Voice Personas v2.0
 
-Comprehensive voice synthesis toolkit using ElevenLabs API.
+Voice synthesis scripts for the ElevenLabs API.
 
-## ✨ Features
+## Features
 
-- **18 Voice Personas** - Carefully curated voices for different use cases
-- **32 Languages** - Multi-language synthesis with the multilingual v2 model
-- **Streaming Mode** - Real-time audio output as it generates
-- **Sound Effects (SFX)** - AI-generated sound effects from text prompts
-- **Batch Processing** - Process multiple texts in one go
-- **Cost Tracking** - Monitor character usage and estimated costs
-- **Voice Design** - Create custom voices from descriptions
-- **Pronunciation Dictionary** - Custom word pronunciation rules
-- **Agent Integration** - Works with any AI agent's built-in TTS
+- 18 voice personas, each picked for a use case
+- 32 languages with the multilingual v2 model
+- Streaming: audio plays while it generates
+- Sound effects (SFX) generated from text prompts
+- Batch processing of many texts in one run
+- Cost tracking of character usage and estimated cost
+- Voice design: create custom voices from descriptions
+- Pronunciation dictionary with custom rules per word
+- Works with the built-in TTS of any AI agent
 
----
-
-## 🎙️ Available Voices
+## Available voices
 
 | Voice | Accent | Gender | Persona | Best For |
 |-------|--------|--------|---------|----------|
@@ -46,7 +44,7 @@ Comprehensive voice synthesis toolkit using ElevenLabs API.
 | will | 🇺🇸 US | male | optimist | Motivation, uplifting |
 | liam | 🇺🇸 US | male | social | YouTube, social media |
 
-## 🎯 Quick Presets
+## Presets
 
 - `default` → rachel (warm, friendly)
 - `narrator` → adam (documentaries)
@@ -61,9 +59,7 @@ Comprehensive voice synthesis toolkit using ElevenLabs API.
 - `australian` → charlie
 - `broadcaster` → daniel (news)
 
----
-
-## 🌍 Supported Languages (32)
+## Supported languages (32)
 
 The multilingual v2 model supports these languages:
 
@@ -97,11 +93,9 @@ python3 tts.py --text "Bonjour le monde!" --voice adam --lang fr
 python3 tts.py --languages
 ```
 
----
+## CLI usage
 
-## 💻 CLI Usage
-
-### Basic Text-to-Speech
+### Text to speech
 
 ```bash
 # List all voices
@@ -117,9 +111,9 @@ python3 scripts/tts.py --text "Breaking news..." --voice broadcaster --output ne
 python3 scripts/tts.py --text "Bonjour!" --voice rachel --lang fr --output french.mp3
 ```
 
-### Streaming Mode
+### Streaming mode
 
-Generate audio with real-time streaming (good for long texts):
+Streaming plays audio while it generates. Use it for long texts:
 
 ```bash
 # Stream audio as it generates
@@ -129,9 +123,9 @@ python3 scripts/tts.py --text "This is a long story..." --voice adam --stream
 python3 scripts/tts.py --text "Chapter one..." --voice george --stream --output chapter1.mp3
 ```
 
-### Batch Processing
+### Batch processing
 
-Process multiple texts from a file:
+Process many texts from one file:
 
 ```bash
 # From newline-separated text file
@@ -141,7 +135,7 @@ python3 scripts/tts.py --batch texts.txt --voice rachel --output-dir ./audio
 python3 scripts/tts.py --batch batch.json --output-dir ./output
 ```
 
-**JSON batch format:**
+JSON batch format:
 ```json
 [
   {"text": "First line", "voice": "rachel", "output": "line1.mp3"},
@@ -150,14 +144,14 @@ python3 scripts/tts.py --batch batch.json --output-dir ./output
 ]
 ```
 
-**Simple text format (one per line):**
+Text format, one text per line:
 ```
 Hello, this is the first sentence.
 This is the second sentence.
 And this is the third.
 ```
 
-### Usage Statistics
+### Usage statistics
 
 ```bash
 # Show usage stats and cost estimates
@@ -167,11 +161,9 @@ python3 scripts/tts.py --stats
 python3 scripts/tts.py --reset-stats
 ```
 
----
+## Sound effects (SFX)
 
-## 🎵 Sound Effects (SFX)
-
-Generate AI-powered sound effects from text descriptions:
+Generate sound effects from text descriptions:
 
 ```bash
 # Generate a sound effect
@@ -190,16 +182,14 @@ python3 scripts/sfx.py --batch sounds.json --output-dir ./sfx
 python3 scripts/sfx.py --examples
 ```
 
-**Example prompts:**
+Example prompts:
 - "Thunder rumbling in the distance"
 - "Cat purring contentedly"
 - "Typing on a mechanical keyboard"
 - "Spaceship engine humming"
 - "Coffee shop background chatter"
 
----
-
-## 🎨 Voice Design
+## Voice design
 
 Create custom voices from text descriptions:
 
@@ -220,7 +210,7 @@ python3 scripts/voice-design.py --gender female --age young --accent american \
 python3 scripts/voice-design.py --options
 ```
 
-**Voice Design Options:**
+Voice design options:
 
 | Option | Values |
 |--------|--------|
@@ -229,13 +219,9 @@ python3 scripts/voice-design.py --options
 | Accent | american, british, african, australian, indian, latin, middle_eastern, scandinavian, eastern_european |
 | Accent Strength | 0.3-2.0 (subtle to strong) |
 
----
+## Pronunciation dictionary
 
-## 📖 Pronunciation Dictionary
-
-Customize how words are pronounced:
-
-Edit `pronunciations.json`:
+Set how words are pronounced in `pronunciations.json`:
 ```json
 {
   "rules": [
@@ -262,17 +248,15 @@ python3 scripts/tts.py --text "The Claude API is great" --voice rachel
 python3 scripts/tts.py --text "The API is great" --voice rachel --no-pronunciations
 ```
 
----
+## Cost tracking
 
-## 💰 Cost Tracking
-
-The skill tracks your character usage and estimates costs:
+The scripts track character usage and estimate costs:
 
 ```bash
 python3 scripts/tts.py --stats
 ```
 
-**Output:**
+Output:
 ```
 📊 ElevenLabs Usage Statistics
 
@@ -287,13 +271,11 @@ python3 scripts/tts.py --stats
   Scale      $1.68 ($0.11/1k chars)
 ```
 
----
+## Agent TTS integration
 
-## 🤖 Agent TTS Integration
+### Agent built-in TTS
 
-### Using with an Agent's Built-in TTS
-
-Agents with TTS support can use ElevenLabs. Configure in `~/.claude/claude.json`:
+An agent with TTS support can use ElevenLabs. Configure it in `~/.claude/claude.json`:
 
 ```json
 {
@@ -309,40 +291,36 @@ Agents with TTS support can use ElevenLabs. Configure in `~/.claude/claude.json`
 }
 ```
 
-### Triggering TTS in Chat
+### TTS in chat
 
-In agent conversations:
-- Use `/tts on` to enable automatic TTS
-- Use the `tts` tool directly for one-off speech
-- Request "read this aloud" or "speak this"
+In an agent conversation:
+- `/tts on` turns on automatic TTS
+- The `tts` tool speaks one message
+- "read this aloud" or "speak this" also trigger speech
 
-### Using Skill Scripts from an Agent
+### Skill scripts from an agent
 
 ```bash
 # An agent can run these scripts directly
 exec python3 /path/to/skills/elevenlabs-voices/scripts/tts.py --text "Hello" --voice rachel
 ```
 
----
+## Configuration
 
-## ⚙️ Configuration
-
-The scripts look for API key in this order:
+The scripts look for the API key in this order:
 
 1. `ELEVEN_API_KEY` or `ELEVENLABS_API_KEY` environment variable
 2. Agent config (`~/.claude/claude.json` → tts.elevenlabs.apiKey)
 3. Skill-local `.env` file
 
-**Create .env file:**
+Create the `.env` file:
 ```bash
 echo 'ELEVEN_API_KEY=your-key-here' > .env
 ```
 
----
+## Voice settings
 
-## 🎛️ Voice Settings
-
-Each voice has tuned settings for optimal output:
+Each voice has its own tuned settings:
 
 | Setting | Range | Description |
 |---------|-------|-------------|
@@ -350,9 +328,7 @@ Each voice has tuned settings for optimal output:
 | similarity_boost | 0.0-1.0 | How closely to match original voice |
 | style | 0.0-1.0 | Exaggeration of speaking style |
 
----
-
-## 📝 Triggers
+## Triggers
 
 - "use {voice_name} voice"
 - "speak as {persona}"
@@ -361,9 +337,7 @@ Each voice has tuned settings for optimal output:
 - "generate sound effect"
 - "design a voice"
 
----
-
-## 📁 Files
+## Files
 
 ```
 elevenlabs-voices/
@@ -380,9 +354,7 @@ elevenlabs-voices/
     └── voice-guide.md    # Voice selection guide
 ```
 
----
-
-## 🔗 Links
+## Links
 
 - [ElevenLabs](https://elevenlabs.io)
 - [API Documentation](https://docs.elevenlabs.io)
@@ -390,9 +362,7 @@ elevenlabs-voices/
 - [Sound Effects API](https://elevenlabs.io/docs/api-reference/sound-generation)
 - [Voice Design API](https://elevenlabs.io/docs/api-reference/voice-generation)
 
----
-
-## 📋 Changelog
+## Changelog
 
 ### v2.0.0
 - Added 32 language support with `--lang` parameter

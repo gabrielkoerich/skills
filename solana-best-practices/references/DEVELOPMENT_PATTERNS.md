@@ -8,7 +8,7 @@
 
 **Category**: Security
 
-**Rule**: Every instruction that mutates state, transfers value, or closes accounts must verify the caller's authority using `Signer<'info>` combined with `has_one`.
+**Rule**: Every instruction that mutates state, transfers value, or closes accounts must verify the caller's authority with `Signer<'info>` and `has_one`.
 
 ### Vulnerable
 
@@ -77,7 +77,7 @@ pub enum ErrorCode {
 
 **Category**: Security
 
-**Rule**: Use `Account<'info, T>`, `Program<'info, T>`, and `Signer<'info>` for automatic validation. Only use `UncheckedAccount` when necessary, with a `/// CHECK:` comment explaining why.
+**Rule**: Use `Account<'info, T>`, `Program<'info, T>`, and `Signer<'info>` for automatic validation. Use `UncheckedAccount` only when you must, with a `/// CHECK:` comment that explains why.
 
 ### Vulnerable
 
@@ -124,7 +124,7 @@ pub enum ErrorCode {
 **When `UncheckedAccount` is acceptable**:
 - Read-only accounts where you only need the public key
 - Accounts passed through to CPIs without deserialization
-- Always add `/// CHECK:` with validation rationale
+- Always add `/// CHECK:` with the reason the account is safe
 
 ```rust
 /// CHECK: This account is used for off-chain reference only.
@@ -218,7 +218,7 @@ pub struct CreateTask<'info> {
 - [ ] All string/vec inputs have length validation with `require!`
 - [ ] Account structs store an `owner: Pubkey` field
 - [ ] `has_one = owner` enforces ownership on mutations
-- [ ] Business logic constraints in `constraint = ...` (e.g., `!task.completed`)
+- [ ] Business logic constraints in `constraint = ...` (for example, `!task.completed`)
 - [ ] `#[instruction(...)]` makes parameters available in account validation
 
 ---
@@ -227,7 +227,7 @@ pub struct CreateTask<'info> {
 
 **Category**: Security
 
-**Rule**: Derive accounts with `seeds` and `bump`, store the bump, and validate with `has_one` to ensure only rightful owners can access their accounts.
+**Rule**: Derive accounts with `seeds` and `bump`, store the bump, and validate with `has_one`, so only the owner can access the account.
 
 ### Vulnerable
 
@@ -284,7 +284,7 @@ pub struct Vault {
 - [ ] Store bump at init with `ctx.bumps.vault`
 - [ ] Reuse stored bump with `bump = vault.bump` (avoids `find_program_address` cost)
 - [ ] Combine with `has_one = owner` for double validation
-- [ ] Include unique IDs in seeds when users need multiple accounts (e.g., `task_id`)
+- [ ] Include unique IDs in seeds when users need multiple accounts (for example, `task_id`)
 
 ---
 
@@ -378,7 +378,7 @@ pub enum ErrorCode {
 
 **Category**: Reliability
 
-**Rule**: Define custom error types with `#[error_code]`, use `require!` macros for early validation, never use `unwrap()` or `panic!` in production.
+**Rule**: Define custom error types with `#[error_code]`, use `require!` macros for early validation, and never use `unwrap()` or `panic!` in production.
 
 ### Vulnerable
 
@@ -420,7 +420,7 @@ pub fn process(ctx: Context<Process>, amount: u64) -> Result<()> {
 - [ ] Use `require!(condition, ErrorCode)` for early validation
 - [ ] Replace all `unwrap()` with `.ok_or(ErrorCode)?` or `?`
 - [ ] Never use `panic!`, `unreachable!`, or `todo!` in deployed code
-- [ ] Anchor constraints (`has_one`, `constraint`) handle validation automatically -- use them
+- [ ] Use Anchor constraints (`has_one`, `constraint`), they handle validation automatically
 
 ---
 
@@ -428,7 +428,7 @@ pub fn process(ctx: Context<Process>, amount: u64) -> Result<()> {
 
 **Category**: Correctness
 
-**Rule**: Calculate exact byte sizes for all fields. Incorrect space causes silent data truncation or allocation failure.
+**Rule**: Calculate exact byte sizes for all fields. Wrong space causes silent data truncation or allocation failure.
 
 ### Formula
 
@@ -527,10 +527,10 @@ pub fn mint_and_check(ctx: Context<MintAndCheck>, amount: u64) -> Result<()> {
 ```
 
 **When to reload**:
-- [ ] After `token::transfer` -- reload source and destination token accounts
-- [ ] After `token::mint_to` -- reload mint account (supply changed)
-- [ ] After `token::burn` -- reload mint account and token account
-- [ ] After any CPI that modifies an account you'll read from
+- [ ] After `token::transfer`, reload the source and destination token accounts
+- [ ] After `token::mint_to`, reload the mint account (supply changed)
+- [ ] After `token::burn`, reload the mint account and the token account
+- [ ] After any CPI that modifies an account you will read
 
 ---
 
@@ -538,14 +538,14 @@ pub fn mint_and_check(ctx: Context<MintAndCheck>, amount: u64) -> Result<()> {
 
 **Category**: Maintainability
 
-**Rule**: Break programs into modular pieces. Use CPIs instead of reimplementing existing functionality. Extract shared logic into separate crates.
+**Rule**: Split programs into modules. Use CPIs instead of reimplementing existing functionality. Extract shared logic into separate crates.
 
 **Guidelines**:
-- One instruction handler per function, doing one thing well
+- One instruction handler per function, and each handler does one thing
 - Extract common validation into helper functions
 - Use CPIs to call SPL Token, System Program, etc. instead of raw account manipulation
 - Share types and utilities across programs via workspace crates
-- Anchor's derive macros eliminate boilerplate -- use them fully
+- Use Anchor's derive macros fully, they remove boilerplate
 
 ---
 
@@ -560,7 +560,7 @@ pub fn mint_and_check(ctx: Context<MintAndCheck>, amount: u64) -> Result<()> {
 - Always add `/// CHECK:` on `UncheckedAccount` explaining why it's safe
 - Document PDA seeds and what makes them unique
 - Explain non-obvious constraints and their security purpose
-- Maintain a README with program architecture and setup steps
+- Keep a README with the program architecture and setup steps
 
 ```rust
 /// Withdraws tokens from the user's vault.
@@ -578,12 +578,12 @@ pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
 
 **Category**: Quality
 
-**Rule**: Test everything -- happy paths, failures, edge cases, and security boundaries.
+**Rule**: Test everything: happy paths, failures, edge cases and security boundaries.
 
 **Strategy**:
 - **Unit tests**: Individual functions, arithmetic, validation logic
 - **Integration tests**: Full transactions via Anchor's test framework
-- **Negative tests**: Verify errors are thrown for invalid inputs, wrong signers, bad accounts
+- **Negative tests**: Verify that invalid inputs, wrong signers and bad accounts return errors
 - **State tests**: Verify account data changes correctly after operations
 - **PDA tests**: Verify derivation and that wrong seeds fail
 
@@ -623,12 +623,12 @@ describe("security tests", () => {
 
 **Category**: Quality
 
-**Rule**: Get code audited before mainnet. Use firms that know Solana.
+**Rule**: Get the code audited before mainnet, by a firm that knows Solana.
 
 **Pre-audit checklist**:
-- [ ] Run `cargo clippy` -- fix all warnings
-- [ ] Run `cargo audit` -- no known vulnerable dependencies
-- [ ] All `unwrap()` eliminated from production code
+- [ ] Run `cargo clippy` and fix all warnings
+- [ ] Run `cargo audit` and confirm there are no known vulnerable dependencies
+- [ ] No `unwrap()` in production code
 - [ ] Every `AccountInfo` has either a typed replacement or `/// CHECK:` justification
 - [ ] Complete test suite with negative tests
 - [ ] Documentation of program architecture and security assumptions
@@ -641,7 +641,7 @@ describe("security tests", () => {
 
 **Category**: Operations
 
-**Rule**: Plan for upgrades from day one. Use PDAs for storage, version accounts, and protect upgrade authority.
+**Rule**: Plan for upgrades from day one. Use PDAs for storage, version your accounts, and protect the upgrade authority.
 
 **Guidelines**:
 - Solana programs are upgradeable by default through the upgrade authority
@@ -649,7 +649,7 @@ describe("security tests", () => {
 - Add a `version: u8` field to account structs for migration
 - Test upgrades on devnet first
 - Use a multisig for the upgrade authority on mainnet
-- When fully stable, consider making immutable with `solana program set-upgrade-authority <PROGRAM_ID> --final`
+- When the program is fully stable, consider making it immutable with `solana program set-upgrade-authority <PROGRAM_ID> --final`
 
 ---
 
@@ -657,7 +657,7 @@ describe("security tests", () => {
 
 **Category**: Performance
 
-**Rule**: Profile instruction compute usage and optimize within the 200k-1.4M CU per transaction limit.
+**Rule**: Profile the compute usage of each instruction and stay within the 200k-1.4M CU per transaction limit.
 
 **Guidelines**:
 - Profile with `solana logs` or transaction simulation to see CU usage

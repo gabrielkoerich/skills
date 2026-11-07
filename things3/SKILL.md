@@ -58,7 +58,7 @@ Examples: modify a todo (needs auth token)
 
 Delete a todo?
 
-- Not supported by `things3-cli` right now (no “delete/move-to-trash” write command; `things trash` is read-only listing).
+- Not supported by `things3-cli` right now (no "delete/move-to-trash" write command; `things trash` is read-only listing).
 - Options: use Things UI to delete/trash, or mark as `--completed` / `--canceled` via `things update`.
 
 Notes
