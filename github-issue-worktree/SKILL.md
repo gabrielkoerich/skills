@@ -5,18 +5,16 @@ description: Manage an isolated worktree per GitHub issue. Register the branch w
 
 # Git Issue Worktree Workflow Skill
 
-This skill is the issue workflow. The worktree belongs to the git-worktrees skill. Read that skill and follow it. Call `git cow` only. A new worktree goes in `~/.worktrees/<project>/`. If `git cow list` already has the branch under `<project>/.claude/worktrees`, use that path.
-
----
+This skill covers the issue workflow. The git-worktrees skill owns the worktree. Read that skill and follow it. Call `git cow` only. A new worktree goes in `~/.worktrees/<project>/`. If `git cow list` already has the branch under `<project>/.claude/worktrees`, use that path.
 
 ## Requirements
 
-- `gh` (GitHub CLI) installed and available on `PATH`
-- `gh auth login` completed for the correct GitHub host/account
-- Authenticated account has permission to read/write issues and pull requests in the target repository
-- Git remote (`origin`) points to the repository where issues and PRs are managed
+- `gh` (GitHub CLI) is installed and on `PATH`
+- `gh auth login` is done for the correct GitHub host/account
+- The authenticated account can read and write issues and pull requests in the target repository
+- The Git remote (`origin`) points to the repository that holds the issues and PRs
 
-Quick verification:
+Check:
 
 ```bash
 gh auth status
@@ -24,21 +22,17 @@ gh repo view
 gh issue list --limit 1
 ```
 
----
-
 ## What is Git Worktree?
 
-Git worktree allows you to have multiple working directories attached to the same repository. Each worktree has its own checked-out branch, enabling you to work on different branches simultaneously without stashing or committing incomplete work.
+A worktree is an extra working directory attached to the same repository. Each worktree has its own checked-out branch, so you can work on several branches at once without stashing or committing unfinished work.
 
 ### Benefits
 
-- **Parallel Development**: Work on multiple branches simultaneously without switching
-- **Clean Workspace**: Each task gets its own isolated directory
-- **No Stashing**: No need to stash changes when switching contexts
-- **Faster Context Switching**: Instantly jump between different tasks
-- **Build Isolation**: Each worktree can have different build states
-
----
+- Work on several branches at once without switching
+- Each task gets its own isolated directory
+- No stash when you switch tasks
+- Switch between tasks instantly
+- Each worktree keeps its own build state
 
 ## Workflow Overview
 
@@ -70,11 +64,9 @@ Git worktree allows you to have multiple working directories attached to the sam
 └─────────────────────────────────────────────────────────────────┘
 ```
 
----
+## Naming conventions
 
-## Naming Conventions
-
-Define names first and reuse them in all commands:
+Set these names first and use them in all commands:
 
 - `PROJECT_NAME`: directory name of the main checkout
 - `WORKTREE_ROOT`: `~/.worktrees/<project-name>/`
@@ -82,7 +74,7 @@ Define names first and reuse them in all commands:
 - `shortTitle`: issue title slug (lowercase, spaces and special characters replaced with `-`)
 - `WORKTREE_PATH`: `~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}`
 
-Compute these before creating any worktree. This stays correct when the current directory is already a worktree:
+Compute them before you create a worktree. This works when the current directory is already a worktree:
 
 ```bash
 common=$(git rev-parse --path-format=absolute --git-common-dir)
@@ -92,13 +84,13 @@ BRANCH_NAME="gh-task-{issueId}-{shortTitle}"
 WORKTREE_PATH="$WORKTREE_ROOT/$BRANCH_NAME"
 ```
 
-## Step-by-Step Instructions
+## Steps
 
-### 1. Start Work on a New Issue
+### 1. Start work on a new issue
 
-#### 1.1 Comment on the Issue
+#### 1.1 Comment on the issue
 
-Before starting, comment on the GitHub issue with your plan:
+Before you start, post your plan as a comment on the issue:
 
 ```bash
 gh issue comment {issueId} --body "## 🚀 Starting Work
@@ -113,7 +105,7 @@ gh issue comment {issueId} --body "## 🚀 Starting Work
 **Worktree:** ~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}"
 ```
 
-#### 1.2 Register the Branch Link via GitHub CLI
+#### 1.2 Register the branch link with the GitHub CLI
 
 ```bash
 # Make sure you are in the project directory and on the intended base branch.
@@ -124,7 +116,7 @@ gh issue develop {issueId} \
   --name gh-task-{issueId}-{shortTitle}
 ```
 
-#### 1.3 Create the Worktree from the Linked Branch
+#### 1.3 Create the worktree from the linked branch
 
 ```bash
 git cow add ~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle} gh-task-{issueId}-{shortTitle}
@@ -133,22 +125,20 @@ cd ~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}
 
 The branch already exists, so the path comes first. Follow the git-worktrees skill for that command.
 
-**Important:** Avoid `gh issue develop --checkout` when you plan to use worktrees. A branch can only be checked out in one worktree at a time.
+Do not use `gh issue develop --checkout` with worktrees. Git checks out a branch in only one worktree at a time.
 
----
+### 2. Development
 
-### 2. Development Phase
+#### 2.1 Work in the new directory
 
-#### 2.1 Work in the New Directory
-
-All development happens in the new worktree directory:
+Do all development in the new worktree directory:
 
 ```bash
 # You're now in ~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}
 # Make your changes, edit files, create new ones
 ```
 
-#### 2.2 Commit Changes
+#### 2.2 Commit changes
 
 ```bash
 # Stage and commit as you work
@@ -156,18 +146,16 @@ git add .
 git commit -m "feat: descriptive commit message"
 ```
 
-#### 2.3 Push to Remote
+#### 2.3 Push to remote
 
 ```bash
 # Push the branch to remote
 git push -u origin gh-task-{issueId}-{shortTitle}
 ```
 
----
+### 3. Submit work
 
-### 3. Submit Work
-
-#### 3.1 Create Pull Request
+#### 3.1 Create the pull request
 
 ```bash
 # Create PR from current branch to main
@@ -190,15 +178,15 @@ Brief description of changes.
 Closes #{issueId}"
 ```
 
-#### 3.2 Link PR to Issue
+#### 3.2 Link the PR to the issue
 
 Two options:
-- Auto-close on merge: include `Closes #{issueId}` or `Fixes #{issueId}` in PR body
-- Relation only (no auto-close): use `Related to #{issueId}` and link in GitHub UI sidebar if needed
+- Close the issue on merge: put `Closes #{issueId}` or `Fixes #{issueId}` in the PR body
+- Relation only, no auto-close: use `Related to #{issueId}`, and link it in the GitHub UI sidebar if needed
 
-#### 3.3 Comment on Issue
+#### 3.3 Comment on the issue
 
-After PR is created, comment completion on the issue:
+After you create the PR, post a completion comment on the issue:
 
 ```bash
 gh issue comment {issueId} --body "## ✅ Task Completed
@@ -214,11 +202,9 @@ Brief description of what was done.
 - Change 3"
 ```
 
----
+### 4. Cleanup (after the PR merges)
 
-### 4. Cleanup (After PR Merge)
-
-#### 4.1 Update Labels
+#### 4.1 Update labels
 
 ```bash
 # Remove in-progress label, add done label
@@ -227,7 +213,7 @@ gh issue edit {issueId} \
   --add-label "status:done"
 ```
 
-#### 4.2 Remove Worktree and Local Branch
+#### 4.2 Remove the worktree and local branch
 
 From the main checkout, follow the git-worktrees skill:
 
@@ -235,13 +221,11 @@ From the main checkout, follow the git-worktrees skill:
 git cow remove --warm ~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}
 ```
 
-This removes the worktree and deletes the branch when it is merged.
+This removes the worktree. It also deletes the branch if the branch is merged.
 
----
+## Quick reference
 
-## Quick Reference Commands
-
-### Worktree Management
+### Worktree management
 
 ```bash
 git cow list
@@ -249,24 +233,22 @@ git cow add ~/.worktrees/<project-name>/gh-task-{id} gh-task-{id}
 git cow remove --warm ~/.worktrees/<project-name>/gh-task-{id}
 ```
 
-### Branch from Specific Base
+### Branch from a specific base
 
 ```bash
 gh issue develop {id} --base main --name gh-task-{id}
 git cow add ~/.worktrees/<project-name>/gh-task-{id} gh-task-{id}
 ```
 
----
+## Best practices
 
-## Best Practices
+### Names
 
-### Naming Conventions
+- Worktree directory: `~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}`
+- Branch name: `gh-task-{issueId}-{shortTitle}`
+- Keep titles short and descriptive (3-4 words at most)
 
-- **Worktree Directory**: `~/.worktrees/<project-name>/gh-task-{issueId}-{shortTitle}`
-- **Branch Name**: `gh-task-{issueId}-{shortTitle}`
-- Keep titles concise but descriptive (max 3-4 words)
-
-### Worktree Root Strategy
+### Worktree root
 
 The default directory is `~/.worktrees/<project-name>/`. Follow the git-worktrees skill for the path. An existing Claude Code worktree under `<project>/.claude/worktrees` stays there.
 
@@ -282,9 +264,9 @@ For issue #42 "Add user authentication":
 - Directory: `~/.worktrees/my-repo/gh-task-42-add-user-auth`
 - Branch: `gh-task-42-add-user-auth`
 
-### Do's and Don'ts
+### Do and don't
 
-| ✅ Do | ❌ Don't |
+| Do | Don't |
 |-------|----------|
 | Register linked branch, then create worktree | Work directly in main repo for isolated tasks |
 | Use descriptive branch names | Use generic names like `fix`, `feature` |
@@ -295,11 +277,9 @@ For issue #42 "Add user authentication":
 | Keep worktrees in a dedicated root directory | Mix worktrees into tracked project paths |
 | Ensure local worktree root is gitignored | Commit worktree directories by accident |
 
----
-
 ## Troubleshooting
 
-### Worktree Already Exists
+### Worktree already exists
 
 ```bash
 git cow list
@@ -307,16 +287,14 @@ git cow list
 
 Reuse the path it prints for that branch.
 
-### Branch Already Exists
+### Branch already exists
 
 ```bash
 git cow add ~/.worktrees/<project-name>/gh-task-{id} gh-task-{id}
 gh issue develop {id} --name gh-task-{id}
 ```
 
----
-
-## Template: Complete Workflow Script
+## Template: complete workflow script
 
 ```bash
 #!/bin/bash
@@ -396,17 +374,13 @@ echo "  5. gh pr create --base $BASE_BRANCH --fill"
 echo "  6. Use 'Related to #${ISSUE_ID}' (relation only) or 'Closes #${ISSUE_ID}' (auto-close)"
 ```
 
----
-
-## Related Documentation
+## Related documentation
 
 - the git-worktrees skill
 - [GitHub CLI Documentation](https://cli.github.com/manual/)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 
----
-
-## Workflow Checklist
+## Workflow checklist
 
 Use this checklist for each task:
 
@@ -417,7 +391,7 @@ Use this checklist for each task:
 - [ ] Commit changes with descriptive messages
 - [ ] Push branch to remote
 - [ ] Create PR from branch to main
-- [ ] Ensure PR description includes `Closes #{issueId}` (auto-close) or `Related to #{issueId}` (relation only)
+- [ ] Make sure the PR description includes `Closes #{issueId}` (auto-close) or `Related to #{issueId}` (relation only)
 - [ ] Comment "## ✅ Task Completed" on issue
 - [ ] Update labels: remove `status:in-progress`, add `status:done`
 - [ ] From the main checkout, `git cow remove --warm` on the worktree path

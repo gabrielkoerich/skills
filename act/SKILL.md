@@ -101,7 +101,7 @@ sudo mv gitleaks /usr/local/bin/
 gitleaks detect --source . --config .gitleaks.toml --exit-code=1
 ```
 
-This applies to any action that depends on `github.event` context — prefer CLI equivalents when testing locally.
+This applies to any action that depends on `github.event` context. Prefer CLI equivalents when testing locally.
 
 ### Secrets
 
@@ -137,7 +137,7 @@ The `.secrets` file format is `KEY=VALUE`, one per line.
 act -l
 ```
 
-Output shows event triggers, job IDs, and job names — useful for finding the right `-j` target.
+Output shows event triggers, job IDs, and job names. Use it to find the right `-j` target.
 
 ## Workflow graph
 

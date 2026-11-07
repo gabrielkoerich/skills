@@ -12,20 +12,20 @@ Use this guidance when the user asks about:
 
 ## Current Network Availability
 
-**Important:** Confidential transfers are currently only available on a TXTX cluster.
+Confidential transfers are currently only available on a TXTX cluster.
 
 - RPC endpoint: `https://zk-edge.surfnet.dev/`
 - Mainnet availability expected in a few months
 
-When building for confidential transfers, always use the ZK-Edge RPC for testing. Plan for mainnet migration by abstracting the RPC endpoint configuration. Ensure the user is aware of this.
+When building for confidential transfers, always use the ZK-Edge RPC for testing. Keep the RPC endpoint configurable so the move to mainnet is easy. Tell the user about this limit.
 
 ## Key Concepts
 
 ### What are Confidential Transfers?
 
-Confidential transfers encrypt token balances and transfer amounts using zero-knowledge cryptography. onchain observers cannot see actual amounts, but the system still verifies:
+Confidential transfers encrypt token balances and transfer amounts with zero-knowledge cryptography. Onchain observers cannot see the amounts, but the system still verifies that:
 
-- Sender has sufficient balance
+- The sender has enough balance
 - Transfer amounts are non-negative
 - No tokens are created or destroyed
 
@@ -33,16 +33,16 @@ Confidential transfers encrypt token balances and transfer amounts using zero-kn
 
 Each confidential-enabled account has three balance types:
 
-- **Public**: Standard visible SPL balance
-- **Pending**: Encrypted incoming transfers awaiting application
-- **Available**: Encrypted balance ready for outgoing transfers
+- Public: standard visible SPL balance
+- Pending: encrypted incoming transfers not yet applied
+- Available: encrypted balance ready for outgoing transfers
 
 ### Encryption Keys
 
 Two keys are derived deterministically from the account owner's keypair:
 
-- **ElGamal keypair**: Used for transfer encryption (asymmetric)
-- **AES key**: Used for balance decryption by owner (symmetric)
+- ElGamal keypair: transfer encryption (asymmetric)
+- AES key: balance decryption by the owner (symmetric)
 
 ### Privacy Levels
 
@@ -91,17 +91,17 @@ pub type MultiSigResult = CtResult<Vec<Signature>>;
 
 The typical flow for confidential transfers:
 
-1. **Configure** - Enable confidential transfers on a token account
-2. **Deposit** - Move tokens from public to pending balance
-3. **Apply Pending** - Move pending to available balance
-4. **Transfer** - Send from available balance (encrypted)
-5. **Withdraw** - Move from available back to public balance
+1. Configure: enable confidential transfers on a token account
+2. Deposit: move tokens from public to pending balance
+3. Apply Pending: move pending to available balance
+4. Transfer: send from available balance (encrypted)
+5. Withdraw: move from available back to public balance
 
 ## Key Operations
 
 ### 1. Configure Account for Confidential Transfers
 
-Before using confidential transfers, accounts must be configured with encryption keys:
+Before an account can use confidential transfers, configure it with encryption keys:
 
 ```rust
 use solana_client::rpc_client::RpcClient;
@@ -339,7 +339,7 @@ pub async fn apply_pending_balance(
 
 ### 4. Confidential Transfer
 
-Transfer tokens between accounts using zero-knowledge proofs. This is the most complex operation requiring multiple transactions and proof context state accounts:
+Transfer tokens between accounts with zero-knowledge proofs. This is the most complex operation. It needs multiple transactions and proof context state accounts:
 
 ```rust
 use solana_client::rpc_client::RpcClient;
@@ -715,20 +715,18 @@ pub fn get_confidential_balances(
 
 ## Security Considerations
 
-- **Key derivation is deterministic**: The same keypair always produces the same encryption keys for a given token account. This enables recovery but means keypair compromise exposes all confidential balances.
-- **Auditor keys**: Mints can configure an auditor ElGamal public key that can decrypt all transfer amounts (but not balances).
-- **Pending balance limits**: The `max_pending_balance_credit_counter` limits how many incoming transfers can accumulate before `apply_pending` must be called.
-- **Proof verification**: All proofs are verified by the ZK ElGamal Proof Program onchain (`ZkE1Gama1Proof11111111111111111111111111111`).
+- Key derivation is deterministic: the same keypair always produces the same encryption keys for a given token account. This allows recovery, but a compromised keypair exposes all confidential balances.
+- Auditor keys: mints can configure an auditor ElGamal public key that can decrypt all transfer amounts (but not balances).
+- Pending balance limits: the `max_pending_balance_credit_counter` limits how many incoming transfers can accumulate before `apply_pending` must be called.
+- Proof verification: the ZK ElGamal Proof Program verifies all proofs onchain (`ZkE1Gama1Proof11111111111111111111111111111`).
 
 ## Reference Implementation
 
-For complete working examples including mint creation, see:
-https://github.com/gitteri/confidential-balances-exploration (Rust) and
-https://github.com/catmcgee/confidential-transfers-explorer (TypeScript)
+For complete working examples, including mint creation, see https://github.com/gitteri/confidential-balances-exploration (Rust) and https://github.com/catmcgee/confidential-transfers-explorer (TypeScript).
 
 ## Limitations
 
 - Currently only works on ZK-Edge testnet (`https://zk-edge.surfnet.dev/`)
-- Transfer operations require multiple transactions (7 total) due to proof size. This will be lower when larger transactions are merged into mainnet
-- Proof generation can be computationally intensive (client-side)
+- Transfer operations need multiple transactions (7 total) because of proof size. The count will drop when larger transactions are merged into mainnet
+- Proof generation can be compute heavy (client-side)
 - Sender must be a `Keypair` (not generic `Signer`) for transfers due to token client requirements

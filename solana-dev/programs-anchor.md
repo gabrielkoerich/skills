@@ -2,32 +2,32 @@
 
 ## When to use Anchor
 Use Anchor by default when:
-- You want fast iteration with reduced boilerplate
+- You want fast iteration with less boilerplate
 - You want an IDL and TypeScript client story out of the box
 - You want mature testing and workspace tooling
-- You need built-in security through automatic account validation
+- You want automatic account validation
 
 ## Core Advantages
-- **Reduced Boilerplate**: Abstracts repetitive account management, instruction serialization, and error handling
-- **Built-in Security**: Automatic account-ownership verification and data validation
-- **IDL Generation**: Automatic interface definition for client generation
+- Less boilerplate: Anchor handles repetitive account management, instruction serialization, and error handling
+- Built-in checks: automatic account-ownership verification and data validation
+- IDL generation: automatic interface definition for client generation
 
 ## Core Macros
 
 ### `declare_id!()`
-Declares the onchain address where the program resides—a unique public key derived from the project's keypair.
+Declares the program's onchain address, a unique public key derived from the project's keypair.
 
 ### `#[program]`
 Marks the module containing every instruction entrypoint and business-logic function.
 
 ### `#[derive(Accounts)]`
-Lists accounts an instruction requires and automatically enforces their constraints:
-- Declares all necessary accounts for specific instructions
-- Enforces constraint checks automatically to block bugs and exploits
+Lists the accounts an instruction requires and enforces their constraints:
+- Declares all accounts each instruction needs
+- Runs constraint checks automatically to block bugs and exploits
 - Generates helper methods for safe account access and mutation
 
 ### `#[error_code]`
-Enables custom, human-readable error types with `#[msg(...)]` attributes for clearer debugging.
+Defines custom, readable error types with `#[msg(...)]` attributes for clearer debugging.
 
 ## Account Types
 
@@ -98,7 +98,7 @@ Default discriminators use `sha256("account:<StructName>")[0..8]`. Custom discri
 pub struct Escrow { ... }
 ```
 
-**Constraints:**
+Constraints:
 - Discriminators must be unique across your program
 - Using `[1]` prevents using `[1, 2, ...]` which also start with `1`
 - `[0]` conflicts with uninitialized accounts
@@ -119,7 +119,7 @@ pub mod my_program {
 ```
 
 ### Context Implementation Pattern
-Move logic to context struct implementations for organization and testability:
+Move logic into context struct implementations to keep it organized and testable:
 
 ```rust
 impl<'info> Transfer<'info> {
@@ -198,7 +198,7 @@ pub token_program: Interface<'info, TokenInterface>,
 
 ## LazyAccount (Anchor 0.31+)
 
-Heap-allocated, read-only account access for efficient memory usage:
+Heap-allocated, read-only account access that saves memory:
 
 ```rust
 // Cargo.toml
@@ -213,7 +213,7 @@ pub fn handler(ctx: Context<MyInstruction>) -> Result<()> {
 }
 ```
 
-**Note:** LazyAccount is read-only. After CPIs, use `unload()` to refresh cached values.
+LazyAccount is read-only. After CPIs, use `unload()` to refresh cached values.
 
 ## Zero-Copy Accounts
 
@@ -226,11 +226,11 @@ pub struct LargeAccount {
 }
 ```
 
-Accounts under 10,240 bytes use `init`; larger accounts require external creation then `zero` constraint initialization.
+Accounts under 10,240 bytes use `init`. Larger accounts must be created externally, then initialized with the `zero` constraint.
 
 ## Remaining Accounts
 
-Pass dynamic accounts beyond fixed instruction structure:
+Pass dynamic accounts beyond the fixed instruction structure:
 
 ```rust
 pub fn batch_operation(ctx: Context<BatchOp>, amounts: Vec<u64>) -> Result<()> {
@@ -252,7 +252,7 @@ pub fn batch_operation(ctx: Context<BatchOp>, amounts: Vec<u64>) -> Result<()> {
 
 ## Compatibility Notes for Anchor 0.32.0
 
-To resolve build conflicts with certain crates in Anchor 0.32.0, run these cargo update commands in your project root:
+To fix build conflicts with some crates in Anchor 0.32.0, run these cargo update commands in your project root:
 
 ```bash
 cargo update base64ct --precise 1.6.0
@@ -260,8 +260,7 @@ cargo update constant_time_eq --precise 0.4.1
 cargo update blake3 --precise 1.5.5
 ```
 
-Additionally, if you encounter warnings about `solana-program` conflicts, add `solana-program = "3"` to the `[dependencies]` section in your program's `Cargo.toml` file (e.g., `programs/your-program/Cargo.toml`).
-
+If you get warnings about `solana-program` conflicts, add `solana-program = "3"` to the `[dependencies]` section in your program's `Cargo.toml` (e.g., `programs/your-program/Cargo.toml`).
 
 ## Security Best Practices
 
@@ -277,9 +276,9 @@ Additionally, if you encounter warnings about `solana-program` conflicts, add `s
 - Prefer explicit program IDs for known CPIs
 
 ### Common Gotchas
-- **Avoid `init_if_needed`**: Permits reinitialization attacks
-- **Legacy IDL formats**: Ensure tooling agrees on format (pre-0.30 vs new spec)
-- **PDA seeds**: Ensure all seed material is stable and canonical
+- Avoid `init_if_needed`: it permits reinitialization attacks
+- Legacy IDL formats: make sure all tooling agrees on the format (pre-0.30 vs new spec)
+- PDA seeds: make sure all seed material is stable and canonical
 
 ## Testing
 
@@ -291,4 +290,4 @@ Additionally, if you encounter warnings about `solana-program` conflicts, add `s
 
 - Treat the program's IDL as a product artifact
 - Prefer generating Kit-native clients via Codama
-- If using Anchor TS client in Kit-first app, put it behind web3-compat boundary
+- If you use the Anchor TS client in a Kit-first app, put it behind a web3-compat boundary

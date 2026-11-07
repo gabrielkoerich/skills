@@ -1,6 +1,6 @@
 # Solana Security Checklist (Program + Client)
 
-> **Deep audit?** Use the [solana-security-audit](../solana-security-audit/SKILL.md) skill for comprehensive vulnerability scanning (35 attack vectors with full insecure/secure code examples, case studies, and detection commands). This checklist is a quick reference for development; the audit skill is for thorough security review.
+> For a deep audit, use the [solana-security-audit](../solana-security-audit/SKILL.md) skill. It covers 35 attack vectors with full insecure/secure code examples, case studies, and detection commands. This checklist is a quick reference for development.
 
 ## Core Principle
 
@@ -10,17 +10,15 @@ Assume the attacker controls:
 - Transaction ordering (within reason)
 - CPI call graphs (via composability)
 
----
-
 ## Vulnerability Categories
 
 ### 1. Missing Owner Checks → [A2](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#a2-owner-checks)
 
-**Risk**: Attacker creates fake accounts with identical data structure and correct discriminator.
+Risk: An attacker creates fake accounts with the same data structure and the correct discriminator.
 
-**Attack**: Without owner checks, deserialization succeeds for both legitimate and counterfeit accounts.
+Attack: Without owner checks, deserialization succeeds for both real and fake accounts.
 
-**Anchor Prevention**:
+Anchor Prevention:
 ```rust
 // Option 1: Use typed accounts (automatic)
 pub account: Account<'info, ProgramAccount>,
@@ -30,22 +28,20 @@ pub account: Account<'info, ProgramAccount>,
 pub account: UncheckedAccount<'info>,
 ```
 
-**Pinocchio Prevention**:
+Pinocchio Prevention:
 ```rust
 if !account.is_owned_by(&crate::ID) {
     return Err(ProgramError::InvalidAccountOwner);
 }
 ```
 
----
-
 ### 2. Missing Signer Checks → [A0](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#0-signer-authorization)
 
-**Risk**: Any account can perform operations that should be restricted to specific authorities.
+Risk: Any account can perform operations that only specific authorities should perform.
 
-**Attack**: Attacker locates target account, extracts owner pubkey, constructs transaction using real owner's address without their signature.
+Attack: The attacker finds the target account, reads the owner pubkey, and builds a transaction with the real owner's address but without their signature.
 
-**Anchor Prevention**:
+Anchor Prevention:
 ```rust
 // Option 1: Use Signer type
 pub authority: Signer<'info>,
@@ -60,22 +56,20 @@ if !ctx.accounts.authority.is_signer {
 }
 ```
 
-**Pinocchio Prevention**:
+Pinocchio Prevention:
 ```rust
 if !self.accounts.authority.is_signer() {
     return Err(ProgramError::MissingRequiredSignature);
 }
 ```
 
----
-
 ### 3. Arbitrary CPI Attacks → [A5](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#5-arbitrary-cpi-cross-program-invocation)
 
-**Risk**: Program blindly calls whatever program is passed as parameter, becoming a proxy for malicious code.
+Risk: The program calls whatever program is passed as a parameter and becomes a proxy for malicious code.
 
-**Attack**: Attacker substitutes malicious program mimicking expected interface (e.g., fake SPL Token that reverses transfers).
+Attack: The attacker substitutes a malicious program that mimics the expected interface (e.g., a fake SPL Token that reverses transfers).
 
-**Anchor Prevention**:
+Anchor Prevention:
 ```rust
 // Use typed Program accounts
 pub token_program: Program<'info, Token>,
@@ -86,22 +80,20 @@ if ctx.accounts.token_program.key() != &spl_token::ID {
 }
 ```
 
-**Pinocchio Prevention**:
+Pinocchio Prevention:
 ```rust
 if self.accounts.token_program.key() != &pinocchio_token::ID {
     return Err(ProgramError::IncorrectProgramId);
 }
 ```
 
----
-
 ### 4. Reinitialization Attacks → [A4](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#4-initialization--re-initialization)
 
-**Risk**: Calling initialization functions on already-initialized accounts overwrites existing data.
+Risk: Calling initialization functions on initialized accounts overwrites existing data.
 
-**Attack**: Attacker reinitializes account to become new owner, then drains controlled assets.
+Attack: The attacker reinitializes the account to become the new owner, then drains the assets it controls.
 
-**Anchor Prevention**:
+Anchor Prevention:
 ```rust
 // Use init constraint (automatic protection)
 #[account(init, payer = payer, space = 8 + Data::LEN)]
@@ -113,9 +105,9 @@ if ctx.accounts.account.is_initialized {
 }
 ```
 
-**Critical**: Avoid `init_if_needed` - it permits reinitialization.
+Critical: avoid `init_if_needed`, it permits reinitialization.
 
-**Pinocchio Prevention**:
+Pinocchio Prevention:
 ```rust
 // Check discriminator before initialization
 let data = account.try_borrow_data()?;
@@ -124,39 +116,35 @@ if data[0] == ACCOUNT_DISCRIMINATOR {
 }
 ```
 
----
-
 ### 5. PDA Sharing Vulnerabilities → [A8](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#8-pda-sharing)
 
-**Risk**: Same PDA used across multiple users enables unauthorized access.
+Risk: One PDA shared across many users allows unauthorized access.
 
-**Attack**: Shared PDA authority becomes "master key" unlocking multiple users' assets.
+Attack: A shared PDA authority becomes a "master key" that unlocks many users' assets.
 
-**Vulnerable Pattern**:
+Vulnerable Pattern:
 ```rust
 // BAD: Only mint in seeds - all vaults for same token share authority
 seeds = [b"pool", pool.mint.as_ref()]
 ```
 
-**Secure Pattern**:
+Secure Pattern:
 ```rust
 // GOOD: Include user-specific identifiers
 seeds = [b"pool", vault.key().as_ref(), owner.key().as_ref()]
 ```
 
----
-
 ### 6. Type Cosplay Attacks → [A3](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#3-type-cosplay)
 
-**Risk**: Accounts with identical data structures but different purposes can be substituted.
+Risk: An attacker can substitute accounts that have the same data structure but a different purpose.
 
-**Attack**: Attacker passes controlled account type as different type parameter, bypassing authorization.
+Attack: The attacker passes an account of one type where the program expects another type, and bypasses authorization.
 
-**Prevention**: Use discriminators to distinguish account types.
+Prevention: Use discriminators to distinguish account types.
 
-**Anchor**: Automatic 8-byte discriminator with `#[account]` macro.
+Anchor: Automatic 8-byte discriminator with `#[account]` macro.
 
-**Pinocchio**:
+Pinocchio:
 ```rust
 // Validate discriminator before processing
 let data = account.try_borrow_data()?;
@@ -165,15 +153,13 @@ if data[0] != EXPECTED_DISCRIMINATOR {
 }
 ```
 
----
-
 ### 7. Duplicate Mutable Accounts → [A6](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#6-duplicate-mutable-accounts)
 
-**Risk**: Passing same account twice causes program to overwrite its own changes.
+Risk: Passing the same account twice makes the program overwrite its own changes.
 
-**Attack**: Sequential mutations on identical accounts cancel earlier changes.
+Attack: Later mutations on the same account cancel earlier changes.
 
-**Prevention**:
+Prevention:
 ```rust
 // Anchor
 if ctx.accounts.account_1.key() == ctx.accounts.account_2.key() {
@@ -186,15 +172,13 @@ if self.accounts.account_1.key() == self.accounts.account_2.key() {
 }
 ```
 
----
-
 ### 8. Revival Attacks → [A9](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#9-closing-accounts), [D30](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#d30-native-3-step-account-closure)
 
-**Risk**: Closed accounts can be restored within same transaction by refunding lamports.
+Risk: A closed account can be restored in the same transaction by refunding lamports.
 
-**Attack**: Multi-instruction transaction drains account, refunds rent, exploits "closed" account.
+Attack: A multi-instruction transaction drains the account, refunds rent, and exploits the "closed" account.
 
-**Secure Closure Pattern**:
+Secure Closure Pattern:
 ```rust
 // Anchor: Use close constraint
 #[account(mut, close = destination)]
@@ -217,15 +201,13 @@ pub fn close(account: &AccountInfo, destination: &AccountInfo) -> ProgramResult 
 }
 ```
 
----
-
 ### 9. Data Matching Vulnerabilities → [A1](../solana-security-audit/references/VULNERABILITY_PATTERNS.md#1-account-data-matching)
 
-**Risk**: Correct type/ownership validation but incorrect assumptions about data relationships.
+Risk: Type and ownership checks pass, but the program makes wrong assumptions about data relationships.
 
-**Attack**: Signer matches transaction but not stored owner field.
+Attack: The signer matches the transaction but not the stored owner field.
 
-**Prevention**:
+Prevention:
 ```rust
 // Anchor: has_one constraint
 #[account(has_one = authority)]
@@ -238,26 +220,22 @@ if data.authority != *authority.key() {
 }
 ```
 
----
-
 ## Additional Patterns (see solana-security-audit for full details)
 
-The 9 patterns above cover the core sealevel attacks. The [solana-security-audit](../solana-security-audit/SKILL.md) skill covers 26 additional patterns including:
+The 9 patterns above cover the core sealevel attacks. The [solana-security-audit](../solana-security-audit/SKILL.md) skill covers 26 more patterns, including:
 
-- **[B11] Account reloading after CPI** -- `.reload()` after any CPI that modifies accounts
-- **[B12] Arithmetic safety** -- overflow, precision loss, saturating, division by zero, multiply-before-divide
-- **[B13] SOL balance drainage via CPI** -- balance checks before/after CPI
-- **[B15] State machine inconsistencies** -- explicit state enums, validated transitions
-- **[B17] Casting vulnerabilities** -- `try_from()` not `as` for narrowing casts
-- **[B18] Authority transfer** -- two-step nominate/accept pattern
-- **[B19] CPI signer forwarding** -- never forward user wallets to third-party CPIs
-- **[B20] Slippage protection** -- `minimum_amount_out` + `deadline` on swaps
-- **[C25] Security dependency chain** -- unconstrained root account poisons all constraints
-- **[C27] Non-atomic init race** -- rent thief pattern from split create+init
-- **[D28-D32] Native Rust patterns** -- Borsh safety, invoke/invoke_signed, validation sequence
-- **[E33-E35] Pinocchio patterns** -- no auto discriminators, no built-in validation
-
----
+- [B11] Account reloading after CPI: `.reload()` after any CPI that modifies accounts
+- [B12] Arithmetic safety: overflow, precision loss, saturating, division by zero, multiply-before-divide
+- [B13] SOL balance drainage via CPI: balance checks before/after CPI
+- [B15] State machine inconsistencies: explicit state enums, validated transitions
+- [B17] Casting vulnerabilities: `try_from()` not `as` for narrowing casts
+- [B18] Authority transfer: two-step nominate/accept pattern
+- [B19] CPI signer forwarding: never forward user wallets to third-party CPIs
+- [B20] Slippage protection: `minimum_amount_out` + `deadline` on swaps
+- [C25] Security dependency chain: unconstrained root account poisons all constraints
+- [C27] Non-atomic init race: rent thief pattern from split create+init
+- [D28-D32] Native Rust patterns: Borsh safety, invoke/invoke_signed, validation sequence
+- [E33-E35] Pinocchio patterns: no auto discriminators, no built-in validation
 
 ## Program-Side Checklist
 
@@ -283,7 +261,7 @@ The 9 patterns above cover the core sealevel attacks. The [solana-security-audit
 
 ### Arithmetic and Invariants
 - [ ] Use checked math (`checked_add`, `checked_sub`, `checked_mul`, `checked_div`) (B12)
-- [ ] Avoid unchecked casts -- use `try_from()` not `as` (B17)
+- [ ] Avoid unchecked casts: use `try_from()`, not `as` (B17)
 - [ ] Multiply before divide to preserve precision (B12e)
 - [ ] Round in favor of the protocol: `try_floor` not `try_round` (B12b)
 - [ ] Set `overflow-checks = true` in `[profile.release]` (B12)
@@ -291,24 +269,20 @@ The 9 patterns above cover the core sealevel attacks. The [solana-security-audit
 ### State Lifecycle
 - [ ] Close accounts securely (mark discriminator, drain lamports) (A9, D30)
 - [ ] Avoid leaving "zombie" accounts with lamports
-- [ ] Gate upgrades and ownership transfers -- two-step pattern (B18)
+- [ ] Gate upgrades and ownership transfers with a two-step pattern (B18)
 - [ ] Prevent reinitialization of existing accounts (A4)
 - [ ] Use explicit state enums, not booleans (B15)
 - [ ] Add slippage protection + deadlines on swaps/trades (B20)
 
----
-
 ## Client-Side Checklist
 
 - [ ] Cluster awareness: never hardcode mainnet endpoints in dev flows
-- [ ] Simulate transactions for UX where feasible
+- [ ] Simulate transactions for UX where possible
 - [ ] Handle blockhash expiry and retry with fresh blockhash
-- [ ] Treat "signature received" as not-final; track confirmation
-- [ ] Never assume token program variant; detect Token-2022 vs classic
+- [ ] Treat "signature received" as not final, and track confirmation
+- [ ] Never assume the token program variant. Detect Token-2022 vs classic
 - [ ] Validate transaction simulation results before signing
 - [ ] Show clear error messages for common failure modes
-
----
 
 ## Security Review Questions
 

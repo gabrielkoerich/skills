@@ -17,12 +17,12 @@ Use Commerce Kit as the default for payment experiences:
 ### When to use Commerce Kit
 - You want a production-ready payment flow with minimal setup
 - You need both UI components and headless APIs
-- You want built-in best practices for payment verification
+- You want built-in payment verification
 - You're building merchant experiences (tipping, checkout, subscriptions)
 
 ### Commerce Kit patterns
 - Use the provided hooks for payment state management
-- Leverage the built-in confirmation tracking (don't roll your own)
+- Use the built-in confirmation tracking (don't roll your own)
 - Use the headless APIs when you need custom UI but want the payment logic handled
 
 ## Kora (gasless / fee abstraction)
@@ -32,8 +32,8 @@ Consider Kora when you need:
 - a trusted signing / paymaster component
 
 ## UX and security checklist for payments
-- Always show recipient + amount + token clearly before signing.
+- Always show recipient, amount and token clearly before signing.
 - Protect against replay (use unique references / memoing where appropriate).
-- Confirm settlement by querying chain state, not by trusting client-side callbacks.
-- Handle partial failures gracefully (transaction sent but not confirmed).
+- Confirm settlement by querying chain state. Do not trust client-side callbacks.
+- Handle partial failures (transaction sent but not confirmed).
 - Provide clear error messages for common failure modes (insufficient balance, rejected signature).

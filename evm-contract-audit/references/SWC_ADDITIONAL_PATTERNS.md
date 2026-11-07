@@ -1,6 +1,6 @@
 # Additional Vulnerability Patterns (SWC Registry & DeFi Trends)
 
-Patterns that supplement the core 13 vectors from EVMbench. These come from the SWC Registry, DASP Top 10, and real DeFi exploit trends (2024-2025).
+These patterns add to the 13 core vectors from EVMbench. They come from the SWC Registry, the DASP Top 10 and real DeFi exploit trends (2024-2025).
 
 ---
 
@@ -8,7 +8,7 @@ Patterns that supplement the core 13 vectors from EVMbench. These come from the 
 
 **Severity**: HIGH | **SWC**: N/A
 
-An attacker re-enters a **view function** in a *different contract* during a callback. The external contract reads stale intermediate state (e.g., pool reserves mid-withdrawal). First major exploit: Sentiment protocol (April 2023). Widely exploited in Curve/Balancer LP price integrations.
+During a callback, an attacker re-enters a view function in a different contract. That contract reads stale intermediate state, such as pool reserves in the middle of a withdrawal. The first major exploit hit the Sentiment protocol (April 2023). Attackers have exploited it often in Curve/Balancer LP price integrations.
 
 **Detection**:
 ```bash
@@ -16,7 +16,7 @@ rg "get_virtual_price|getRate|getPoolTokenPrice" --type sol -n
 # Protocols that read LP token prices from Curve/Balancer during callbacks
 ```
 
-**Fix**: Use TWAP prices, check upstream pool's reentrancy lock before reading, or add reentrancy-aware wrappers.
+**Fix**: Use TWAP prices, check the upstream pool's reentrancy lock before reading, or add reentrancy-aware wrappers.
 
 ---
 
@@ -24,7 +24,7 @@ rg "get_virtual_price|getRate|getPoolTokenPrice" --type sol -n
 
 **Severity**: HIGH | **SWC**: N/A
 
-In empty ERC-4626 vaults, the first depositor deposits 1 wei (gets 1 share), then donates a large amount directly via `transfer` (not `deposit`). This inflates `totalAssets` while `totalShares = 1`. Subsequent depositors get 0 shares (rounded down).
+In an empty ERC-4626 vault, the first depositor deposits 1 wei and gets 1 share. Then the depositor donates a large amount directly with `transfer` (not `deposit`). This inflates `totalAssets` while `totalShares = 1`, so later depositors get 0 shares (rounded down).
 
 **Detection**:
 ```bash
@@ -33,7 +33,7 @@ rg "convertToShares|convertToAssets|ERC4626" --type sol -n
 rg "_decimalsOffset|deadShares|INITIAL_DEPOSIT" --type sol -n
 ```
 
-**Fix**: Use OpenZeppelin 4.9+ virtual shares offset (`_decimalsOffset()`), or mint dead shares to `address(1)` on first deposit.
+**Fix**: Use the OpenZeppelin 4.9+ virtual shares offset (`_decimalsOffset()`), or mint dead shares to `address(1)` on the first deposit.
 
 ---
 
@@ -41,7 +41,7 @@ rg "_decimalsOffset|deadShares|INITIAL_DEPOSIT" --type sol -n
 
 **Severity**: CRITICAL | **SWC-112**
 
-`delegatecall` executes callee's code in the caller's storage context. If the target is attacker-controlled, they overwrite arbitrary storage (including owner), drain funds, or corrupt state.
+`delegatecall` runs the callee's code in the caller's storage context. If the attacker controls the target, the attacker can overwrite any storage (including the owner), drain funds or corrupt state.
 
 **Detection**:
 ```bash
@@ -57,7 +57,7 @@ rg "delegatecall" --type sol -n
 
 **Severity**: HIGH | **SWC-115**
 
-`tx.origin` returns the original EOA, not the immediate caller. A malicious contract can trick a user into calling it, then call the vulnerable contract — `tx.origin` passes the check because it's the user's address.
+`tx.origin` returns the original EOA, not the immediate caller. A malicious contract can trick a user into calling it and then call the vulnerable contract. The `tx.origin` check passes because it holds the user's address.
 
 **Detection**:
 ```bash
@@ -72,7 +72,7 @@ rg "tx\.origin" --type sol -n
 
 **Severity**: MEDIUM | **SWC-133**
 
-`abi.encodePacked` with multiple dynamic types omits length prefixes: `abi.encodePacked("ab","c") == abi.encodePacked("a","bc")`. Causes hash collisions in signatures and merkle proofs.
+`abi.encodePacked` with multiple dynamic types omits length prefixes: `abi.encodePacked("ab","c") == abi.encodePacked("a","bc")`. This causes hash collisions in signatures and merkle proofs.
 
 **Detection**:
 ```bash
@@ -80,7 +80,7 @@ rg "abi\.encodePacked" --type sol -n
 # Check if two adjacent dynamic types (string, bytes, dynamic array)
 ```
 
-**Fix**: Use `abi.encode` instead, or never place two dynamic types adjacent in `encodePacked`.
+**Fix**: Use `abi.encode`, or never put two dynamic types next to each other in `encodePacked`.
 
 ---
 
@@ -88,7 +88,7 @@ rg "abi\.encodePacked" --type sol -n
 
 **Severity**: MEDIUM | **SWC**: N/A
 
-A malicious callee returns an extremely large byte array. Solidity automatically copies return data, and quadratic memory expansion cost consumes all gas. Dangerous in `try/catch` and relayer patterns.
+A malicious callee returns a very large byte array. Solidity copies return data automatically, and the quadratic memory expansion cost uses up all gas. This is dangerous in `try/catch` and relayer patterns.
 
 **Detection**:
 ```bash
@@ -104,7 +104,7 @@ rg "\.call\(|try\s+\w+\." --type sol -n
 
 **Severity**: HIGH | **SWC-120**
 
-`block.timestamp`, `block.prevrandao`, `blockhash` are predictable or manipulable by validators. `blockhash(block.number)` always returns 0.
+Validators can predict or manipulate `block.timestamp`, `block.prevrandao` and `blockhash`. `blockhash(block.number)` always returns 0.
 
 **Detection**:
 ```bash
@@ -119,7 +119,7 @@ rg "block\.timestamp.*random|block\.prevrandao|blockhash.*random|keccak256.*bloc
 
 **Severity**: CRITICAL | **SWC-109**
 
-Implementation contracts without `_disableInitializers()` in the constructor can be directly initialized by attackers. They become owner, then upgrade the proxy to a malicious implementation.
+If an implementation contract has no `_disableInitializers()` in its constructor, an attacker can initialize it directly. The attacker becomes owner and then upgrades the proxy to a malicious implementation.
 
 **Detection**:
 ```bash
@@ -136,7 +136,7 @@ rg "_disableInitializers" --type sol -n
 
 **Severity**: HIGH | **SWC**: N/A
 
-New state variables inserted in the middle of a contract between versions collide with existing slots. Changed inheritance order also shifts layout.
+A new state variable inserted in the middle of a contract between versions collides with existing slots. A change in inheritance order also shifts the layout.
 
 **Detection**:
 ```bash
@@ -144,7 +144,7 @@ rg "__gap" --type sol -n
 # All upgradeable base contracts should have uint256[N] private __gap
 ```
 
-**Fix**: Only append new variables at the end. Use `__gap` in base contracts. Use OZ's storage layout checker.
+**Fix**: Only add new variables at the end. Use `__gap` in base contracts. Use the OZ storage layout checker.
 
 ---
 
@@ -152,7 +152,7 @@ rg "__gap" --type sol -n
 
 **Severity**: HIGH | **SWC**: N/A
 
-Powerful admin functions (pause, upgrade, set fees to 100%, sweep funds) create single points of failure. #1 exploit category by dollar value (Ronin $625M, WazirX $230M, Orbit $82M).
+Powerful admin functions (pause, upgrade, set fees to 100%, sweep funds) are single points of failure. This is the #1 exploit category by dollar value (Ronin $625M, WazirX $230M, Orbit $82M).
 
 **Detection**:
 ```bash
@@ -161,7 +161,7 @@ rg "onlyOwner|onlyAdmin|onlyRole" --type sol -n
 rg "emergencyWithdraw|sweep|migrate|setFee|pause" --type sol -n
 ```
 
-**Fix**: Use multisig, timelocks (24-48h minimum), upper bounds on adjustable parameters, role separation.
+**Fix**: Use a multisig, timelocks (24-48h minimum), upper bounds on adjustable parameters and role separation.
 
 ---
 
@@ -169,14 +169,14 @@ rg "emergencyWithdraw|sweep|migrate|setFee|pause" --type sol -n
 
 **Severity**: MEDIUM | **SWC-126**
 
-In relayer/meta-transaction patterns, the relayer forwards with just enough gas for the outer call but not the inner call. Inner call fails silently; relayer still gets paid.
+In relayer and meta-transaction patterns, the relayer forwards enough gas for the outer call but not for the inner call. The inner call fails silently, and the relayer still gets paid.
 
 **Detection**:
 ```bash
 rg "gasleft\(\)|gasLimit|relay|forward|meta" --type sol -n
 ```
 
-**Fix**: Check inner call return values. Validate `gasleft() >= requiredGas` before inner call.
+**Fix**: Check inner call return values. Validate `gasleft() >= requiredGas` before the inner call.
 
 ---
 
@@ -184,7 +184,7 @@ rg "gasleft\(\)|gasLimit|relay|forward|meta" --type sol -n
 
 **Severity**: HIGH | **SWC**: N/A
 
-Custom `permit()` implementations often miss: `ecrecover` returns `address(0)` on invalid sig, `DOMAIN_SEPARATOR` not recomputed on chain forks, nonce not incremented.
+Custom `permit()` implementations often miss one of these: `ecrecover` returns `address(0)` on an invalid signature, `DOMAIN_SEPARATOR` must be recomputed on chain forks, and the nonce must be incremented.
 
 **Detection**:
 ```bash
@@ -193,19 +193,19 @@ rg "ecrecover" --type sol -n
 # Check if using OZ ERC20Permit or custom implementation
 ```
 
-**Fix**: Use OpenZeppelin's `ERC20Permit`. If custom: recompute domain separator when chainId changes, check signer != address(0), increment nonce.
+**Fix**: Use OpenZeppelin's `ERC20Permit`. In a custom implementation, recompute the domain separator when chainId changes, check signer != address(0) and increment the nonce.
 
 ---
 
 ## 2024-2025 DeFi Exploit Trends
 
-1. **Access control / key compromise** — #1 by dollar value (WazirX $230M, Orbit $82M, Radiant $50M)
-2. **Read-only reentrancy** — ongoing in Curve/Balancer LP integrations
-3. **Cross-chain bridge bugs** — message verification + access control combos
-4. **L2-specific issues** — sequencer dependency, `block.number` semantics differ across L2s
-5. **ERC-4626 inflation** — legacy vaults without virtual offsets still exploited
-6. **Merkle tree attacks** — leaf pre-image, second pre-image in airdrop contracts
-7. **Oracle manipulation** — multi-step, multi-protocol, multi-tx attacks replacing simple spot price manipulation
+1. Access control and key compromise: #1 by dollar value (WazirX $230M, Orbit $82M, Radiant $50M)
+2. Read-only reentrancy: still exploited in Curve/Balancer LP integrations
+3. Cross-chain bridge bugs: message verification combined with access control flaws
+4. L2-specific issues: sequencer dependency, and `block.number` semantics differ across L2s
+5. ERC-4626 inflation: attackers still exploit legacy vaults without virtual offsets
+6. Merkle tree attacks: leaf pre-image and second pre-image in airdrop contracts
+7. Oracle manipulation: multi-step, multi-protocol, multi-tx attacks replace simple spot price manipulation
 
 ---
 

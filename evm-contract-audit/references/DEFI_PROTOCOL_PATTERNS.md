@@ -1,6 +1,6 @@
 # DeFi Protocol-Specific Vulnerability Patterns
 
-Patterns organized by protocol type: AMM/DEX, Lending, Bridge. Each includes vulnerable and secure code, detection heuristics.
+Patterns grouped by protocol type: AMM/DEX, lending and bridge. Each pattern has vulnerable code, secure code and detection heuristics.
 
 ---
 
@@ -10,7 +10,7 @@ Patterns organized by protocol type: AMM/DEX, Lending, Bridge. Each includes vul
 
 **Severity**: HIGH
 
-Attacker front-runs a swap by buying the token (raising price), victim swaps at inflated price, attacker back-runs by selling.
+The attacker front-runs a swap by buying the token, which raises the price. The victim swaps at the inflated price, and the attacker back-runs by selling.
 
 ```solidity
 // VULNERABLE: No slippage protection
@@ -44,9 +44,9 @@ rg -n "amountOutMin|minAmountOut|minimumOut|slippage" --type sol
 
 ### JIT (Just-In-Time) Liquidity
 
-LP adds concentrated liquidity just before a large swap and removes it immediately after, capturing fees without sustained impermanent loss. Extracts value from passive LPs.
+An LP adds concentrated liquidity just before a large swap and removes it right after. The LP collects fees without carrying impermanent loss over time, and takes that value from passive LPs.
 
-**Mitigation**: Require minimum LP duration before fee accrual.
+Mitigation: require a minimum LP duration before fees accrue.
 
 ### Price Manipulation via Low-Liquidity Pools
 
@@ -199,4 +199,4 @@ rg -n "function claim|function bid|function buy|function mint" --type sol
 rg -n "amountOutMin|minAmountOut|deadline" --type sol
 ```
 
-**Mitigation**: Use commit-reveal schemes for high-value operations; don't trust non-finalized blocks for irreversible actions.
+Mitigation: use commit-reveal schemes for high-value operations. Do not trust non-finalized blocks for irreversible actions.

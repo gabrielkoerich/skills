@@ -10,8 +10,7 @@ tags: [tts, speech, voice, audio, macos, offline, free]
 
 ## When not to use this
 
-The compact voices sound dated. For natural quality use the `kokoro-tts` skill instead,
-which runs Kokoro-82M on the Metal GPU. Stay here when you need zero startup latency.
+The compact voices sound dated. For natural quality use the `kokoro-tts` skill instead, which runs Kokoro-82M on the Metal GPU. Stay here when you need zero startup latency.
 
 ## Speak aloud
 
@@ -32,8 +31,7 @@ say -o out.m4a --data-format=aac --bit-rate=64000 "Hello"  # small, for sharing
 afplay out.wav                              # play a rendered file
 ```
 
-The file format comes from the extension. `--data-format` controls the samples.
-Use `say --file-format=?` and `say -o x.wav --data-format=?` to list what a format accepts.
+The file format comes from the extension. `--data-format` controls the samples. Use `say --file-format=?` and `say -o x.wav --data-format=?` to list what a format accepts.
 
 ## Long text
 
@@ -43,8 +41,7 @@ say -f script.txt -o narration.m4a --data-format=aac
 pbpaste | say                               # speak the clipboard
 ```
 
-Read from a file, not a terminal. When stdin is a TTY, `say` speaks line by line and
-an `-o` file keeps only the last line.
+Read from a file, not a terminal. When stdin is a TTY, `say` speaks line by line and an `-o` file keeps only the last line.
 
 ## Voices
 
@@ -56,15 +53,11 @@ say -v '?' | grep en_                       # English only
 
 Quote names that contain spaces or parentheses: `say -v "Eddy (English (UK))" "hi"`.
 
-Decent defaults for narration: `Samantha` (en_US), `Daniel` (en_GB), `Karen` (en_AU),
-`Moira` (en_IE), `Tessa` (en_ZA). Skip `Bad News`, `Bells`, `Boing`, `Bubbles`,
-`Cellos`, `Jester`, `Organ`, `Trinoids`, `Whisper`, `Zarvox` and friends. They are
-novelty voices and sound like a 1996 startup chime.
+Decent defaults for narration: `Samantha` (en_US), `Daniel` (en_GB), `Karen` (en_AU), `Moira` (en_IE), `Tessa` (en_ZA). Skip `Bad News`, `Bells`, `Boing`, `Bubbles`, `Cellos`, `Jester`, `Organ`, `Trinoids`, `Whisper`, `Zarvox` and friends. They are novelty voices and sound like a 1996 startup chime.
 
 ### Getting better quality
 
-The default voices are the *compact* ones and sound dated. Apple ships neural
-Enhanced and Premium voices as a free download:
+The default voices are the *compact* ones and sound dated. Apple ships neural Enhanced and Premium voices as a free download:
 
 **System Settings > Accessibility > Spoken Content > System Voice > Manage Voices**
 
@@ -74,8 +67,7 @@ Download a Premium voice, then call it by its full display name:
 say -v "Zoe (Premium)" "This is the neural voice"
 ```
 
-The quality jump is large and it is the single highest-value thing to do here.
-Siri voices are not reachable from `say` or any public API.
+The quality jump is large, and this is the most useful change you can make here. Siri voices are not reachable from `say` or any public API.
 
 ## Inline speech controls
 

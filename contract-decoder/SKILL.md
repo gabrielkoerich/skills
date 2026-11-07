@@ -5,7 +5,7 @@ description: "Decode and reverse-engineer smart contract binaries for security r
 
 # Smart Contract Decoder
 
-Decode deployed smart contract binaries to extract instructions, account structures, and attack surface — with or without source code. Built for bug bounty research on Immunefi, Code4rena, and similar platforms.
+Decode deployed smart contract binaries to extract instructions, account structures, and attack surface, with or without source code. Built for bug bounty research on Immunefi, Code4rena, and similar platforms.
 
 ## Requirements
 
@@ -17,8 +17,8 @@ Decode deployed smart contract binaries to extract instructions, account structu
 - `sha256sum` or `shasum` (for quick hashes)
 
 **EVM (optional):**
-- `cast` (Foundry) — for `cast disassemble`, `cast 4byte-decode`, reading storage
-- `heimdall` (optional) — advanced EVM decompiler
+- `cast` (Foundry): for `cast disassemble`, `cast 4byte-decode`, reading storage
+- `heimdall` (optional): advanced EVM decompiler
 - A block explorer API key (Etherscan, Arbiscan, etc.) for fetching verified source
 
 ## Workflow
@@ -153,10 +153,10 @@ heimdall decompile <ADDRESS> --rpc-url <RPC> -o ./decompiled
 
 Once you have instruction names and account structures:
 
-1. **Map the attack surface**: list all state-changing instructions, their signers, and account constraints
-2. **Identify privileged operations**: look for admin/authority/owner patterns
-3. **Check for missing validations**: compare declared accounts against actual usage
-4. **Cross-reference with source** (if available): verify deployed binary matches published source
+1. Map the attack surface: list all state-changing instructions, their signers, and account constraints
+2. Identify privileged operations: look for admin/authority/owner patterns
+3. Check for missing validations: compare declared accounts against actual usage
+4. Cross-reference with source (if available): verify deployed binary matches published source
 
 ```bash
 # Verify Solana program matches source (if anchor project)
@@ -181,8 +181,8 @@ cast etherscan-source <ADDRESS> --chain mainnet -d ./verified-source
 
 ## Integration with Audit Skills
 
-After decoding, use the existing audit skills for systematic vulnerability analysis:
+After decoding, use the audit skills for vulnerability analysis:
 
-- **`/solana-security-audit`** — 35 attack vectors across Anchor, native Rust, and Pinocchio
-- **`/solana-best-practices`** — 31 vulnerability patterns + case studies + Token-2022 security
-- **`/evm-contract-audit`** — 120 real vulnerabilities from Code4rena
+- `/solana-security-audit`: 35 attack vectors across Anchor, native Rust, and Pinocchio
+- `/solana-best-practices`: 31 vulnerability patterns + case studies + Token-2022 security
+- `/evm-contract-audit`: 120 real vulnerabilities from Code4rena

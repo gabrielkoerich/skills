@@ -1,16 +1,14 @@
 # Token-2022 Extension Security
 
-Security considerations for SPL Token-2022 (Token Extensions Program). Token-2022 introduces extensions that change fundamental assumptions about token behavior.
+Security checks for SPL Token-2022 (the Token Extensions Program). Token-2022 adds extensions that change basic assumptions about how tokens behave.
 
 Sources: [Zealynx Security Checklist](https://www.zealynx.io/blogs/solana-security-checklist), [Helius Security Guide](https://www.helius.dev/blog/a-hitchhikers-guide-to-solana-program-security)
-
----
 
 ## Token-Agnostic Interface
 
 **Severity**: High
 
-Programs hardcoded for SPL Token will break with Token-2022 tokens. Token-2022 uses a different program ID.
+Programs that hardcode SPL Token break with Token-2022 tokens, because Token-2022 uses a different program ID.
 
 ```rust
 // VULNERABLE -- only works with SPL Token, ignores Token-2022
@@ -56,15 +54,13 @@ token_interface::transfer_checked(
 )?;
 ```
 
-**Key rule**: Always use `Interface<'info, TokenInterface>` instead of `Program<'info, Token>` and `transfer_checked` instead of `transfer`.
-
----
+**Rule**: Always use `Interface<'info, TokenInterface>` instead of `Program<'info, Token>` and `transfer_checked` instead of `transfer`.
 
 ## Pre-created ATAs
 
 **Severity**: Medium
 
-Using `init` for associated token accounts fails if the ATA already exists (e.g., user already received tokens from another source).
+`init` on an associated token account fails if the ATA already exists, for example when the user already received tokens from another source.
 
 ```rust
 // VULNERABLE -- fails if ATA already exists
@@ -88,15 +84,13 @@ pub user_ata: Account<'info, TokenAccount>,
 pub user_ata: Account<'info, TokenAccount>,
 ```
 
-**Note**: Requires `anchor-lang = { features = ["init-if-needed"] }`. Be aware that `init_if_needed` requires careful use -- ensure the account is validated in all cases, not just the init path.
-
----
+**Note**: Requires `anchor-lang = { features = ["init-if-needed"] }`. With `init_if_needed`, validate the account in all cases, not only on the init path.
 
 ## SPL Token Validation
 
 **Severity**: High
 
-Accepting any token account without validating the mint allows attackers to use worthless tokens.
+If the program accepts any token account without validating the mint, attackers can use worthless tokens.
 
 ```rust
 // VULNERABLE -- no mint validation
@@ -136,8 +130,6 @@ pub struct Deposit<'info> {
 - [ ] Check `!token_account.is_frozen()`
 - [ ] For deposits: verify the mint is the one your protocol expects
 
----
-
 ## CPIGuard Extension
 
 **Severity**: High
@@ -171,15 +163,13 @@ if let Ok(cpi_guard) = account_state.get_extension::<CpiGuard>() {
 token_interface::transfer_checked(cpi_ctx, amount, decimals)?;
 ```
 
-**Key rule**: Always handle the case where CPI operations may be blocked by CPIGuard. Provide user-facing error messages or alternative instruction flows.
-
----
+**Rule**: Always handle the case where CPIGuard blocks a CPI. Give the user a clear error message or an alternative instruction flow.
 
 ## Default Account State Extension
 
 **Severity**: Medium
 
-Mints with the `DefaultAccountState` extension can create token accounts that start frozen. Programs assuming new accounts are active will fail.
+Mints with the `DefaultAccountState` extension can create token accounts that start frozen. Programs that assume new accounts are active fail on them.
 
 ```rust
 // VULNERABLE -- assumes newly created ATA is immediately usable
@@ -205,15 +195,13 @@ if let Ok(default_state) = mint_state.get_extension::<DefaultAccountState>() {
 }
 ```
 
-**Key rule**: Never assume new token accounts are active. Check the mint's `DefaultAccountState` extension.
-
----
+**Rule**: Never assume new token accounts are active. Check the mint's `DefaultAccountState` extension.
 
 ## Mint Close Authority Extension
 
 **Severity**: High
 
-Token-2022 mints with a `MintCloseAuthority` can be closed after all tokens are burned. Programs holding references to such mints may encounter closed accounts.
+Token-2022 mints with a `MintCloseAuthority` can be closed after all tokens are burned. A program that stores a reference to such a mint can later find it closed.
 
 ```rust
 // VULNERABLE -- assumes mint always exists
@@ -236,9 +224,7 @@ pub fn check_supply(ctx: Context<CheckSupply>) -> Result<()> {
 }
 ```
 
-**Key rule**: If your protocol accepts arbitrary mints, check for `MintCloseAuthority` and handle the case where the mint may no longer exist.
-
----
+**Rule**: If your protocol accepts arbitrary mints, check for `MintCloseAuthority` and handle the case where the mint may no longer exist.
 
 ## Permanent Delegate Extension
 
@@ -274,17 +260,15 @@ pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
 }
 ```
 
-**Key rule**: NEVER accept deposits of tokens with a permanent delegate unless your protocol explicitly accounts for the risk. The delegate can drain all vaults at any time.
-
----
+**Rule**: NEVER accept deposits of tokens with a permanent delegate unless your protocol explicitly accounts for the risk. The delegate can drain all vaults at any time.
 
 ## Transfer Hook Extension
 
 **Severity**: High
 
-Token-2022 mints with `TransferHook` execute custom program logic on every transfer. This has compute and security implications.
+Token-2022 mints with `TransferHook` run custom program logic on every transfer, which affects both compute use and security.
 
-**Compute risk**: Transfer hooks consume additional compute units. A heavy hook can cause your transaction to exceed the CU budget.
+**Compute risk**: Transfer hooks use extra compute units. A heavy hook can push your transaction past the CU budget.
 
 **Security risk**: The hook program can enforce additional constraints or fail transfers unexpectedly.
 
@@ -320,15 +304,13 @@ pub fn process_transfer(ctx: Context<ProcessTransfer>, amount: u64) -> Result<()
 }
 ```
 
-**Key rule**: When working with arbitrary Token-2022 mints, always budget extra CU for potential transfer hooks. Test with hook-enabled tokens.
-
----
+**Rule**: When working with arbitrary Token-2022 mints, always budget extra CU for potential transfer hooks. Test with hook-enabled tokens.
 
 ## Transfer Fee Extension
 
 **Severity**: High
 
-Token-2022 mints with `TransferFee` withhold a percentage of each transfer. The received amount is less than the sent amount.
+Token-2022 mints with `TransferFee` withhold a percentage of each transfer, so the recipient gets less than the sender sent.
 
 ```rust
 // VULNERABLE -- assumes received == sent
@@ -370,9 +352,7 @@ pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
 }
 ```
 
-**Key rule**: NEVER assume `received == sent`. Always check for `TransferFeeConfig` and calculate the actual received amount. Use `transfer_checked` which handles fees automatically on the token side.
-
----
+**Rule**: NEVER assume `received == sent`. Always check for `TransferFeeConfig` and calculate the actual received amount. Use `transfer_checked` which handles fees automatically on the token side.
 
 ## Token-2022 Security Checklist
 
@@ -380,11 +360,11 @@ Before integrating Token-2022 tokens:
 
 - [ ] Use `Interface<'info, TokenInterface>` and `InterfaceAccount` types
 - [ ] Use `transfer_checked` instead of `transfer`
-- [ ] Check for `PermanentDelegate` -- reject or handle appropriately
-- [ ] Check for `TransferFee` -- adjust accounting for withheld fees
-- [ ] Check for `TransferHook` -- budget extra compute units
-- [ ] Check for `CPIGuard` -- provide fallback instruction flows
-- [ ] Check for `DefaultAccountState` -- handle frozen-by-default accounts
-- [ ] Check for `MintCloseAuthority` -- handle potentially closed mints
+- [ ] Check for `PermanentDelegate`: reject or handle appropriately
+- [ ] Check for `TransferFee`: adjust accounting for withheld fees
+- [ ] Check for `TransferHook`: budget extra compute units
+- [ ] Check for `CPIGuard`: provide fallback instruction flows
+- [ ] Check for `DefaultAccountState`: handle frozen-by-default accounts
+- [ ] Check for `MintCloseAuthority`: handle potentially closed mints
 - [ ] Use `init_if_needed` for ATAs, not `init`
 - [ ] Validate mint, owner, and frozen state on all token accounts

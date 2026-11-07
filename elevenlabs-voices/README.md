@@ -1,8 +1,8 @@
 # ElevenLabs Voice Personas v2.0.0
 
-High-quality voice synthesis with 18 personas, 32 languages, sound effects, and voice design.
+Voice synthesis with the ElevenLabs API: 18 personas, 32 languages, sound effects and voice design.
 
-## Quick Start
+## Quick start
 
 ```bash
 # Set your API key
@@ -36,23 +36,23 @@ python3 scripts/tts.py --stats
 | Voice Design | `python3 scripts/voice-design.py --gender female --age young` |
 | Cost Stats | `--stats` |
 
-## Voice Presets
+## Voice presets
 
-- `narrator` - Documentary style
-- `storyteller` - Audiobooks
-- `professional` - Corporate
-- `educator` - Tutorials
-- `calm` - Meditation
-- `energetic` - Social media
-- `broadcaster` - News
+- `narrator`: documentary style
+- `storyteller`: audiobooks
+- `professional`: corporate
+- `educator`: tutorials
+- `calm`: meditation
+- `energetic`: social media
+- `broadcaster`: news
 
 ## Documentation
 
-- [SKILL.md](SKILL.md) - Full documentation
-- [examples.md](examples.md) - Usage examples
-- [voices.json](voices.json) - Voice configurations
-- [pronunciations.json](pronunciations.json) - Custom pronunciations
+- [SKILL.md](SKILL.md): full documentation
+- [examples.md](examples.md): usage examples
+- [voices.json](voices.json): voice configurations
+- [pronunciations.json](pronunciations.json): custom pronunciations
 
 ## License
 
-MIT - See ElevenLabs terms for API usage.
+MIT. API usage follows the ElevenLabs terms.

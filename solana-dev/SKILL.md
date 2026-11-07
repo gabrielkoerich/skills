@@ -18,28 +18,26 @@ Use this Skill when the user asks for:
 - Confidential transfers (Token-2022 ZK extension)
 
 ## Default stack decisions (opinionated)
-1) **UI: framework-kit first**
+1) UI: framework-kit first
 - Use `@solana/client` + `@solana/react-hooks`.
 - Prefer Wallet Standard discovery/connect via the framework-kit client.
 
-2) **SDK: @solana/kit first**
+2) SDK: @solana/kit first
 - Prefer Kit types (`Address`, `Signer`, transaction message APIs, codecs).
 - Prefer `@solana-program/*` instruction builders over hand-rolled instruction data.
 
-3) **Legacy compatibility: web3.js only at boundaries**
-- If you must integrate a library that expects web3.js objects (`PublicKey`, `Transaction`, `Connection`),
-  use `@solana/web3-compat` as the boundary adapter.
-- Do not let web3.js types leak across the entire app; contain them to adapter modules.
+3) Legacy compatibility: web3.js only at boundaries
+- If a library expects web3.js objects (`PublicKey`, `Transaction`, `Connection`), use `@solana/web3-compat` as the boundary adapter.
+- Do not let web3.js types leak across the app. Keep them in adapter modules.
 
-4) **Programs**
+4) Programs
 - Default: Anchor (fast iteration, IDL generation, mature tooling).
-- Performance/footprint: Pinocchio when you need CU optimization, minimal binary size,
-  zero dependencies, or fine-grained control over parsing/allocations.
+- Performance/footprint: Pinocchio when you need CU optimization, minimal binary size, zero dependencies, or fine-grained control over parsing/allocations.
 
-5) **Testing**
+5) Testing
 - Default: LiteSVM or Mollusk for unit tests (fast feedback, runs in-process).
-- Use Surfpool for integration tests against realistic cluster state (mainnet/devnet) locally.
-- Use solana-test-validator only when you need specific RPC behaviors not emulated by LiteSVM.
+- Use Surfpool for local integration tests against realistic cluster state (mainnet/devnet).
+- Use solana-test-validator only when you need specific RPC behaviors that LiteSVM does not emulate.
 
 ## Operating procedure (how to execute tasks)
 When solving a Solana task:
@@ -58,7 +56,7 @@ When solving a Solana task:
 - High-performance programs: Pinocchio over Anchor.
 
 ### 3. Implement with Solana-specific correctness
-Always be explicit about:
+Always state explicitly:
 - cluster + RPC endpoints + websocket endpoints
 - fee payer + recent blockhash
 - compute budget + prioritization (where relevant)
